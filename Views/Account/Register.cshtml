@@ -1,0 +1,62 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+  <div class="container py-4">
+    <div class="row g-4">
+      <div class="col-12 col-lg-6 order-2 order-lg-1">
+            <div class="p-4 bg-light rounded shadow-sm">
+              <legend>Register</legend>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="registerUsername" placeholder="Enter a username">
+                <label for="registerUsername">Username</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="registerEmail" placeholder="Enter your email">
+                <label for="registerEmail">Email address</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="registerCity" placeholder="Enter your city">
+                <label for="registerCity">City</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="registerCountry" placeholder="Enter your country">
+                <label for="registerCountry">Country</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="date" class="form-control" id="registerDOB" placeholder=" ">
+                <label for="registerDOB">Date of Birth</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="registerPassword" placeholder="Create a password">
+                <label for="registerPassword">Password</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input type="password" class="form-control" id="registerPasswordConfirm" placeholder="Confirm your password">
+                <label for="registerPasswordConfirm">Confirm Password</label>
+              </div>
+              <div class="mb-3">
+                <div class="form-check">
+                    <input id="rememberMeCheckbox" type="checkbox" class="form-check-input">
+                    <label for="rememberMeCheckbox" class="form-check-label">Remember me</label>
+                </div>
+             </div>
+
+              <button type="submit" class="btn btn-primary">Register</button>
+            </fieldset>
+            </div>
+      </div>
+      <div class="col-12 col-lg-6 order-1 order-lg-2 d-flex align-items-center">
+          <div class="text-center text-lg-start p-4">
+              <h1 class="display-5 mb-3">Millions of people find their lost items</h1>
+              <p class="lead">Join the community now and help eachother find what has been lost</p>
+          </div>
+      </div>
+    </div>
+  </div>

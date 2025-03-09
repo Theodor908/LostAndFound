@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,39 +10,32 @@
     <link rel="stylesheet" href="~/css/lux.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LostAndFound.styles.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header>
         <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">Navbar</a>
+            <div class="container-fluid mx-5">
+                <a class="navbar-brand" asp-controller="About" asp-action="Index">Lost And Found</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarColor01">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Home
+                        <a class="nav-link active" asp-controller="Home" asp-action="Index">Home
                         <span class="visually-hidden">(current)</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
+                        <a class="nav-link" href="#">Add Lost Item</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" asp-controller="Account" asp-action="Profile" role="button" aria-haspopup="true" aria-expanded="false">My profile</a>
                         <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Separated link</a>
+                            <a class="dropdown-item" asp-controller="Account" asp-action="Register">Register</a>
+                            <a class="dropdown-item" asp-controller="Account" asp-action="Login">Login</a>
+                            <a class="dropdown-item" asp-controller="Account" asp-action="Login">My list</a>
                         </div>
                     </li>
                 </ul>
@@ -54,20 +47,20 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div class="container my-auto">
+        <main role="main">
             @RenderBody()
         </main>
     </div>
-    <div class="container my-5">
-
-</div>
-
-
     <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous" asp-append-version="true"></script>
     <script src="~/lib/font-awesome/js/fontawesome.min.js" asp-append-version="true"></script>
     <script src="/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+     <footer class="py-3 mt-auto bg-primary">
+        <div class="container">
+            <p class="text-center mb-0" style="color: rgb(255,255,255,0.55)">&copy; 2025 - Lost And Found</p>
+        </div>
+    </footer>
 </body>
 </html>

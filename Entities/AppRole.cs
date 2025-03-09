@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace LostAndFound.Entities;
 
-public class AppUser:IdentityUser<int>
+public class AppRole:IdentityRole<int>
 {
 
 }

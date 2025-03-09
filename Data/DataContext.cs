@@ -5,9 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LostAndFound.Data;
 
-public class DataContext(DbContextOptions options): IdentityDbContext<AppUser>(options)
+public class DataContext(DbContextOptions<DataContext> options) : IdentityDbContext<AppUser, AppRole, int>(options)
 {
-    DbSet<AppUser> Users { get; set; }
-
     
 }
