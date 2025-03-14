@@ -4,11 +4,12 @@ using LostAndFound.Models;
 
 namespace LostAndFound.Controllers;
 
-public class AboutController : Controller
+public class BrowseController : Controller
 {
 
     public IActionResult Index()
     {
         return View();
     }
+    
 }

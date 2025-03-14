@@ -1,0 +1,35 @@
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 0.8rem;
+}
+
+.card {
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.category-icon {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+}
+
+.filter-section {
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.info-item {
+    margin-bottom: 5px;
+}

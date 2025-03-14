@@ -1,0 +1,122 @@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Add Lost Item";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/ReportLostItem.css" asp-append-version="true" />
+}
+
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="mb-4">Report Lost Item</h1>
+            <p class="lead mb-4">Please provide details about your lost item to help others identify it.</p>
+            
+            <div class="bg-light rounded-4 shadow-sm p-4 mb-4">
+                <form asp-controller="Item" asp-action="ReportLost" method="post" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        
+                        <div class="col-md-12">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="itemTitle" name="Title" placeholder="e.g. Blue Backpack, iPhone 14 Pro, Gold Watch" required>
+                                <label for="itemTitle">Item Name/Title <span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="itemCategory" name="Category" required>
+                                    <option value="" selected disabled>Select a category</option>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="clothing">Clothing</option>
+                                    <option value="jewelry">Jewelry</option>
+                                    <option value="documents">Documents</option>
+                                    <option value="pets">Pets</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <label for="itemCategory">Category <span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="date" class="form-control" id="dateLost" name="DateLost" required max="@DateTime.Now.ToString("yyyy-MM-dd")">
+                                <label for="dateLost">Date Lost <span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="locationArea" name="LocationArea" required>
+                                    <option value="" selected disabled>Select location area</option>
+                                    <option value="north">North Campus</option>
+                                    <option value="south">South Campus</option>
+                                    <option value="east">East Campus</option>
+                                    <option value="west">West Campus</option>
+                                    <option value="center">City Center</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                <label for="locationArea">Location Area <span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="specificLocation" name="SpecificLocation" placeholder="e.g. Library 2nd Floor, Room 101, Cafeteria" required>
+                                <label for="specificLocation">Specific Location <span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12">
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" id="description" name="Description" placeholder="Describe the lost item" rows="4" required></textarea>
+                                <label for="description">Item Description <span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12">
+                            <div class="form-floating mb-3">
+                                <input type="file" class="form-control" id="itemPhoto" name="ItemPhoto" accept="image/*">
+                                <label for="itemPhoto">Upload Photo</label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12 mt-3">
+                            <h4>Contact Information</h4>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="contactName" name="ContactName" placeholder="Enter your name" required>
+                                <label for="contactName">Contact Name <span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-floating mb-3">
+                                <input type="email" class="form-control" id="contactEmail" name="ContactEmail" placeholder="Enter your email" required>
+                                <label for="contactEmail">Email <span class="text-danger">*</span></label>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-12 mt-3">
+                            <button type="submit" class="btn btn-primary">Submit Report</button>
+                            <a href="#" class="btn btn-outline-secondary ms-2">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="bg-light rounded-4 shadow-sm p-4">
+                <h4>Tips for Better Results</h4>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item bg-transparent">Be as specific as possible about the item's appearance.</li>
+                    <li class="list-group-item bg-transparent">Upload a clear photo if possible.</li>
+                    <li class="list-group-item bg-transparent">Provide accurate location details.</li>
+                    <li class="list-group-item bg-transparent">Check the browse page regularly for updates.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

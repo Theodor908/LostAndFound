@@ -4,10 +4,10 @@ using LostAndFound.Models;
 
 namespace LostAndFound.Controllers;
 
-public class HomeController : Controller
+public class ItemController : Controller
 {
 
-    public IActionResult Index()
+    public IActionResult ReportLostItem()
     {
         return View();
     }

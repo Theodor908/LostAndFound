@@ -1,5 +1,6 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Login";
 }
 @section Styles {
     <link rel="stylesheet" href="~/css/Login.css" asp-append-version="true" />
@@ -14,13 +15,13 @@
                         <legend class="mb-4">Login</legend>
 
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" id="username" placeholder="Enter your username">
-                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" placeholder="Enter your username" required>
+                            <label for="username">Username <span class="text-danger">*</span></label>
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="password" placeholder="Enter your password">
-                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                            <label for="password">Password <span class="text-danger">*</span></label>
                         </div>
 
                         <div class="mb-3">
