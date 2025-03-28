@@ -1,6 +1,7 @@
-@{
+@model LostAndFound.Models.ItemDTO
+@{    
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Add Lost Item";
+    ViewData["Title"] = "Report Lost Item";
 }
 
 @section Styles {
@@ -15,18 +16,20 @@
             
             <div class="bg-light rounded-4 shadow-sm p-4 mb-4">
                 <form asp-controller="Item" asp-action="ReportLost" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    
                     <div class="row g-3">
-                        
                         <div class="col-md-12">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="itemTitle" name="Title" placeholder="e.g. Blue Backpack, iPhone 14 Pro, Gold Watch" required>
-                                <label for="itemTitle">Item Name/Title <span class="text-danger">*</span></label>
+                                <input asp-for="Name" class="form-control" placeholder="e.g. Blue Backpack, iPhone 14 Pro, Gold Watch">
+                                <label asp-for="Name"><span class="text-danger">*</span></label>
+                                <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
                         </div>
                         
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <select class="form-select" id="itemCategory" name="Category" required>
+                                <select asp-for="Category" class="form-select">
                                     <option value="" selected disabled>Select a category</option>
                                     <option value="electronics">Electronics</option>
                                     <option value="clothing">Clothing</option>
@@ -35,20 +38,22 @@
                                     <option value="pets">Pets</option>
                                     <option value="other">Other</option>
                                 </select>
-                                <label for="itemCategory">Category <span class="text-danger">*</span></label>
+                                <label asp-for="Category"><span class="text-danger">*</span></label>
+                                <span asp-validation-for="Category" class="text-danger"></span>
                             </div>
                         </div>
                         
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="date" class="form-control" id="dateLost" name="DateLost" required max="@DateTime.Now.ToString("yyyy-MM-dd")">
-                                <label for="dateLost">Date Lost <span class="text-danger">*</span></label>
+                                <input asp-for="DateLost" class="form-control" max="@DateTime.Now.ToString("yyyy-MM-dd")">
+                                <label asp-for="DateLost"><span class="text-danger">*</span></label>
+                                <span asp-validation-for="DateLost" class="text-danger"></span>
                             </div>
                         </div>
                         
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <select class="form-select" id="locationArea" name="LocationArea" required>
+                                <select asp-for="LocationArea" class="form-select">
                                     <option value="" selected disabled>Select location area</option>
                                     <option value="north">North Campus</option>
                                     <option value="south">South Campus</option>
@@ -57,28 +62,31 @@
                                     <option value="center">City Center</option>
                                     <option value="other">Other</option>
                                 </select>
-                                <label for="locationArea">Location Area <span class="text-danger">*</span></label>
+                                <label asp-for="LocationArea"><span class="text-danger">*</span></label>
+                                <span asp-validation-for="LocationArea" class="text-danger"></span>
                             </div>
                         </div>
                         
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="specificLocation" name="SpecificLocation" placeholder="e.g. Library 2nd Floor, Room 101, Cafeteria" required>
-                                <label for="specificLocation">Specific Location <span class="text-danger">*</span></label>
+                                <input asp-for="SpecificLocation" class="form-control">
+                                <label asp-for="SpecificLocation"><span class="text-danger">*</span></label>
+                                <span asp-validation-for="SpecificLocation" class="text-danger"></span>
                             </div>
                         </div>
                         
                         <div class="col-md-12">
                             <div class="form-floating mb-3">
-                                <textarea class="form-control" id="description" name="Description" placeholder="Describe the lost item" rows="4" required></textarea>
-                                <label for="description">Item Description <span class="text-danger">*</span></label>
+                                <textarea asp-for="Description" class="form-control" placeholder="Describe the lost item" style="height: 120px"></textarea>
+                                <label asp-for="Description"><span class="text-danger">*</span></label>
+                                <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
                         </div>
                         
                         <div class="col-md-12">
-                            <div class="form-floating mb-3">
-                                <input type="file" class="form-control" id="itemPhoto" name="ItemPhoto" accept="image/*">
-                                <label for="itemPhoto">Upload Photo</label>
+                            <div class="mb-3">
+                                <label for="ItemPhoto" class="form-label">Upload Photo</label>
+                                <input type="file" class="form-control" id="ItemPhoto" name="ItemPhoto" accept="image/*">
                             </div>
                         </div>
                         
@@ -88,21 +96,23 @@
                         
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="text" class="form-control" id="contactName" name="ContactName" placeholder="Enter your name" required>
-                                <label for="contactName">Contact Name <span class="text-danger">*</span></label>
+                                <input asp-for="ContactName" class="form-control" placeholder="Enter your name">
+                                <label asp-for="ContactName"><span class="text-danger">*</span></label>
+                                <span asp-validation-for="ContactName" class="text-danger"></span>
                             </div>
                         </div>
                         
                         <div class="col-md-6">
                             <div class="form-floating mb-3">
-                                <input type="email" class="form-control" id="contactEmail" name="ContactEmail" placeholder="Enter your email" required>
-                                <label for="contactEmail">Email <span class="text-danger">*</span></label>
+                                <input asp-for="ContactEmail" class="form-control" placeholder="Enter your email">
+                                <label asp-for="ContactEmail"><span class="text-danger">*</span></label>
+                                <span asp-validation-for="ContactEmail" class="text-danger"></span>
                             </div>
                         </div>
                         
                         <div class="col-md-12 mt-3">
                             <button type="submit" class="btn btn-primary">Submit Report</button>
-                            <a href="#" class="btn btn-outline-secondary ms-2">Cancel</a>
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary ms-2">Cancel</a>
                         </div>
                     </div>
                 </form>
@@ -120,3 +130,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,4 +1,5 @@
-﻿@{
+﻿@model LostAndFound.Models.CategoryDTO 
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Browse Items";
 }
@@ -74,6 +75,7 @@
     </div>
     
     <div class="row g-4">
+        @for(int i = 0; i < care
         <!-- Item 1 -->
         <div class="col-sm-6 col-lg-4 col-xl-3">
             <div class="card h-100 border-0 shadow-sm hover-shadow transition-all rounded-4">
