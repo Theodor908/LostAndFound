@@ -2,7 +2,8 @@ using System;
 
 namespace LostAndFound.Interfaces;
 
-public class IUnitOfWork
+public interface IUnitOfWork
 {
-
+    Task<bool> Complete();
+    bool HasChanges();
 }

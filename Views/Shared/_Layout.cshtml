@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lost And Found</title>
     <script type="importmap"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/lux.min.css" asp-append-version="true" />
@@ -23,22 +24,30 @@
                 <div class="collapse navbar-collapse" id="navbarColor01">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" asp-controller="Browse" asp-action="Index">Browse
-                        <span class="visually-hidden">(current)</span>
+                        <a class="nav-link" asp-controller="Browse" asp-action="Index">Browse 
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Item" asp-action="ReportLostItem">Report Lost Item</a>
+                        <a class="nav-link" asp-controller="Item" asp-action="ReportLostItem">Report Item</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="Profile">Profile</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
-                    </li>
+                    @if(User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Profile" asp-route-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" role="button" aria-haspopup="true" aria-expanded="false">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                        </li>
+                    }
                     <!--
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" asp-controller="Account" asp-action="Profile" role="button" aria-haspopup="true" aria-expanded="false">My profile</a>
@@ -72,5 +81,6 @@
             <p class="text-center mb-0" style="color: rgb(255,255,255,0.55)">&copy; 2025 - Lost And Found</p>
         </div>
     </footer>
+    
 </body>
 </html>

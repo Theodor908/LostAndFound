@@ -1,37 +1,18 @@
-using System.Diagnostics;
+using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using LostAndFound.Models;
-using CloudinaryDotNet.Actions;
-using CloudinaryDotNet;
-using LostAndFound.Interfaces;
 
-namespace LostAndFound.Controllers;
-
-public class ItemController(IWebHostEnvironment webHostEnvironment, IPhotoService photoService) : Controller
+namespace LostAndFound.Controllers
 {
-
-    public IActionResult ReportLostItem()
+    public class ItemController : Controller
     {
-        return View();
-    }
 
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ReportLost(ItemDTO item, IFormFile itemPhoto)
-    {
-        if(ModelState.IsValid)
+        [HttpGet]
+        public IActionResult ReportItem()
         {
-            if(itemPhoto != null)
-            {
-                var result = await photoService.UploadPhotoAsync(itemPhoto);
-                if(result != null)
-                {
-                    item.Photo.PublicId = result.PublicId;
-                    item.Photo.Url = result.SecureUrl.AbsoluteUri;
-                }
-
-            }
+            return View();
         }
-        return View(item);
     }
 }

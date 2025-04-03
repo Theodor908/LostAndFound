@@ -1,0 +1,73 @@
+[
+    {
+      "UserName": "Zimmerman",
+      "Email": "zimmermangallagher@orbaxter.com",
+      "City": "Silkworth",
+      "Country": "Botswana",
+      "Items": [],
+      "UserRoles": [],
+      "Photo": {
+        "Url": "https://randomuser.me/api/portraits/men/4.jpg",
+        "PublicId": null
+      },
+      "Posts": [],
+      "Comments": []
+    },
+    {
+      "UserName": "Landry",
+      "Email": "landrygallagher@orbaxter.com",
+      "City": "Norwood",
+      "Country": "Belize",
+      "Items": [],
+      "UserRoles": [],
+      "Photo": {
+        "Url": "https://randomuser.me/api/portraits/men/80.jpg",
+        "PublicId": null
+      },
+      "Posts": [],
+      "Comments": []
+    },
+    {
+      "UserName": "Cooper",
+      "Email": "coopergallagher@orbaxter.com",
+      "City": "Bethany",
+      "Country": "Laos",
+      "Items": [],
+      "UserRoles": [],
+      "Photo": {
+        "Url": "https://randomuser.me/api/portraits/men/24.jpg",
+        "PublicId": null
+      },
+      "Posts": [],
+      "Comments": []
+    },
+    {
+      "UserName": "Duffy",
+      "Email": "duffygallagher@orbaxter.com",
+      "City": "Caron",
+      "Country": "Swaziland",
+      "Items": [],
+      "UserRoles": [],
+      "Photo": {
+        "Url": "https://randomuser.me/api/portraits/men/78.jpg",
+        "PublicId": null
+      },
+      "Posts": [],
+      "Comments": []
+    },
+    {
+      "UserName": "Rhodes",
+      "Email": "rhodesgallagher@orbaxter.com",
+      "City": "Deercroft",
+      "Country": "Bahamas",
+      "Items": [],
+      "UserRoles": [],
+      "Photo": {
+        "Url": "https://randomuser.me/api/portraits/men/86.jpg",
+        "PublicId": null
+      },
+      "Posts": [],
+      "Comments": []
+    }
+  ]
+  

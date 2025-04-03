@@ -9,7 +9,9 @@ public class AutoMapperProfiles: Profile
 {
     public AutoMapperProfiles()
     {
-        CreateMap<ItemDTO, Item>();
-        CreateMap<Item, ItemDTO>();
+
+        CreateMap<AppUser, UserDTO>();
+        CreateMap<UserDTO, AppUser>();
+
     }
 }

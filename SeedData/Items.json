@@ -1,0 +1,97 @@
+[
+  {
+    "Id": 0,
+    "Name": "Watch",
+    "Description": "Consectetur occaecat ullamco incididunt fugiat nostrud et.",
+    "Country": "Puerto Rico",
+    "City": "Gulf",
+    "SpecificLocation": "nostrud",
+    "FoundAt": "2020-11-20",
+    "IsFound": true,
+    "CategoryId": 2,
+    "AppUserId": 5,
+    "PostId": 1,
+    "Photos": [
+      {
+        "Url": "https://example.com/photo13.jpg",
+        "PublicId": null
+      }
+    ]
+  },
+  {
+    "Id": 1,
+    "Name": "Watch",
+    "Description": "Sit fugiat non esse ut nisi nisi deserunt aute qui dolor.",
+    "Country": "Guatemala",
+    "City": "Chamizal",
+    "SpecificLocation": "cupidatat",
+    "FoundAt": "2023-12-27",
+    "IsFound": false,
+    "CategoryId": 3,
+    "AppUserId": 5,
+    "PostId": 2,
+    "Photos": [
+      {
+        "Url": "https://example.com/photo34.jpg",
+        "PublicId": null
+      }
+    ]
+  },
+  {
+    "Id": 2,
+    "Name": "Wallet",
+    "Description": "Velit esse sunt aliquip ad incididunt reprehenderit duis.",
+    "Country": "Lesotho",
+    "City": "Vallonia",
+    "SpecificLocation": "voluptate",
+    "FoundAt": "2020-11-02",
+    "IsFound": false,
+    "CategoryId": 1,
+    "AppUserId": 5,
+    "PostId": 4,
+    "Photos": [
+      {
+        "Url": "https://example.com/photo72.jpg",
+        "PublicId": null
+      }
+    ]
+  },
+  {
+    "Id": 3,
+    "Name": "Wallet",
+    "Description": "Velit commodo aute consectetur id in consectetur.",
+    "Country": "Turkmenistan",
+    "City": "Richford",
+    "SpecificLocation": "magna",
+    "FoundAt": "2020-10-02",
+    "IsFound": false,
+    "CategoryId": 2,
+    "AppUserId": 2,
+    "PostId": 3,
+    "Photos": [
+      {
+        "Url": "https://example.com/photo51.jpg",
+        "PublicId": null
+      }
+    ]
+  },
+  {
+    "Id": 4,
+    "Name": "iPhone 13",
+    "Description": "Aliquip sunt magna sit qui minim labore laborum reprehenderit commodo in pariatur ad dolore est.",
+    "Country": "Macau",
+    "City": "Ribera",
+    "SpecificLocation": "elit",
+    "FoundAt": "2021-05-05",
+    "IsFound": true,
+    "CategoryId": 3,
+    "AppUserId": 5,
+    "PostId": 4,
+    "Photos": [
+      {
+        "Url": "https://example.com/photo59.jpg",
+        "PublicId": null
+      }
+    ]
+  }
+]

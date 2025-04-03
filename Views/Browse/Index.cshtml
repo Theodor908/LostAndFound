@@ -1,11 +1,10 @@
-﻿@model LostAndFound.Models.CategoryDTO 
+﻿@model LostAndFound.Models.BrowseDTO
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Browse Items";
 }
 
 @section Styles {
-
     <link rel="stylesheet" href="~/css/Browse.css" asp-append-version="true" />
 }
 
@@ -13,7 +12,6 @@
     <div class="row mb-4">
         <div class="col-12">
             <h1 class="mb-4">Browse Items</h1>
-            <!-- there will been a lost items module in the future-->
             <div class="bg-light rounded-4 shadow-sm p-4 mb-4 filter-section">
                 <form asp-controller="Browse" asp-action="Index" method="get">
                     <div class="row">
@@ -21,42 +19,59 @@
                             <label for="statusFilter" class="form-label">Status</label>
                             <select class="form-select" id="statusFilter" name="status">
                                 <option value="">All</option>
-                                <option value="lost">Lost Items</option>
-                                <option value="found">Found Items</option>
-                                <option value="claimed">Claimed</option>
+                                <option value="lost" selected="@(Model.FilterParams.Status == "lost")">Lost Items</option>
+                                <option value="found" selected="@(Model.FilterParams.Status == "found")">Found Items</option>
+                                <option value="claimed" selected="@(Model.FilterParams.Status == "claimed")">Claimed</option>
                             </select>
                         </div>
                         <div class="col-md-6 col-lg-3 mb-3">
                             <label for="categoryFilter" class="form-label">Category</label>
-                            <select class="form-select" id="categoryFilter" name="category">
+                            <select class="form-select" id="categoryFilter" name="categoryName">
                                 <option value="">All Categories</option>
-                                <option value="electronics">Electronics</option>
-                                <option value="clothing">Clothing</option>
-                                <option value="jewelry">Jewelry</option>
-                                <option value="documents">Documents</option>
-                                <option value="pets">Pets</option>
-                                <option value="other">Other</option>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category.Name" 
+                                            selected="@(Model.FilterParams?.CategoryName == category.Name)">
+                                        @category.Name (@category.ItemCount)
+                                    </option>
+                                }
                             </select>
                         </div>
                         <div class="col-md-6 col-lg-3 mb-3">
-                            <label for="locationFilter" class="form-label">Location</label>
-                            <select class="form-select" id="locationFilter" name="location">
-                                <option value="">All Locations</option>
-                                <option value="north">North Campus</option>
-                                <option value="south">South Campus</option>
-                                <option value="east">East Campus</option>
-                                <option value="west">West Campus</option>
-                                <option value="center">City Center</option>
+                            <label for="countryFilter" class="form-label">Country</label>
+                            <select class="form-select" id="countryFilter" name="country">
+                                <option value="">All Countries</option>
+                                @foreach (var country in Model.Countries)
+                                {
+                                    <option value="@country" selected="@(Model.FilterParams?.Country == country)">@country</option>
+                                }
+                                
+                            </select>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <label for="cityFilter" class="form-label">City</label>
+                            <select class="form-select" id="cityFilter" name="city">
+                                <option value="">All Cities</option>
+                                @foreach (var city in Model.Cities)
+                                {
+                                    <option value="@city" selected="@(Model.FilterParams?.City?.Equals(city, StringComparison.OrdinalIgnoreCase) == true)">
+                                        @city
+                                    </option>
+                                }
                             </select>
                         </div>
                         <div class="col-md-6 col-lg-3 mb-3">
                             <label for="dateFilter" class="form-label">Date</label>
                             <select class="form-select" id="dateFilter" name="dateRange">
                                 <option value="">Any Time</option>
-                                <option value="today">Today</option>
-                                <option value="week">This Week</option>
-                                <option value="month">This Month</option>
+                                <option value="today" selected="@(Model.FilterParams?.DateRange == "today")">Today</option>
+                                <option value="week" selected="@(Model.FilterParams?.DateRange == "week")">This Week</option>
+                                <option value="month" selected="@(Model.FilterParams?.DateRange == "month")">This Month</option>
                             </select>
+                        </div>
+                        <div class="col-md-6 col-lg-3 mb-3">
+                            <label for="searchTerm" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="searchTerm" name="searchTerm" value="@Model.FilterParams?.SearchTerm" placeholder="Search items...">
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -75,261 +90,199 @@
     </div>
     
     <div class="row g-4">
-        @for(int i = 0; i < care
-        <!-- Item 1 -->
-        <div class="col-sm-6 col-lg-4 col-xl-3">
-            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all rounded-4">
-                <span class="badge bg-danger status-badge">Lost</span>
-                <img src="~/img/placeholder.jpg" alt="Lost Laptop" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-laptop category-icon text-primary"></i>
-                        MacBook Pro
-                    </h5>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                        Library, 2nd Floor
+        @if (Model.Items.Items.Any())
+        {
+            @foreach (var item in Model.Items.Items)
+            {
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="card h-100 shadow-sm item-card">
+                        @if(item.IsClaimed)
+                        {
+                            <div class="claimed-badge">Claimed</div>
+                        }
+                        else
+                        {
+                        <div class="status-badge @(item.IsFound ? "found" : "lost")">
+                            @(item.IsFound ? "Found" : "Lost")
+                        </div>
+                        }
+                        @if (item.Photos.Any())
+                        {
+                            <img src="@item.Photos.First().Url" class="card-img-top item-img" alt="@item.Name">
+                        }
+                        else
+                        {
+                            <div class="card-img-top item-img-placeholder">
+                                <i class="fas fa-image"></i>
+                            </div>
+                        }
+                        
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Name</h5>
+                            <p class="card-text text-muted mb-1">
+                                <i class="fas fa-tag me-1"></i> @item.Category.Name
+                            </p>
+                            <p class="card-text text-muted mb-1">
+                                <i class="fas fa-map-marker-alt me-1"></i> @item.City, @item.Country
+                            </p>
+                            <p class="card-text text-muted mb-1">
+                                <i class="fas fa-hourglass-half"></i> 
+                                @(item.PostedAt.ToString("MMM dd, yyyy"))
+                            </p>
+                            <p class="card-text text-muted mb-1">
+                                <i class="@(item.FoundAt.HasValue ? "fas fa-calendar-check" : "far fa-calendar-alt me-1")"></i> 
+                                @(item.FoundAt.HasValue ? item.FoundAt.Value.ToString("MMM dd, yyyy") : "Not specified")
+                            </p>
+                            <p class="card-text text-muted mb-3">
+                                <i class="fas fa-clipboard me-1"></i> Post: @item.Post.Title
+                            </p>
+                            <a asp-controller="Posts" asp-action="Details" asp-route-id="@item.PostId" class="btn btn-primary w-100">
+                                View Post Details
+                            </a>
+                        </div>
                     </div>
-                    <div class="info-item">
-                        <i class="fas fa-calendar-alt text-muted me-2"></i>
-                        Mar 8, 2025
-                    </div>
-                    <p class="card-text mt-2">Silver MacBook Pro with stickers on the cover. Last seen in the library.</p>
                 </div>
-                <div class="card-footer bg-transparent border-top-0">
-                    <a href="#" class="btn btn-outline-primary btn-sm w-100">
-                        <i class="fas fa-info-circle me-1"></i> View Details
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Item 2 -->
-        <div class="col-sm-6 col-lg-4 col-xl-3">
-            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all rounded-4">
-                <span class="badge bg-success status-badge">Found</span>
-                <img src="~/img/placeholder.jpg" alt="Found Wallet" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-wallet category-icon text-primary"></i>
-                        Brown Leather Wallet
-                    </h5>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                        Student Center
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-calendar-alt text-muted me-2"></i>
-                        Mar 10, 2025
-                    </div>
-                    <p class="card-text mt-2">Brown leather wallet found on a table in the student center cafeteria.</p>
-                </div>
-                <div class="card-footer bg-transparent border-top-0">
-                    <a href="#" class="btn btn-outline-primary btn-sm w-100">
-                        <i class="fas fa-info-circle me-1"></i> View Details
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Item 3 -->
-        <div class="col-sm-6 col-lg-4 col-xl-3">
-            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all rounded-4">
-                <span class="badge bg-danger status-badge">Lost</span>
-                <img src="~/img/placeholder.jpg" alt="Lost Headphones" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-headphones category-icon text-primary"></i>
-                        Wireless Headphones
-                    </h5>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                        Gym Locker Room
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-calendar-alt text-muted me-2"></i>
-                        Mar 7, 2025
-                    </div>
-                    <p class="card-text mt-2">Black Sony wireless headphones lost in the gym locker room.</p>
-                </div>
-                <div class="card-footer bg-transparent border-top-0">
-                    <a href="#" class="btn btn-outline-primary btn-sm w-100">
-                        <i class="fas fa-info-circle me-1"></i> View Details
-                    </a>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> No items found matching your search criteria.
                 </div>
             </div>
-        </div>
-        
-        <!-- Item 4 -->
-        <div class="col-sm-6 col-lg-4 col-xl-3">
-            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all rounded-4">
-                <span class="badge bg-success status-badge">Found</span>
-                <img src="~/img/placeholder.jpg" alt="Found Keys" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-key category-icon text-primary"></i>
-                        Keys with Blue Keychain
-                    </h5>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                        Parking Lot B
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-calendar-alt text-muted me-2"></i>
-                        Mar 9, 2025
-                    </div>
-                    <p class="card-text mt-2">Set of keys with a blue dolphin keychain found in Parking Lot B.</p>
-                </div>
-                <div class="card-footer bg-transparent border-top-0">
-                    <a href="#" class="btn btn-outline-primary btn-sm w-100">
-                        <i class="fas fa-info-circle me-1"></i> View Details
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Item 5 -->
-        <div class="col-sm-6 col-lg-4 col-xl-3">
-            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all rounded-4">
-                <span class="badge bg-info status-badge">Claimed</span>
-                <img src="~/img/placeholder.jpg" alt="Water Bottle" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-wine-bottle category-icon text-primary"></i>
-                        Blue Water Bottle
-                    </h5>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                        Science Building
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-calendar-alt text-muted me-2"></i>
-                        Mar 5, 2025
-                    </div>
-                    <p class="card-text mt-2">Blue metal water bottle with sports logo. Found in Chemistry Lab.</p>
-                </div>
-                <div class="card-footer bg-transparent border-top-0">
-                    <a href="#" class="btn btn-outline-primary btn-sm w-100">
-                        <i class="fas fa-info-circle me-1"></i> View Details
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Item 6 -->
-        <div class="col-sm-6 col-lg-4 col-xl-3">
-            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all rounded-4">
-                <span class="badge bg-danger status-badge">Lost</span>
-                <img src="~/img/placeholder.jpg" alt="Glasses" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-glasses category-icon text-primary"></i>
-                        Reading Glasses
-                    </h5>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                        Main Auditorium
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-calendar-alt text-muted me-2"></i>
-                        Mar 11, 2025
-                    </div>
-                    <p class="card-text mt-2">Black-framed reading glasses in a red case. Left during the lecture.</p>
-                </div>
-                <div class="card-footer bg-transparent border-top-0">
-                    <a href="#" class="btn btn-outline-primary btn-sm w-100">
-                        <i class="fas fa-info-circle me-1"></i> View Details
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Item 7 -->
-        <div class="col-sm-6 col-lg-4 col-xl-3">
-            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all rounded-4">
-                <span class="badge bg-success status-badge">Found</span>
-                <img src="~/img/placeholder.jpg" alt="Umbrella" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-umbrella category-icon text-primary"></i>
-                        Folding Umbrella
-                    </h5>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                        Bus Stop #3
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-calendar-alt text-muted me-2"></i>
-                        Mar 6, 2025
-                    </div>
-                    <p class="card-text mt-2">Black folding umbrella left at the campus bus stop near the admin building.</p>
-                </div>
-                <div class="card-footer bg-transparent border-top-0">
-                    <a href="#" class="btn btn-outline-primary btn-sm w-100">
-                        <i class="fas fa-info-circle me-1"></i> View Details
-                    </a>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Item 8 -->
-        <div class="col-sm-6 col-lg-4 col-xl-3">
-            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all rounded-4">
-                <span class="badge bg-danger status-badge">Lost</span>
-                <img src="~/img/placeholder.jpg" alt="ID Card" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-id-card category-icon text-primary"></i>
-                        Student ID Card
-                    </h5>
-                    <div class="info-item">
-                        <i class="fas fa-map-marker-alt text-muted me-2"></i>
-                        Campus Cafeteria
-                    </div>
-                    <div class="info-item">
-                        <i class="fas fa-calendar-alt text-muted me-2"></i>
-                        Mar 10, 2025
-                    </div>
-                    <p class="card-text mt-2">University ID card with student name. Lost during lunch time.</p>
-                </div>
-                <div class="card-footer bg-transparent border-top-0">
-                    <a href="#" class="btn btn-outline-primary btn-sm w-100">
-                        <i class="fas fa-info-circle me-1"></i> View Details
-                    </a>
-                </div>
-            </div>
-        </div>
+        }
     </div>
     
-    <!-- Pagination -->
-    <nav aria-label="Page navigation" class="mt-5">
-        <ul class="pagination justify-content-center">
-            <li class="page-item disabled">
-                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
-                    <i class="fas fa-angle-left"></i>
-                </a>
-            </li>
-            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-            <li class="page-item"><a class="page-link" href="#">2</a></li>
-            <li class="page-item"><a class="page-link" href="#">3</a></li>
-            <li class="page-item">
-                <a class="page-link" href="#">
-                    <i class="fas fa-angle-right"></i>
-                </a>
-            </li>
-        </ul>
-    </nav>
-    
-    <!-- Empty State (Only shown when there are no results) TO DO-->
-    @if (Model != null && Model.Count == 0)
+    @if (Model.Items.TotalPages > 1)
     {
-        <div class="text-center py-5">
-            <i class="fas fa-search fa-5x text-secondary mb-3"></i>
-            <h3>No Items Found</h3>
-            <p class="text-muted">Try adjusting your filters or search terms</p>
-            <a asp-controller="Browse" asp-action="Index" class="btn btn-primary mt-3">
-                <i class="fas fa-redo me-1"></i> Reset Filters
-            </a>
+        <div class="row mt-4">
+            <div class="col-12">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item @(!Model.Items.HasPrevious ? "disabled" : "")">
+                            <a class="page-link" 
+                               asp-controller="Browse" 
+                               asp-action="Index" 
+                               asp-route-status="@Model.FilterParams?.Status"
+                               asp-route-category="@Model.FilterParams?.CategoryName"
+                               asp-route-country="@Model.FilterParams?.Country"
+                               asp-route-city="@Model.FilterParams?.City"
+                               asp-route-dateRange="@Model.FilterParams?.DateRange"
+                               asp-route-searchTerm="@Model.FilterParams?.SearchTerm"
+                               asp-route-pageNumber="@(Model.Items.CurrentPage - 1)">
+                                Previous
+                            </a>
+                        </li>
+                        
+                        @for (int i = 1; i <= Model.Items.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.Items.CurrentPage ? "active" : "")">
+                                <a class="page-link"
+                                   asp-controller="Browse"
+                                   asp-action="Index"
+                                   asp-route-status="@Model.FilterParams?.Status"
+                                      asp-route-category="@Model.FilterParams?.CategoryName"
+                                      asp-route-country="@Model.FilterParams?.Country"
+                                      asp-route-city="@Model.FilterParams?.City"
+                                        asp-route-dateRange="@Model.FilterParams?.DateRange"
+                                        asp-route-searchTerm="@Model.FilterParams?.SearchTerm"
+                                      asp-route-pageNumber="@i">
+                                    @i
+                                </a>
+                            </li>
+                        }
+                        <li class="page-item @(!Model.Items.HasNext ? "disabled" : "")">
+                            <a class="page-link" 
+                               asp-controller="Browse" 
+                               asp-action="Index" 
+                               asp-route-status="@Model.FilterParams?.Status"
+                               asp-route-category="@Model.FilterParams?.CategoryName"
+                               asp-route-country="@Model.FilterParams?.Country"
+                               asp-route-city="@Model.FilterParams?.City"
+                               asp-route-dateRange="@Model.FilterParams?.DateRange"
+                               asp-route-searchTerm="@Model.FilterParams?.SearchTerm"
+                               asp-route-pageNumber="@(Model.Items.CurrentPage + 1)">
+                                Next
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
         </div>
     }
 </div>
+  <script>
+$(document).ready(function () {
+    var selectedCountry = $('#countryFilter').val();
+    var selectedCity = $('#cityFilter').val();
+    
+    if (selectedCountry && $('#cityFilter option').length <= 1) {
+        loadCitiesForCountry(selectedCountry, selectedCity);
+    }
+    
+    $('#countryFilter').change(function () {
+        var country = $(this).val();
+        
+        if (country) {
+            loadCitiesForCountry(country);
+        } else {
+            $('#cityFilter').html('<option value="">All Cities</option>').prop('disabled', false);
+        }
+    });
+    
+    function loadCitiesForCountry(country, cityToSelect = null) {
+        $('#cityFilter').prop('disabled', true).html('<option value="">Loading...</option>');
+        
+        $.ajax({
+            url: '@Url.Action("GetCitiesByCountry", "Browse")',
+            type: 'GET',
+            data: { country: country },
+            success: function (response) {
+                if (response.success && response.cities && response.cities.length > 0) {
+                    var citiesHtml = '<option value="">All Cities</option>';
+                    
+                    $.each(response.cities, function (index, city) {
+                        var selected = (cityToSelect && cityToSelect.toLowerCase() === city.toLowerCase()) ? 'selected' : '';
+                        citiesHtml += '<option value="' + city + '" ' + selected + '>' + city + '</option>';
+                    });
+                    
+                    $('#cityFilter').html(citiesHtml).prop('disabled', false);
+                } else {
+                    $('#cityFilter').html('<option value="">No cities available</option>').prop('disabled', true);
+                }
+            },
+            error: function () {
+                $('#cityFilter').html('<option value="">Error loading cities</option>').prop('disabled', true);
+            }
+        });
+    }
+    
+    function getCachedCities(country) {
+        try {
+            var cachedData = localStorage.getItem('cities_' + country.toLowerCase());
+            if (cachedData) {
+                var cacheItem = JSON.parse(cachedData);
+                // Check if cache is still valid (24 hours)
+                if ((new Date().getTime() - cacheItem.timestamp) < (24 * 60 * 60 * 1000)) {
+                    return cacheItem.data;
+                }
+            }
+        } catch (e) {
+            console.error('Error reading from cache:', e);
+        }
+        return null;
+    }
+    
+    function setCachedCities(country, cities) {
+        try {
+            localStorage.setItem('cities_' + country.toLowerCase(), JSON.stringify({
+                data: cities,
+                timestamp: new Date().getTime()
+            }));
+        } catch (e) {
+            console.error('Error writing to cache:', e);
+        }
+    }
+});
+    </script>

@@ -1,8 +1,10 @@
+@model LostAndFound.Models.RegisterDTO
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Browse Items";
+    ViewData["Title"] = "Register";
 }
-  
+
 <div class="container py-4">
     <div class="row g-4">
         <div class="col-12 col-lg-6 order-2 order-lg-1">
@@ -10,49 +12,52 @@
                 <fieldset>
                     <legend>Register</legend>
 
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="registerUsername" placeholder="Enter a username" required>
-                        <label for="registerUsername">Username <span class="text-danger">*</span></label>
-                    </div>
+                    <form asp-controller="Account" asp-action="Register" method="post">
 
-                    <div class="form-floating mb-3">
-                        <input type="email" class="form-control" id="registerEmail" placeholder="Enter your email" required>
-                        <label for="registerEmail">Email address <span class="text-danger">*</span></label>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="registerCity" placeholder="Enter your city" required>
-                        <label for="registerCity">City <span class="text-danger">*</span></label>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="registerCountry" placeholder="Enter your country" required>
-                        <label for="registerCountry">Country <span class="text-danger">*</span></label>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input type="date" class="form-control" id="registerDOB" required>
-                        <label for="registerDOB">Date of Birth <span class="text-danger">*</span></label>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input type="password" class="form-control" id="registerPassword" placeholder="Create a password" required>
-                        <label for="registerPassword">Password <span class="text-danger">*</span></label>
-                    </div>
-
-                    <div class="form-floating mb-3">
-                        <input type="password" class="form-control" id="registerPasswordConfirm" placeholder="Confirm your password" required>
-                        <label for="registerPasswordConfirm">Confirm Password <span class="text-danger">*</span></label>
-                    </div>
-
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input id="rememberMeCheckbox" type="checkbox" class="form-check-input">
-                            <label for="rememberMeCheckbox" class="form-check-label">Remember me</label>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Username" class="form-control" placeholder="Enter a username" required>
+                            <label asp-for="Username"></label>
+                            <span asp-validation-for="Username" class="text-danger"></span>
                         </div>
-                    </div>
 
-                    <button type="submit" class="btn btn-primary">Register</button>
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" class="form-control" type="email" placeholder="Enter your email" required>
+                            <label asp-for="Email"></label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="City" class="form-control" placeholder="Enter your city" required>
+                            <label asp-for="City"></label>
+                            <span asp-validation-for="City" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Country" class="form-control" placeholder="Enter your country" required>
+                            <label asp-for="Country"></label>
+                            <span asp-validation-for="Country" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Password" class="form-control" type="password" placeholder="Create a password" required>
+                            <label asp-for="Password"></label>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="Confirm your password" required>
+                            <label asp-for="ConfirmPassword"></label>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                         <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="RememberMe" type="checkbox" class="form-check-input">
+                                <label asp-for="RememberMe" class="form-check-label">Remember me</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Register</button>
+                    </form>
                 </fieldset>
             </div>
         </div>

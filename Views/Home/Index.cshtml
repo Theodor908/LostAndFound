@@ -13,8 +13,8 @@
             <h1 class="display-3 fw-bold text-white mb-4">About Lost And Found</h1>
             <p class="lead text-white mb-4">Connecting people with their missing belongings since 2025</p>
             <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-                <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">Report Lost Item</button>
-                <button type="button" class="btn btn-outline-light btn-lg px-4">Report Found Item</button>
+                <a asp-controller="Item" asp-action="ReportLostItem" class="btn btn-primary btn-lg px-4 me-sm-3">Report Lost Item</a>
+                <a class="btn btn-outline-light btn-lg px-4">Report Found Item</a>
             </div>
         </div>
     </div>
@@ -176,7 +176,7 @@
             <div class="col-lg-8 text-center">
                 <h3 class="fw-bold mb-4">Start searching, start posting, and let's bring lost items back to where they belong!</h3>
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                    <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3">Sign Up Now</button>
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg px-4 me-sm-3">Sign Up Now</a>
                 </div>
             </div>
         </div>
