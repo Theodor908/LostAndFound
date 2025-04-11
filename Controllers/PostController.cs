@@ -1,33 +1,43 @@
-using System.Threading.Tasks;
 using LostAndFound.Entities;
 using LostAndFound.Interfaces;
 using LostAndFound.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LostAndFound.Controllers;
-
-public class PostsController(IPostRepository postRepository, IItemRepository itemRepository) : Controller
+[Authorize]
+public class PostController(IPostRepository postRepository) : Controller
 {
-
-    public async Task<IActionResult> Details(int id)
+    public IActionResult ReportItem()
     {
-        var post = await postRepository.GetPostWithItemsAndCommentsByIdAsync(id);
-        
-        if (post == null)
+        var model = new PostDTO
         {
-            return NotFound();
-        }
-
-        var viewModel = new PostDetailsViewModel
-        {
-            Post = post
+            Title = string.Empty,
+            Description = string.Empty,
+            Items = []
         };
-
-        return View(viewModel);
+        return View(model);
     }
-}
 
-public class PostDetailsViewModel
-{
-    public Post Post { get; set; } = null!;
+    // [HttpPost]
+    // public async Task<IActionResult> CreatePost()
+    // {
+        
+    // }
+
+    // public async Task<IActionResult> Details(int id)
+    // {
+    //     var post = await postRepository.GetPostWithItemsAndCommentsByIdAsync(id);
+        
+    //     if (post == null)
+    //     {
+    //         return NotFound();
+    //     }
+
+    //     // TO DO map to view model
+
+    //     return View(viewModel);
+    // }
+
+
 }

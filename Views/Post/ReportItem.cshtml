@@ -1,0 +1,130 @@
+@model LostAndFound.Models.PostDTO
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Create Post";
+}
+
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-12 col-lg-7 order-2 order-lg-1">
+            <div class="p-4 bg-light rounded shadow-sm">
+                <form asp-controller="Post" asp-action="Create" method="post" enctype="multipart/form-data">
+                    <fieldset>
+                        <legend>Create New Post</legend>
+
+                        <!-- Post Info -->
+                        <div class="form-floating mb-3">
+                            <input asp-for="Title" class="form-control" placeholder="Enter title" />
+                            <label asp-for="Title"></label>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <textarea asp-for="Description" class="form-control" placeholder="Post description" style="height: 100px;"></textarea>
+                            <label asp-for="Description"></label>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div id="itemsContainer">
+                            @for (int i = 0; i < Model.Items.Count; i++)
+                            {
+                                <div class="card mb-4 shadow-sm">
+                                    <div class="card-header bg-primary text-white">
+                                        Item @(@i + 1)
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-floating mb-3">
+                                            <input name="Items[@i].Name" class="form-control" placeholder="Item name" value="@Model.Items[i].Name" />
+                                            <label>Item Name</label>
+                                        </div>
+
+                                        <div class="form-floating mb-3">
+                                            <textarea name="Items[@i].Description" class="form-control" placeholder="Item description" style="height: 100px;">@Model.Items[i].Description</textarea>
+                                            <label>Item Description</label>
+                                        </div>
+
+                                        <div class="form-floating mb-3">
+                                            <input name="Items[@i].FoundAt" type="datetime-local" class="form-control" 
+                                                value="@(Model.Items[i].FoundAt?.ToString("yyyy-MM-ddTHH:mm") ?? "")" />
+                                            <label>Found At</label>
+                                        </div>
+
+                                        <div class="form-check mb-3">
+                                            <input class="form-check-input" type="checkbox" name="Items[@i].IsFound" value="true" @(Model.Items[i].IsFound ? "checked" : "") />
+                                            <label class="form-check-label">Is Found</label>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="form-label">Upload Photos</label>
+                                            <input type="file" name="Items[@i].Photos" class="form-control" multiple accept="image/*" />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <button type="button" id="addItem" class="btn btn-outline-primary mb-4">+ Add Another Item</button>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-controller="Post" asp-action="CreatePost" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Create Post</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
+        <!-- Guidelines -->
+        <div class="col-12 col-lg-5 order-1 order-lg-2 d-flex align-items-center">
+            <div class="bg-white p-4 shadow-sm rounded w-100">
+                <h3 class="mb-3">Posting Guidelines</h3>
+                <ul class="list-unstyled lh-lg">
+                    <li>✅ Be specific about when and where the item was lost/found</li>
+                    <li>📷 Include clear photos (up to 5 per item)</li>
+                    <li>🔒 Avoid revealing uniquely identifying info</li>
+                    <li>💡 For valuable items, keep a detail hidden for verification</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        let itemIndex = @Model.Items.Count;
+
+        document.getElementById('addItem').addEventListener('click', () => {
+            const container = document.getElementById('itemsContainer');
+            const card = document.createElement('div');
+            card.className = 'card mb-4 shadow-sm';
+            card.innerHTML = `
+                <div class="card-header bg-primary text-white">Item ${itemIndex + 1}</div>
+                <div class="card-body">
+                    <div class="form-floating mb-3">
+                        <input name="Items[${itemIndex}].Name" class="form-control" placeholder="Item name" />
+                        <label>Item Name</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <textarea name="Items[${itemIndex}].Description" class="form-control" placeholder="Item description" style="height: 100px;"></textarea>
+                        <label>Item Description</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="datetime-local" name="Items[${itemIndex}].FoundAt" class="form-control" />
+                        <label>Found At</label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" name="Items[${itemIndex}].IsFound" value="true" class="form-check-input" />
+                        <label class="form-check-label">Is Found</label>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Upload Photos</label>
+                        <input type="file" name="Items[${itemIndex}].Photos" class="form-control" multiple accept="image/*" />
+                    </div>
+                </div>`;
+            container.appendChild(card);
+            itemIndex++;
+        });
+    </script>
+}

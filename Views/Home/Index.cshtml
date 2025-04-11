@@ -12,28 +12,41 @@
         <div class="col-md-8 mx-auto my-5 position-relative" style="z-index: 10; padding-top: 10vh;">
             <h1 class="display-3 fw-bold text-white mb-4">About Lost And Found</h1>
             <p class="lead text-white mb-4">Connecting people with their missing belongings since 2025</p>
-            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-                <a asp-controller="Item" asp-action="ReportLostItem" class="btn btn-primary btn-lg px-4 me-sm-3">Report Lost Item</a>
-                <a class="btn btn-outline-light btn-lg px-4">Report Found Item</a>
-            </div>
         </div>
     </div>
     <div class="container px-4 py-5">
-        <div class="row align-items-center g-5 py-5">
-            <div class="col-lg-6">
-                <h2 class="fw-bold mb-4">Bringing Lost Items Back To Their Owners</h2>
-                <p class="lead">Every day, countless items are lost in public places—phones left on park benches, wallets misplaced in cafés, keys dropped on busy sidewalks.</p>
-                <p>Losing something valuable can be stressful, and finding its rightful owner can seem like an impossible task. That's where <strong>Lost And Found</strong> comes in.</p>
-                <div class="d-flex align-items-center mt-4">
-                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center bg-opacity-10" style="width: 50px; height: 50px;">
-                        <i class="fa fa-list-check fs-1 text-primary"></i>
-                    </div>
-                    <div class="ms-3">
-                        <h5 class="mb-0">10,000+</h5>
-                        <p class="mb-0 text-muted">Items returned to owners</p>
-                    </div>
+        <div class="d-flex row align-items-center g-5 py-5">
+            <div class="col-lg-5">
+            <h2 class="fw-bold mb-4">Bringing Lost Items Back To Their Owners</h2>
+            <p class="lead">Every day, countless items are lost in public places—phones left on park benches, wallets misplaced in cafés, keys dropped on busy sidewalks.</p>
+            <p>Losing something valuable can be stressful, and finding its rightful owner can seem like an impossible task. That's where <strong>Lost And Found</strong> comes in.</p>
+            <div class="d-flex align-items-center mt-4">
+                <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center bg-opacity-10" style="width: 50px; height: 50px;">
+                    <i class="fa fa-list-check fs-1 text-primary"></i>
+                </div>
+                <div class="ms-3">
+                    <h5 class="mb-0">10,000+</h5>
+                    <p class="mb-0 text-muted">Items returned to owners</p>
                 </div>
             </div>
+        </div>
+        <div class="col-lg-2 d-none d-lg-flex justify-content-center">
+            <div class="vr" style="width:1px; height:450px;"></div>
+        </div>
+        <div class="col-lg-5">
+            <h2 class="fw-bold mb-4">A Simple Way to Reunite People with Their Belongings</h2>
+            <p class="lead">Found something? Snap a photo, add a description, and post it in seconds. Lost something? Search by location, category, or keywords.</p>
+            <p>We make it easy for good people to do good things—whether you're reporting a found item or looking for something you lost, our intuitive platform connects finders and seekers fast.</p>
+            <div class="d-flex align-items-center mt-4">
+                <div class="bg-success rounded-circle d-flex align-items-center justify-content-center bg-opacity-10" style="width: 50px; height: 50px;">
+                    <i class="fa fa-bolt fs-1 text-success"></i>
+                </div>
+                <div class="ms-3">
+                    <h5 class="mb-0">Instant Matching</h5>
+                    <p class="mb-0 text-muted">Real-time alerts and smart search</p>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
     <div class="bg-light py-5">
@@ -62,20 +75,18 @@
                         <ul class="list-group list-group-flush border-0">
                             <li class="list-group-item bg-transparent px-0 d-flex align-items-center">
                                 <span class="badge bg-primary rounded-pill me-2">1</span>
-                                Browse through the listed found items
+                                Browse through the listed lost items
                             </li>
                             <li class="list-group-item bg-transparent px-0 d-flex align-items-center">
                                 <span class="badge bg-primary rounded-pill me-2">2</span>
-                                Use search filters to locate your lost belongings
+                                Specify when and where it was lost
                             </li>
                             <li class="list-group-item bg-transparent px-0 d-flex align-items-center">
                                 <span class="badge bg-primary rounded-pill me-2">3</span>
-                                Contact the person who reported finding the item
+                                Contact the person who reported finding the item<br>
+                                If the item is not found, report it as lost
                             </li>
                         </ul>
-                        <div class="d-grid gap-2 mt-4">
-                            <a href="#" class="btn btn-outline-primary">Find Your Item</a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -90,20 +101,18 @@
                         <ul class="list-group list-group-flush border-0">
                             <li class="list-group-item bg-transparent px-0 d-flex align-items-center">
                                 <span class="badge bg-success rounded-pill me-2">1</span>
-                                Post a description and photo of the found item
+                                Browse through the listed found items
                             </li>
                             <li class="list-group-item bg-transparent px-0 d-flex align-items-center">
-                                <span class="badge bg-success rounded-pill me-2">2</span>
-                                Specify when and where it was found
+                                <span class="badge bg-success rounded-pill me-2">2</span> 
+                                Use search filters to locate the lost belongings
                             </li>
                             <li class="list-group-item bg-transparent px-0 d-flex align-items-center">
                                 <span class="badge bg-success rounded-pill me-2">3</span>
-                                Wait for the owner to reach out and verify their claim
+                                If the owner is found, arrange a meeting to return the item
+                                Otherwise, report the item as lost
                             </li>
                         </ul>
-                        <div class="d-grid gap-2 mt-4">
-                            <a href="#" class="btn btn-outline-success">Report Found Item</a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -163,10 +172,6 @@
                 <div class="col-lg-8 text-center py-5">
                     <h2 class="display-5 fw-bold text-white mb-4">Join Us in Making a Difference</h2>
                     <p class="lead text-white mb-4">Losing something valuable can be frustrating, but with Lost And Found, there's hope. Together, we can turn moments of panic into stories of kindness and reunions.</p>
-                    <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                        <button type="button" class="btn btn-light btn-lg px-4 me-md-2 fw-bold">Get Started</button>
-                        <button type="button" class="btn btn-outline-light btn-lg px-4">Learn More</button>
-                    </div>
                 </div>
             </div>
         </div>

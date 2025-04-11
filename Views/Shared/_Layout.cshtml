@@ -28,7 +28,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" asp-controller="Item" asp-action="ReportLostItem">Report Item</a>
+                        <a class="nav-link" asp-controller="Post" asp-action="ReportItem">Report Item</a>
                     </li>
                     @if(User.Identity?.IsAuthenticated == true)
                     {
@@ -48,18 +48,11 @@
                             <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
                         </li>
                     }
-                    <!--
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" asp-controller="Account" asp-action="Profile" role="button" aria-haspopup="true" aria-expanded="false">My profile</a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" asp-controller="Account" asp-action="Register">Register</a>
-                            <a class="dropdown-item" asp-controller="Account" asp-action="Login">Login</a>
-                        </div>
-                    </li>
-                    TO DO-->
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-sm-2" type="search" placeholder="Search">
+                <form class="d-flex" asp-controller="Browse" asp-action="Index" method="get">
+                    <input type="hidden" name="status" value="">
+                    <input type="hidden" name="dateRange" value="">             
+                    <input class="form-control me-2" type="search" name="searchTerm" placeholder="Search items..." aria-label="Search">
                     <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
                 </form>
                 </div>

@@ -9,10 +9,5 @@ namespace LostAndFound.Controllers
     public class ItemController : Controller
     {
 
-        [HttpGet]
-        public IActionResult ReportItem()
-        {
-            return View();
-        }
     }
 }
