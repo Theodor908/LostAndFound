@@ -16,6 +16,15 @@ public class UserRepository(DataContext dataContext) : IUserRepository
             .FirstOrDefaultAsync(u => u.Id == id);
     }
 
+    public async Task<AppUser?> GetUserByUsernameAsync(string username)
+    {
+        return await dataContext.Users
+            .Include(u => u.Items)
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .FirstOrDefaultAsync(u => u.UserName == username);
+    }
+
     public async Task<AppUser?> GetUserByUsernameOrEmailAsync(string usernameOrEmail)
     {
         return await dataContext.Users

@@ -6,7 +6,7 @@ namespace LostAndFound.Interfaces;
 public interface ICategoryRepository
 {
     
-    Task<IEnumerable<Category>?> GetCategoriesAsync();
+    Task<List<Category>?> GetAllCategoriesAsync();
     Task<Category?> GetCategoryByIdAsync(int id);
     Task<Category?> GetCategoryByNameAsync(string name);
     void AddCategoryAsync(Category category);

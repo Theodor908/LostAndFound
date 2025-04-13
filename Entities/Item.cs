@@ -10,9 +10,10 @@ public class Item
     public required string Description { get; set; } = string.Empty;
     public required string Country { get; set; } = string.Empty;
     public required string City { get; set; } = string.Empty;
-    public required string SpecificLocation { get; set; } = string.Empty;
+    public required string Location { get; set; } = string.Empty;
     public DateTime PostedAt { get; set; } = DateTime.UtcNow;
     public DateTime? FoundAt { get; set; } = null;
+    public DateTime? LostAt { get; set; } = null;
     public bool IsFound { get; set; } = false;
     public bool IsClaimed { get; set; } = false;
     public List<Photo> Photos { get; set; } = [];    

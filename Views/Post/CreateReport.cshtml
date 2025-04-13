@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Create Report";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Create New Report</h4>
+                </div>
+                <div class="card-body p-4">
+                    <p class="lead mb-4">How many items would you like to include in your report?</p>
+                    
+                    <form action="/Post/ReportItem" method="get">
+                        <div class="mb-4">
+                            <label for="numberOfItems" class="form-label">Number of Items</label>
+                            <select id="numberOfItems" name="numberOfItems" class="form-select form-select-lg">
+                                @{
+                                    foreach (var i in Enumerable.Range(1, 10))
+                                    {
+                                        <option value="@i">@i item@(i > 1 ? "s" : "")</option>
+                                    }
+                                }
+                            </select>
+                            <div class="form-text mt-2">
+                                You can report up to 10 items in a single post.
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Continue</button>
+                            <a href="/Browse/Index" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer bg-light">
+                    <p class="mb-0"><i class="bi bi-info-circle me-2"></i>You'll be able to specify whether items are lost or found on the next page.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

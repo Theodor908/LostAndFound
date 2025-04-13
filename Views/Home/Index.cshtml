@@ -170,20 +170,22 @@
         <div class="p-5 mb-4 rounded-4 shadow-lg" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
             <div class="row justify-content-center">
                 <div class="col-lg-8 text-center py-5">
-                    <h2 class="display-5 fw-bold text-white mb-4">Join Us in Making a Difference</h2>
+                    <h2 class="display-5 fw-bold text-white mb-4">@if(!User.Identity!.IsAuthenticated){<text>Join Us in Making a Difference</text>}else{<text>Thank You For Joining Us in Making a Difference</text>}</h2>
                     <p class="lead text-white mb-4">Losing something valuable can be frustrating, but with Lost And Found, there's hope. Together, we can turn moments of panic into stories of kindness and reunions.</p>
                 </div>
             </div>
         </div>
     </div>
+    @if(!User.Identity.IsAuthenticated){
     <div class="container px-4 py-5">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
                 <h3 class="fw-bold mb-4">Start searching, start posting, and let's bring lost items back to where they belong!</h3>
                 <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg px-4 me-sm-3">Sign Up Now</a>
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg px-4 me-sm-3">Register Now</a>
                 </div>
             </div>
         </div>
     </div>
+    }
 </div>

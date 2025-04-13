@@ -185,7 +185,7 @@ public class ItemRepository : IItemRepository
             query = query.Where(i =>
                 EF.Functions.Like(i.Name, searchTerm) ||
                 EF.Functions.Like(i.Description, searchTerm) ||
-                EF.Functions.Like(i.SpecificLocation, searchTerm) ||
+                EF.Functions.Like(i.Location, searchTerm) ||
                 EF.Functions.Like(i.Post.Title, searchTerm));
         }
 

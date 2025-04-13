@@ -15,6 +15,11 @@ public class PostRepository(DataContext dataContext) : IPostRepository
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
+    public async Task<List<Post>?> GetAllPostsAsync()
+    {
+        return await dataContext.Posts.ToListAsync();
+    }
+
     public async Task<Post?> GetPostWithItemsAndCommentsByIdAsync(int id)
     {
         return await dataContext.Posts

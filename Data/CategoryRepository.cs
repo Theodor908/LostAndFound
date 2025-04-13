@@ -17,7 +17,7 @@ public class CategoryRepository(DataContext dataContext) : ICategoryRepository
         dataContext.Categories.Remove(category);
     }
 
-    public async Task<IEnumerable<Category>?> GetCategoriesAsync()
+    public async Task<List<Category>?> GetAllCategoriesAsync()
     {
         return await dataContext.Categories.ToListAsync();
     }
