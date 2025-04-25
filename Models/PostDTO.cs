@@ -5,7 +5,7 @@ using LostAndFound.Helpers.Validators;
 public class PostDTO : IValidatableObject
 {
     public int Id { get; set; }
-    public string? UserName { get; set; }
+    public string PostType { get; set; } = string.Empty;
     [Required(ErrorMessage = "Title is required")]
     [StringLength(200, MinimumLength = 5, ErrorMessage = "Title must be between 5 and 200 characters")]
     [Display(Name = "Title")]

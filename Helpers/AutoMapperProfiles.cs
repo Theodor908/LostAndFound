@@ -16,8 +16,12 @@ public class AutoMapperProfiles: Profile
         CreateMap<Post, PostDTO>();
         CreateMap<PostDTO, Post>();
 
-        CreateMap<Photo, PhotoDTO>();
-        CreateMap<PhotoDTO, Photo>();
+        CreateMap<Photo, PhotoDTO>()
+            .ForMember(dest => dest.Url, opt => opt.MapFrom(src => src.Url))
+            .ForMember(dest => dest.PublicId, opt => opt.MapFrom(src => src.PublicId));
+        CreateMap<PhotoDTO, Photo>()
+            .ForMember(dest => dest.Url, opt => opt.MapFrom(src => src.Url))
+            .ForMember(dest => dest.PublicId, opt => opt.MapFrom(src => src.PublicId));
 
         CreateMap<Item, ItemDTO>()
             .ForMember(dest => dest.PhotosDTO, opt => opt.MapFrom(src => src.Photos))

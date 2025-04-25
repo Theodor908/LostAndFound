@@ -1,0 +1,96 @@
+﻿@model LostAndFound.Models.ItemDTO
+@{
+    int i = ViewBag.ItemIndex;
+    string postType = ViewBag.PostType;
+    var categories = ViewBag.Categories;
+}
+
+<div class="card mb-4 shadow-sm item-card" data-index="@i">
+  <div class="card-header bg-primary text-white item-header d-flex justify-content-between align-items-center">
+    <span>Item @(@i + 1)</span>
+    @if (i > 0)
+    {
+      <button type="button" class="btn btn-sm btn-outline-light delete-item">
+        <i class="bi bi-trash"></i> Remove
+      </button>
+    }
+  </div>
+  <div class="card-body">
+    <!-- Item Name -->
+    <div class="form-floating mb-3">
+      <input name="Items[@i].Name" class="form-control" placeholder="Item name" required />
+      <label>Item Name</label>
+      <span class="text-danger field-validation-valid" data-valmsg-for="Items[@i].Name" data-valmsg-replace="true"></span>
+    </div>
+
+    <!-- Category Dropdown -->
+    <div class="form-floating mb-3">
+      <select name="Items[@i].CategoryId" class="form-select" required>
+        <option value="">-- Select Category --</option>
+        @{
+          if(categories != null)
+            foreach (var category in categories)
+            {
+              <option value="@category.Id">@category.Name</option>
+            }
+        }
+      </select>
+      <label>Category</label>
+      <span class="text-danger field-validation-valid" data-valmsg-for="Items[@i].CategoryId" data-valmsg-replace="true"></span>
+    </div>
+
+    <!-- Item Description -->
+    <div class="form-floating mb-3">
+      <textarea name="Items[@i].Description" class="form-control" style="height: 100px;" placeholder="Item description" required></textarea>
+      <label>Item Description</label>
+      <span class="text-danger field-validation-valid" data-valmsg-for="Items[@i].Description" data-valmsg-replace="true"></span>
+    </div>
+
+    <!-- Hidden Location Fields -->
+    <input name="Items[@i].Country" type="hidden" id="country_@i" required />
+    
+    <input name="Items[@i].City" type="hidden" id="city_@i" required />
+    <input name="Items[@i].Location" type="hidden" id="location_@i" required />
+    
+    <!-- Location validation message -->
+    <div class="mb-3">
+      <span class="text-danger field-validation-valid" data-valmsg-for="Items[@i].Country" data-valmsg-replace="true"></span>
+      <span class="text-danger field-validation-valid" data-valmsg-for="Items[@i].City" data-valmsg-replace="true"></span>
+      <span class="text-danger field-validation-valid" data-valmsg-for="Items[@i].Location" data-valmsg-replace="true"></span>
+    </div>
+
+    <!-- Location Display -->
+    <div id="display_location_@i" class="mb-3">
+      <small class="text-muted">No location selected. <span class="text-danger">*Required</span></small>
+    </div>
+
+    <!-- Pick Location Button -->
+    <button type="button" class="btn btn-secondary select-location mb-3" data-item-index="@i" data-bs-toggle="modal" data-bs-target="#locationModal">
+      Pick Location
+    </button>
+
+    <div class="form-floating mb-3">
+      <textarea name="Items[@i].SpecificLocation" class="form-control" style="height: 100px;" placeholder="Item specific location" required></textarea>
+      <label>Specific Location</label>
+      <span class="text-danger field-validation-valid" data-valmsg-for="Items[@i].SpecificLocation" data-valmsg-replace="true"></span>
+    </div>
+
+    <!-- Date Found/Lost -->
+    <div class="form-floating mb-3 date-field lost-field @(postType != "Lost" ? "d-none" : "")">
+      <input name="Items[@i].LostAt" class="form-control" type="datetime-local" placeholder="Lost at" @(postType == "Lost" ? "required" : "") />
+      <label>When Lost</label>
+      <span class="text-danger field-validation-valid" data-valmsg-for="Items[@i].LostAt" data-valmsg-replace="true"></span>
+    </div>
+    <div class="form-floating mb-3 date-field found-field @(postType != "Found" ? "d-none" : "")">
+      <input name="Items[@i].FoundAt" class="form-control" type="datetime-local" placeholder="Found at" @(postType == "Found" ? "required" : "") />
+      <label>When Found</label>
+      <span class="text-danger field-validation-valid" data-valmsg-for="Items[@i].FoundAt" data-valmsg-replace="true"></span>
+    </div>
+
+    <!-- Photos -->
+    <div class="mb-3">
+      <label class="form-label">Upload Photos</label>
+      <input type="file" name="Items[@i].Photos" class="form-control" multiple accept="image/*" />
+    </div>
+  </div>
+</div>

@@ -14,7 +14,7 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
         return postsDTO;
     }
 
-    public async Task<PostCreationDTO?> CreatePostAsync(string username, PostDTO postDto, string postType, bool isValid)
+    public async Task<PostCreationDTO?> CreatePostAsync(string username, PostDTO postDto, bool isValid)
     {
         if (!isValid)
         {
@@ -46,17 +46,18 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
             {
                 Name = itemDTO.Name,
                 Description = itemDTO.Description,
-                Location = itemDTO.Location,
                 Country = itemDTO.Country,
                 City = itemDTO.City,
-                IsFound = postType == "Found",
+                Location = itemDTO.Location,
+                SpecificLocation = itemDTO.SpecificLocation,
+                IsFound = postDto.PostType == "Found",
                 CategoryId = itemDTO.CategoryId,
                 Category = category!,
                 AppUserId = user.Id,
                 AppUser = user
             };
 
-            if (postType == "Found")
+            if (postDto.PostType == "Found")
             {
                 item.FoundAt = itemDTO.FoundAt ?? DateTime.UtcNow;
             }

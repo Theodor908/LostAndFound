@@ -1,10 +1,12 @@
 using System;
+using AutoMapper;
+using LostAndFound.Entities;
 using LostAndFound.Interfaces;
 using LostAndFound.Models;
 
 namespace LostAndFound.Services;
 
-public class UserService : IUserService
+public class UserService(IUnitOfWork unitOfWork, IMapper mapper) : IUserService
 {
     public void CreateUser(UserDTO userDto)
     {
@@ -26,14 +28,26 @@ public class UserService : IUserService
         throw new NotImplementedException();
     }
 
-    public Task<UserDTO?> GetUserByIdAsync(int id)
+    public async Task<UserDTO?> GetUserByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        AppUser? user = await unitOfWork.UserRepository.GetUserByIdAsync(id);
+        if (user == null)
+        {
+            return null;
+        }
+        UserDTO userDTO = mapper.Map<UserDTO>(user);
+        return userDTO;
     }
 
-    public Task<UserDTO?> GetUserByUsernameAsync(string username)
+    public async Task<UserDTO?> GetUserByUsernameAsync(string username)
     {
-        throw new NotImplementedException();
+        AppUser? user = await unitOfWork.UserRepository.GetUserByUsernameAsync(username);
+        if (user == null)
+        {
+            return null;
+        }
+        UserDTO userDTO = mapper.Map<UserDTO>(user);
+        return userDTO;
     }
 
     public void UpdateUser(UserDTO userDto)

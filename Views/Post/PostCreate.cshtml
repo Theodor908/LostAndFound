@@ -1,0 +1,563 @@
+@model LostAndFound.Models.PostDTO
+@inject LostAndFound.Interfaces.ICategoryService CategoryService
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Create Post";
+    var categories = await CategoryService.GetAllCategoriesAsync();
+}
+
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-12 col-lg-7 order-2 order-lg-1">
+            <div class="p-4 bg-light rounded shadow-sm">
+                <form asp-controller="Post" asp-action="CreatePost" method="post" enctype="multipart/form-data">
+                    <fieldset>
+                        <legend>Create New Post</legend>
+
+                        <!-- Post Type Selection -->
+                        <div class="mb-4">
+                            <label class="form-label">Post Type</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="PostType" id="typeLost" value="Lost" checked>
+                                    <label class="form-check-label" for="typeLost">
+                                        Lost Items
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="PostType" id="typeFound" value="Found">
+                                    <label class="form-check-label" for="typeFound">
+                                        Found Items
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Title" class="form-control" placeholder="Enter title" required />
+                            <label asp-for="Title"></label>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <textarea asp-for="Description" class="form-control" placeholder="Post description" style="height: 100px;" required></textarea>
+                            <label asp-for="Description"></label>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div id="itemsContainer" class="overflow-scroll" style="max-height: 800px;">
+                            @for (int i = 0; i < Model.Items.Count; i++)
+                            {
+                                <div class="card mb-4 shadow-sm item-card" data-index="@i">
+                                  <div class="card-header bg-primary text-white item-header d-flex justify-content-between align-items-center">
+                                    <span>Item @(@i + 1)</span>
+                                    @if (i > 0)
+                                    {
+                                      <button type="button" class="btn btn-sm btn-outline-light delete-item">
+                                        <i class="bi bi-trash"></i> Remove
+                                      </button>
+                                    }
+                                  </div>
+                                  <div class="card-body">
+                                    <!-- Item Name -->
+                                    <div class="form-floating mb-3">
+                                      <input asp-for="Items[@i].Name" class="form-control" placeholder="Item name" required />
+                                      <label asp-for="Items[@i].Name"></label>
+                                      <span asp-validation-for="Items[@i].Name" class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Category Dropdown -->
+                                    <div class="form-floating mb-3">
+                                      <select asp-for="Items[@i].CategoryId" class="form-select" required>
+                                        <option value="">-- Select Category --</option>
+                                        @{
+                                          if(categories != null)
+                                            foreach (var category in categories)
+                                            {
+                                              <option value="@category.Id">@category.Name</option>
+                                            }
+                                        }
+                                      </select>
+                                      <label asp-for="Items[@i].CategoryId"></label>
+                                      <span asp-validation-for="Items[@i].CategoryId" class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Item Description -->
+                                    <div class="form-floating mb-3">
+                                      <textarea asp-for="Items[@i].Description" class="form-control" style="height: 100px;" placeholder="Item description" required></textarea>
+                                      <label asp-for="Items[@i].Description"></label>
+                                      <span asp-validation-for="Items[@i].Description" class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Hidden Location Fields -->
+                                    <input asp-for="Items[@i].Country" type="hidden" id="country_@i" required />
+                                    <input asp-for="Items[@i].City" type="hidden" id="city_@i" required />
+                                    <input asp-for="Items[@i].Location" type="hidden" id="location_@i" required />
+                                    
+                                    <!-- Location validation message -->
+                                    <div class="mb-3">
+                                      <span asp-validation-for="Items[@i].Country" class="text-danger"></span>
+                                      <span asp-validation-for="Items[@i].City" class="text-danger"></span>
+                                      <span asp-validation-for="Items[@i].Location" class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Location Display -->
+                                    <div id="display_location_@i" class="mb-3">
+                                      <small class="text-muted">No location selected. <span class="text-danger">*Required</span></small>
+                                    </div>
+
+                                    <!-- Pick Location Button -->
+                                    <button type="button" class="btn btn-secondary select-location mb-3" data-item-index="@i" data-bs-toggle="modal" data-bs-target="#locationModal">
+                                      Pick Location
+                                    </button>
+
+                                    <div class="form-floating mb-3">
+                                      <textarea asp-for="Items[@i].SpecificLocation" class="form-control" style="height: 100px;" placeholder="Item specific location" required></textarea>
+                                      <label asp-for="Items[@i].SpecificLocation"></label>
+                                      <span asp-validation-for="Items[@i].SpecificLocation" class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Date Found/Lost -->
+                                    <div class="form-floating mb-3 date-field lost-field">
+                                      <input asp-for="Items[@i].LostAt" class="form-control" type="datetime-local" placeholder="Lost at" />
+                                      <label asp-for="Items[@i].LostAt">When Lost</label>
+                                      <span asp-validation-for="Items[@i].LostAt" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-floating mb-3 date-field found-field d-none">
+                                      <input asp-for="Items[@i].FoundAt" class="form-control" type="datetime-local" placeholder="Found at" />
+                                      <label asp-for="Items[@i].FoundAt">When Found</label>
+                                      <span asp-validation-for="Items[@i].FoundAt" class="text-danger"></span>
+                                    </div>
+
+                                    <!-- Photos -->
+                                    <div class="mb-3">
+                                      <label class="form-label">Upload Photos</label>
+                                      <input type="file" name="Items[@i].Photos" class="form-control" multiple accept="image/*" />
+                                    </div>
+                                  </div>
+                                </div>
+                            }
+                        </div>
+
+                        <button type="button" id="addItem" class="btn btn-outline-primary mb-4">+ Add Another Item</button>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-controller="Post" asp-action="PostCreate" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Create Post</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-5 order-1 order-lg-2 d-flex align-items-center">
+            <div class="bg-white p-4 shadow-sm rounded w-100">
+                <h3 class="mb-3">Posting Guidelines</h3>
+                <ul class="list-unstyled lh-lg">
+                    <li>✅ Be specific about when and where the item was lost/found</li>
+                    <li>📷 Include clear photos (up to 5 per item)</li>
+                    <li>🔒 Avoid revealing uniquely identifying info</li>
+                    <li>💡 For valuable items, keep a detail hidden for verification</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Location Modal -->
+<div class="modal fade" id="locationModal" tabindex="-1" aria-labelledby="locationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="locationModalLabel">Select Location</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <input id="searchAddress" class="form-control" type="text" placeholder="Search for a location">
+        </div>
+        <div id="map" style="height: 400px; width: 100%;" class="border rounded"></div>
+        <p class="text-muted mt-2"><small>Drag the marker to adjust location precisely</small></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="saveLocation" class="btn btn-primary">Save Location</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Global variables
+    let itemIndex = @Model.Items.Count;
+    let postType = '@Model.PostType'; // Get from model
+    let currentItemIndex = 0;
+
+    // Event listeners for radio buttons
+    document.getElementById('typeLost').addEventListener('change', function() {
+        if (this.checked) {
+            postType = 'Lost';
+            updateFormFields();
+            updatePostTypeOnServer(postType);
+        }
+    });
+
+    document.getElementById('typeFound').addEventListener('change', function() {
+        if (this.checked) {
+            postType = 'Found';
+            updateFormFields();
+            updatePostTypeOnServer(postType);
+        }
+    });
+
+    // Function to update the post type on the server
+    function updatePostTypeOnServer(type) {
+        fetch('/Post/UpdatePostType', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({ postType: type })
+        })
+        .then(response => response.json())
+        .catch(error => {
+            console.error('Error updating post type:', error);
+        });
+    }
+
+    // Function to update form fields based on post type
+    function updateFormFields() {
+        document.querySelectorAll('.item-card').forEach((card, index) => {
+            const lostField = card.querySelector('.lost-field');
+            const foundField = card.querySelector('.found-field');
+            
+            if (postType === 'Lost') {
+                lostField.classList.remove('d-none');
+                foundField.classList.add('d-none');
+                // Update required attribute
+                lostField.querySelector('input').setAttribute('required', '');
+                foundField.querySelector('input').removeAttribute('required');
+            } else {
+                lostField.classList.add('d-none');
+                foundField.classList.remove('d-none');
+                // Update required attribute
+                lostField.querySelector('input').removeAttribute('required');
+                foundField.querySelector('input').setAttribute('required', '');
+            }
+            
+            // Update card headers
+            card.querySelector('.item-header span').textContent = `Item ${index + 1}`;
+        });
+    }
+
+    // Add item button functionality with AJAX
+    document.getElementById('addItem').addEventListener('click', function() {
+        const container = document.getElementById('itemsContainer');
+        
+        // Show a loading indicator
+        const loadingIndicator = document.createElement('div');
+        loadingIndicator.className = 'text-center my-3 loading-indicator';
+        loadingIndicator.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
+        container.appendChild(loadingIndicator);
+        
+        // Make AJAX call to get new item template
+        fetch(`/Post/GetItemTemplate?index=${itemIndex}&postType=${postType}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(html => {
+                // Remove loading indicator
+                container.querySelector('.loading-indicator')?.remove();
+                
+                // Append the new template to the container
+                container.insertAdjacentHTML('beforeend', html);
+                
+                // Increment the index for the next item
+                itemIndex++;
+                
+                // Re-initialize validation for the new form elements
+                if ($.validator && $.validator.unobtrusive) {
+                    $.validator.unobtrusive.parse(document.querySelector('form'));
+                }
+            })
+            .catch(error => {
+                // Remove loading indicator
+                container.querySelector('.loading-indicator')?.remove();
+                
+                console.error('Error fetching item template:', error);
+                alert('Failed to add new item. Please try again.');
+            });
+    });
+
+    // Delete item functionality (event delegation for dynamically added elements)
+    document.getElementById('itemsContainer').addEventListener('click', function(event) {
+        if (event.target.classList.contains('delete-item') || 
+            event.target.closest('.delete-item')) {
+            const button = event.target.classList.contains('delete-item') ? 
+                            event.target : event.target.closest('.delete-item');
+            const card = button.closest('.item-card');
+            const cardIndex = parseInt(card.getAttribute('data-index'));
+            
+            // Add a loading overlay to the card
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.className = 'position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75';
+            loadingOverlay.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
+            loadingOverlay.style.zIndex = '10';
+            card.style.position = 'relative';
+            card.appendChild(loadingOverlay);
+            
+            // Call AJAX to update server state
+            fetch('/Post/DeleteItem', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({ index: cardIndex })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the card from DOM
+                    card.remove();
+                    
+                    // Update the item numbers and form input names
+                    document.querySelectorAll('.item-card').forEach((card, index) => {
+                        card.setAttribute('data-index', index);
+                        card.querySelector('.item-header span').textContent = `Item ${index + 1}`;
+                        
+                        // Update input names to reflect new indices
+                        updateInputNames(card, index);
+                    });
+                    
+                    // Update the global item index
+                    itemIndex = document.querySelectorAll('.item-card').length;
+                } else {
+                    // Remove loading overlay
+                    card.querySelector('.position-absolute')?.remove();
+                    
+                    alert('Failed to delete item. Please try again.');
+                }
+            })
+            .catch(error => {
+                // Remove loading overlay
+                card.querySelector('.position-absolute')?.remove();
+                
+                console.error('Error deleting item:', error);
+                alert('Failed to delete item. Please try again.');
+            });
+        }
+    });
+
+    // Helper function to update input names in a card
+    function updateInputNames(card, newIndex) {
+        // Update all input, select, and textarea elements within the card
+        card.querySelectorAll('input, select, textarea').forEach(element => {
+            const name = element.getAttribute('name');
+            if (name && name.includes('Items[')) {
+                // Extract the field name after the index
+                const fieldName = name.substring(name.indexOf('].') + 2);
+                // Create the new name with updated index
+                const newName = `Items[${newIndex}].${fieldName}`;
+                element.setAttribute('name', newName);
+                
+                // Update ID attribute if it exists and includes the index
+                const id = element.getAttribute('id');
+                if (id && id.includes('_')) {
+                    const idParts = id.split('_');
+                    if (idParts.length > 1) {
+                        // Assume the last part is the index
+                        idParts[idParts.length - 1] = newIndex;
+                        element.setAttribute('id', idParts.join('_'));
+                    }
+                }
+                
+                // Update any validation attributes
+                if (element.getAttribute('data-val-required')) {
+                    element.setAttribute('data-val-required', 
+                        element.getAttribute('data-val-required').replace(/\[\d+\]/, `[${newIndex}]`));
+                }
+                if (element.getAttribute('data-valmsg-for')) {
+                    element.setAttribute('data-valmsg-for', 
+                        element.getAttribute('data-valmsg-for').replace(/\[\d+\]/, `[${newIndex}]`));
+                }
+            }
+        });
+        
+        // Update data-* attributes that might contain indices
+        card.querySelectorAll('[data-item-index]').forEach(element => {
+            element.setAttribute('data-item-index', newIndex);
+        });
+        
+        // Update IDs of any containers that might have indices
+        const displayLocation = card.querySelector(`[id^="display_location_"]`);
+        if (displayLocation) {
+            displayLocation.setAttribute('id', `display_location_${newIndex}`);
+        }
+    }
+        
+        // Initialize map and marker
+        let map, marker, geocoder;
+        
+        function initMap() {
+            // Initialize the geocoder
+            geocoder = new google.maps.Geocoder();
+            
+            // Default map center (can be set to a default location)
+            const defaultPosition = { lat: 40.7128, lng: -74.0060 }; // New York City
+            
+            // Create map
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: defaultPosition,
+                zoom: 8,
+                mapTypeControl: true,
+                streetViewControl: false
+            });
+            
+            // Create marker
+            marker = new google.maps.Marker({
+                position: defaultPosition,
+                map: map,
+                draggable: true,
+                animation: google.maps.Animation.DROP
+            });
+            
+            // Create search box
+            const searchInput = document.getElementById('searchAddress');
+            const searchBox = new google.maps.places.SearchBox(searchInput);
+            
+            // Bias the SearchBox results towards current map's viewport
+            map.addListener('bounds_changed', function() {
+                searchBox.setBounds(map.getBounds());
+            });
+            
+            // Listen for the event fired when the user selects a prediction
+            searchBox.addListener('places_changed', function() {
+                const places = searchBox.getPlaces();
+                
+                if (places.length === 0) {
+                    return;
+                }
+                
+                // For each place, get the location
+                const bounds = new google.maps.LatLngBounds();
+                places.forEach(function(place) {
+                    if (!place.geometry || !place.geometry.location) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+                    
+                    // Set marker to the found location
+                    marker.setPosition(place.geometry.location);
+                    
+                    // Center map on the found location
+                    if (place.geometry.viewport) {
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+                
+                map.fitBounds(bounds);
+                map.setZoom(15); // Zoom in to a reasonable level
+            });
+            
+            // Location selection handler
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('select-location') || 
+                    event.target.closest('.select-location')) {
+                    const button = event.target.classList.contains('select-location') ? 
+                                    event.target : event.target.closest('.select-location');
+                    currentItemIndex = button.getAttribute('data-item-index');
+
+                    // Center map on currently selected location if it exists
+                    const currentLocation = document.getElementById(`location_${currentItemIndex}`).value;
+                    if (currentLocation) {
+                        try {
+                            const urlParams = new URLSearchParams(currentLocation.split('?')[1]);
+                            const q = urlParams.get('q');
+                            if(q) {
+                                const [lat, lng] = q.split(',').map(Number);
+                                const position = { lat: lat, lng: lng };
+                                marker.setPosition(position);
+                                map.setCenter(position);
+                                map.setZoom(15); // Zoom in when showing existing location
+                            }
+                        } catch (error) {
+                            console.error("Error parsing location URL:", error);
+                        }
+                    }
+                }
+            });
+            
+            // Save location button handler
+            document.getElementById('saveLocation').addEventListener('click', function() {
+                const position = marker.getPosition();
+                const lat = parseFloat(position.lat().toFixed(6));
+                const lng = parseFloat(position.lng().toFixed(6));
+                const locationUrl = `https://maps.google.com/?q=${lat},${lng}`;
+                
+                reverseGeocodePosition(position, function(addr) {
+                    const country = addr.country || "Unknown Country";
+                    const city = addr.city || "Unknown City";
+                    
+                    // Set the hidden field values
+                    document.getElementById(`country_${currentItemIndex}`).value = country;
+                    document.getElementById(`city_${currentItemIndex}`).value = city;
+                    document.getElementById(`location_${currentItemIndex}`).value = locationUrl;
+                    
+                    // Update the display
+                    document.getElementById(`display_location_${currentItemIndex}`).innerHTML = 
+                        `<small class="text-success">${city}, ${country} (<a href="${locationUrl}" target="_blank">View Map</a>)</small>`;
+                    
+                    // Close the modal
+                    const modalEl = document.getElementById('locationModal');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    modal.hide();
+                    
+                    // Trigger validation updates
+                    if ($.validator && $.validator.unobtrusive) {
+                        $(`#country_${currentItemIndex}`).valid();
+                        $(`#city_${currentItemIndex}`).valid();
+                        $(`#location_${currentItemIndex}`).valid();
+                    }
+                });
+            });
+            
+            // Reverse geocode helper function
+            function reverseGeocodePosition(position, callback) {
+                geocoder.geocode({ 'location': position }, function(results, status) {
+                    if (status === 'OK' && results[0]) {
+                        let city = "", country = "";
+                        results[0].address_components.forEach(component => {
+                            if (component.types.includes('locality')) {
+                                city = component.long_name;
+                            } else if (component.types.includes('administrative_area_level_1') && city === "") {
+                                // Use administrative area if city is not found
+                                city = component.long_name;
+                            }
+                            if (component.types.includes('country')) {
+                                country = component.long_name;
+                            }
+                        });
+                        callback({ city: city, country: country });
+                    } else {
+                        console.warn('Geocoder failed due to: ' + status);
+                        callback({ city: "", country: "" });
+                    }
+                });
+            }
+        }
+    </script>
+    
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBDw8xyqq1nqw1FMGVcv7xOrELbkkjPzo&libraries=places&callback=initMap&lang=en">
+    </script>
+}

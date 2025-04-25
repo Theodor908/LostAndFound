@@ -3,29 +3,32 @@ using LostAndFound.Helpers.Validators;
 namespace LostAndFound.Models;
 public class ItemDTO
 {
-
     [Required(ErrorMessage = "Item name is required")]
     [StringLength(100, ErrorMessage = "Name cannot be longer than 100 characters")]
     [Display(Name = "Item Name")]
-    public required string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Description is required")]
     [StringLength(1000, ErrorMessage = "Description cannot exceed 1000 characters")]
     [Display(Name = "Item Description")]
-    public required string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Country is required")]
     [Display(Name = "Country")]
-    public required string Country { get; set; }
+    public string Country { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "City is required")]
     [Display(Name = "City")]
-    public required string City { get; set; }
-
-    [Required(ErrorMessage = "Location details are required")]
-    [StringLength(200, ErrorMessage = "Location cannot exceed 200 characters")]
+    public string City { get; set; } = string.Empty;
+    
+    [Required(ErrorMessage = "Location is required")]
     [Display(Name = "Location")]
-    public required string Location { get; set; }
+    public string Location { get; set; } = string.Empty;
+
+    [Required(ErrorMessage = "Specific location details are required")]
+    [StringLength(200, ErrorMessage = "Location cannot exceed 200 characters")]
+    [Display(Name = "Specific Location")]
+    public string SpecificLocation { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Please select a category")]
     [Range(1, int.MaxValue, ErrorMessage = "Please select a valid category")]
