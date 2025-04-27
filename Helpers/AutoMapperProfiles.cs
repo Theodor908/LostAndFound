@@ -34,5 +34,8 @@ public class AutoMapperProfiles: Profile
         CreateMap<Category, CategoryDTO>();
         CreateMap<CategoryDTO, Category>();
 
+        CreateMap<PagedList<Item>, PagedList<ItemDTO>>()
+            .ConvertUsing<PagedListConverter<Item, ItemDTO>>();
+
     }
 }

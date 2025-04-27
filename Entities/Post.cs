@@ -5,6 +5,7 @@ namespace LostAndFound.Entities;
 public class Post
 {
     public int Id { get; set; }
+    public string PostType { get; set; } = string.Empty;
     public bool IsClosed { get; set; } = false;
     public required string Title { get; set; }
     public required string Description { get; set; }

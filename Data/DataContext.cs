@@ -29,11 +29,13 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
             .WithOne(u => u.Role)
             .HasForeignKey(ur => ur.RoleId)
             .IsRequired();
-        // AppUser and Photo relationship
+       // AppUser and Photo relationship
         builder.Entity<AppUser>()
             .HasOne(u => u.Photo)
             .WithOne(p => p.AppUser)
+            .HasForeignKey<Photo>(p => p.AppUserId)
             .OnDelete(DeleteBehavior.Cascade);
+
         // AppUser and Item relationship
         builder.Entity<Item>()
             .HasOne(i => i.AppUser)
@@ -48,6 +50,12 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
         builder.Entity<Item>()
             .HasOne(i => i.Category)
             .WithMany(c => c.Items)
+            .OnDelete(DeleteBehavior.Cascade);
+        // Item and Photo relationship
+        builder.Entity<Item>()
+            .HasMany(i => i.Photos)
+            .WithOne(p => p.Item)
+            .HasForeignKey(p => p.ItemId)
             .OnDelete(DeleteBehavior.Cascade);
 
     }

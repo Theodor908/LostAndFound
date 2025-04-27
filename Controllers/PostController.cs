@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 using LostAndFound.Extensions;
 using LostAndFound.Interfaces;
 using LostAndFound.Models;
@@ -26,7 +25,6 @@ public class PostController(IUserService userService, ICategoryService categoryS
             Items = [new ItemDTO()]
         };
         
-        // Store the initial model in TempData
         SaveDraftToTempData(model);
 
         return View(model);
@@ -35,80 +33,122 @@ public class PostController(IUserService userService, ICategoryService categoryS
     [HttpPost]
     public async Task<IActionResult> CreatePost(PostDTO postDTO)
     {
-        postDTO.Items = postDTO.Items.Where(i => !string.IsNullOrWhiteSpace(i.Name)).ToList();
-        
-        if (!postDTO.Items.Any())
-        {
-            ModelState.AddModelError("Items", "At least one item is required");
-        }
-        
-        var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-        Console.WriteLine("ModelState Errors: " + string.Join(", ", errors));
-        foreach (var error in errors)
-        {
-            Console.WriteLine(error);
-        }
-        Console.WriteLine("ModelState Error Count: " + ModelState.ErrorCount);
 
         if (!ModelState.IsValid)
         {
             ViewBag.Categories = await categoryService.GetAllCategoriesAsync();
-            return View("ReportItem", postDTO);
+            return View("PostCreate", postDTO);
         }
 
         var username = User.GetUsername();
         var result = await postService.CreatePostAsync(username, postDTO, ModelState.IsValid);
 
-        if (result == null)
+        if (result < 0)
         {
             ViewBag.Categories = await categoryService.GetAllCategoriesAsync();
-            return View("ReportItem", postDTO);
+            return View("PostCreate", postDTO);
         }
         
-        // Clear the draft data after successful submission
         TempData.Remove(TempDataKey);
 
-        return RedirectToAction("Details", new { id = result.Id });
+        return RedirectToAction("PostDetails", new { id = result });
     }
     
     [HttpGet]
-    public async Task<IActionResult> Details(int id)
+    public async Task<IActionResult> PostDetails(int id)
     {
         var postDetails = await postService.GetPostDetailsByIdAsync(id);
         if (postDetails == null)
         {
             return NotFound();
         }
-        return View(postDetails);
+        var userDetails = await userService.GetUserByIdAsync(postDetails.AppUserId);
+        if (userDetails == null)
+        {
+            return NotFound();
+        }
+        PostDetailsDTO postDetailsDTO = new()
+        {
+            Post = postDetails,
+            User = userDetails
+        };
+        return View(postDetailsDTO);
+    }
+    [HttpGet] 
+    public async Task<IActionResult> PostUpdate(int id)
+    {
+        var postDetails = await postService.GetPostDetailsByIdAsync(id);
+        if (postDetails == null)
+        {
+            return NotFound();
+        }
+        
+        var userDetails = await userService.GetUserByIdAsync(postDetails.AppUserId);
+        if (userDetails == null)
+        {
+            return NotFound();
+        }
+        
+        PostDTO postDTO = new()
+        {
+            Id = postDetails.Id,
+            Title = postDetails.Title,
+            Description = postDetails.Description,
+            PostType = postDetails.PostType,
+            Items = postDetails.Items
+        };
+        
+        ViewBag.Categories = await categoryService.GetAllCategoriesAsync();
+        
+        return View(postDTO);
     }
 
-    // Add this new action to handle AJAX requests for new item templates
+    [HttpPost]
+    public async Task<IActionResult> PostUpdate(int id, PostDTO postDTO)
+    {
+        if (id != postDTO.Id)
+        {
+            return BadRequest("Post ID mismatch");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            ViewBag.Categories = await categoryService.GetAllCategoriesAsync();
+            return View("PostUpdate", postDTO);
+        }
+
+        var result = await postService.UpdatePostAsync(id, postDTO, ModelState.IsValid);
+
+        if (!result)
+        {
+            return BadRequest("Failed to update post");
+        }
+
+        return RedirectToAction("PostDetails", new { id = id });
+    }
+
+
     [HttpGet]
     public async Task<IActionResult> GetItemTemplate(int index, string postType)
     {
-        // Get the current draft from TempData
+
         var draft = GetDraftFromTempData();
         
-        // If we have a draft but not enough items, add a new one
         if (draft != null)
         {
-            // Ensure we have enough items for the requested index
             while (draft.Items.Count <= index)
             {
                 draft.Items.Add(new ItemDTO());
             }
             
-            // Update postType if needed
             if (draft.PostType != postType)
             {
                 draft.PostType = postType;
             }
             
-            // Save the updated draft back to TempData
             SaveDraftToTempData(draft);
         }
         
-        // Set up the ViewBag for the template
         var categories = await categoryService.GetAllCategoriesAsync();
         ViewBag.Categories = categories;
         ViewBag.ItemIndex = index;
@@ -120,21 +160,19 @@ public class PostController(IUserService userService, ICategoryService categoryS
     [HttpPost]
     public IActionResult DeleteItem(int index)
     {
-        // Get the current draft from TempData
+
         var draft = GetDraftFromTempData();
         
         if (draft != null && draft.Items.Count > index)
         {
-            // Remove the item at the specified index
+
             draft.Items.RemoveAt(index);
-            
-            // Make sure we still have at least one item
+
             if (draft.Items.Count == 0)
             {
                 draft.Items.Add(new ItemDTO());
             }
             
-            // Save the updated draft back to TempData
             SaveDraftToTempData(draft);
             
             return Json(new { success = true, newCount = draft.Items.Count });
@@ -146,15 +184,13 @@ public class PostController(IUserService userService, ICategoryService categoryS
     [HttpPost]
     public IActionResult UpdatePostType(string postType)
     {
-        // Get the current draft from TempData
         var draft = GetDraftFromTempData();
         
         if (draft != null)
         {
-            // Update the post type
+
             draft.PostType = postType;
             
-            // Save the updated draft back to TempData
             SaveDraftToTempData(draft);
             
             return Json(new { success = true });
@@ -162,8 +198,7 @@ public class PostController(IUserService userService, ICategoryService categoryS
         
         return Json(new { success = false });
     }
-    
-    // Helper method to retrieve the draft from TempData
+
     private PostDTO GetDraftFromTempData()
     {
         if (TempData.TryGetValue(TempDataKey, out var jsonData) && jsonData is string json)

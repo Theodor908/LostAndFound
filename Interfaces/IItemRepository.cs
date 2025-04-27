@@ -13,7 +13,7 @@ public interface IItemRepository
     Task<Item?> GetItemByIdAsync(int id);
     void AddItem(Item item);
     void UpdateItemAsync(Item item);
-    Task<bool> DeleteItemAsync(int id);
+    Task<bool> DeleteItemAsync(Item item);
     
     Task<List<Item>> GetAllItemsAsync();
     Task<List<Item>> GetItemsByUserIdAsync(int userId, bool? isFound = null);

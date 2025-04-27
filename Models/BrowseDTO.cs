@@ -14,7 +14,7 @@ public class BrowseDTO
     public List<string> Cities { get; set; } = [];
     public string? DateRange { get; set; } = string.Empty;
     public string? SearchTerm { get; set; } = string.Empty;
-    public PagedList<Item> Items { get; set; } = new();
-    public List<Category> Categories { get; set; } = [];
+    public PagedList<ItemDTO> Items { get; set; } = new();
+    public List<CategoryDTO> Categories { get; set; } = [];
     public ItemFilterParams FilterParams { get; set; } = new();
 }

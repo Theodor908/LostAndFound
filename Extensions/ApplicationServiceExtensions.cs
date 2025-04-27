@@ -1,12 +1,11 @@
 using System;
 using LostAndFound.Data;
+using LostAndFound.Entities;
 using LostAndFound.Helpers;
 using LostAndFound.Interfaces;
 using LostAndFound.Repositories;
 using LostAndFound.Services;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace LostAndFound.Extensions;
@@ -30,15 +29,26 @@ public static class ApplicationServiceExtensions
     
     services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
-    services.AddScoped<IPhotoService, PhotoService>();
-    services.AddScoped<IPostService, PostService>();
+
+    services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+    services.AddSingleton<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
+
     services.AddScoped<IUserRepository, UserRepository>();
     services.AddScoped<IItemRepository, ItemRepository>();
-    services.AddScoped<IPostRepository, PostRepository>(); 
-    services.AddScoped<ICategoryService, CategoryService>(); 
-    services.AddScoped<IUserService, UserService>();  
+    services.AddScoped<IPostRepository, PostRepository>();
+    services.AddScoped<IPhotoRepository, PhotoRepository>();
     services.AddScoped<ICategoryRepository, CategoryRepository>();
+
     services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+    services.AddScoped<IPhotoService, PhotoService>();
+    services.AddScoped<IUserService, UserService>();
+    services.AddScoped<IPostService, PostService>();
+    services.AddScoped<ICategoryService, CategoryService>();
+    services.AddScoped<IItemService, ItemService>();
+    services.AddScoped<IBrowseService, BrowseService>();
+
+    services.AddScoped<IAuthService, AuthService>();
     return services;
 }
 }

@@ -1,3 +1,4 @@
+using AspNetCoreGeneratedDocument;
 using LostAndFound.Entities;
 using LostAndFound.Helpers;
 

@@ -35,9 +35,8 @@ public class ItemRepository : IItemRepository
         _context.Entry(item).State = EntityState.Modified;
     }
 
-    public async Task<bool> DeleteItemAsync(int id)
+    public async Task<bool> DeleteItemAsync(Item item)
     {
-        var item = await _context.Items.FindAsync(id);
         if (item == null) return false;
         
         _context.Items.Remove(item);

@@ -16,7 +16,16 @@
             <div class="bg-light rounded-4 shadow-sm p-4 profile-section">
                 <div class="row align-items-center">
                     <div class="col-md-auto text-center text-md-start mb-3 mb-md-0">
-                        <img src="~/img/placeholder.jpg" alt="Profile Picture" class="profile-img">
+                        @{
+                            if(Model.Photo != null)
+                            {
+                                <img src="@Model.Photo.Url" alt="Profile Picture" class="profile-img">
+                            }
+                            else
+                            {
+                                <img src="~/img/Portrait_Placeholder.png" alt="Profile Picture" class="profile-img">
+                            }
+                        }
                     </div>
                     <div class="col-md">
                         <h2 class="mb-1">@Model.Username</h2>
@@ -48,13 +57,19 @@
                         {
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="card h-100 border-0 shadow-sm hover-shadow transition-all rounded-4 item-card">
-                                @if(item.IsFound == true)
-                                {
-                                    <span class="badge bg-primary status-badge">Found</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-secondary status-badge">Not found</span>
+                                 @{
+                                    if(item.IsClaimed == true)
+                                    {
+                                        <span class="badge bg-warning status-badge">Claimed</span>
+                                    }
+                                    else if(item.IsFound == true)
+                                    {
+                                        <span class="badge bg-success status-badge">Found</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger status-badge">Lost</span>
+                                    }
                                 }
                                 <span class="badge bg-success status-badge">@item.IsFound</span>
                                 <img src="~/img/placeholder.jpg" alt="@item.Name" class="card-img-top">
@@ -97,15 +112,35 @@
                         {
                         <div class="col-sm-6 col-lg-4 col-xl-3">
                             <div class="card h-100 border-0 shadow-sm hover-shadow transition-all rounded-4 item-card">
-                                <span class="badge bg-primary status-badge">Found</span>
-                                <img src="~/img/placeholder.jpg" alt="@item.Name" class="card-img-top">
+                                @{
+                                    if(item.IsClaimed == true)
+                                    {
+                                        <span class="badge bg-warning status-badge">Claimed</span>
+                                    }
+                                    else if(item.IsFound == true)
+                                    {
+                                        <span class="badge bg-success status-badge">Found</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger status-badge">Lost</span>
+                                    }
+                                    @if(item.PhotosDTO != null && item.PhotosDTO.Any())
+                                    {
+                                        <img src="@item.PhotosDTO.First().Url" alt="@item.Name" class="card-img-top">
+                                    }
+                                    else
+                                    {
+                                        <img src="~/img/placeholder.jpg" alt="@item.Name" class="card-img-top">
+                                    }
+                                }
                                 <div class="card-body">
                                     <h5 class="card-title">@item.Name</h5>
                                     <p class="card-text mt-2">@item.Description</p>
                                 </div>
                                 <div class="card-footer bg-transparent border-top-0">
                                     <div class="d-flex">
-                                        <a href="#" class="btn btn-outline-primary btn-sm flex-grow-1 me-2">
+                                        <a asp-controller="Post" asp-action="PostUpdate" asp-route-id="@item.PostId" method="get" class="btn btn-outline-primary btn-sm flex-grow-1 me-2">
                                             <i class="fas fa-edit me-1"></i> Edit
                                         </a>
                                         <a href="#" class="btn btn-outline-danger btn-sm flex-grow-1">

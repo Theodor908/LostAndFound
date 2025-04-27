@@ -1,12 +1,11 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using LostAndFound.Entities;
 using LostAndFound.Models;
 using AutoMapper;
+using LostAndFound.Interfaces;
 
 namespace LostAndFound.Controllers;
 
-public class AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IMapper mapper) : Controller
+public class AccountController(IAuthService authService, IUserService userService, IMapper mapper) : Controller
 {
 
          [HttpGet]
@@ -20,20 +19,17 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
         {
             if (!ModelState.IsValid) return View(model);
 
-            var user = await userManager.FindByEmailAsync(model.UsernameOrEmail) ?? await userManager.FindByNameAsync(model.UsernameOrEmail);
-            if (user == null)
-            {
-                ModelState.AddModelError("", "Invalid login attempt.");
-                return View(model);
-            }
+            var (succeeded, errorMessage) = await authService.LoginAsync(
+                model.UsernameOrEmail, 
+                model.Password, 
+                model.RememberMe);
 
-            var result = await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
-            
-            if (result.Succeeded)
+            if (succeeded)
             {
                 return RedirectToAction("Index", "Home");
             }
             
+            ModelState.AddModelError("", errorMessage!);
             return View(model);
         }
 
@@ -53,48 +49,27 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
                 return View(registerDTO);
             }
 
-            var existingUser = await userManager.FindByNameAsync(registerDTO.Username);
-            if (existingUser != null)
+            var (succeeded, errors, user) = await authService.RegisterAsync(registerDTO);
+
+
+
+            if (succeeded)
             {
-                ModelState.AddModelError("Username", "Username already in use.");
-                return View(registerDTO);
+                // The service has already saved changes
+                return RedirectToAction("Profile", "Account", new { id = user!.Id });
             }
 
-            existingUser = await userManager.FindByEmailAsync(registerDTO.Email);
-            if (existingUser != null)
+            foreach (var error in errors!)
             {
-                ModelState.AddModelError("Email", "Email already in use.");
-                return View(registerDTO);
-            }
-
-            var user = new AppUser
-            {
-                UserName = registerDTO.Username,
-                Email = registerDTO.Email,
-                City = registerDTO.City,
-                Country = registerDTO.Country
-            };
-
-            var result = await userManager.CreateAsync(user, registerDTO.Password);
-
-            if (result.Succeeded)
-            {
-                await signInManager.PasswordSignInAsync(user, registerDTO.Password, isPersistent: true, lockoutOnFailure: false);
-                return RedirectToAction("Profile", "Account", new { id = user.Id });
-            }
-
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError("", error.Description);
+                ModelState.AddModelError(error.Key, error.Value);
             }
 
             return View(registerDTO);
         }
-
         [HttpGet]
-        public IActionResult Profile(int id)
+        public async Task<IActionResult> Profile(int id)
         {
-            var user = userManager.Users.FirstOrDefault(u => u.Id == id);
+            var user = await userService.GetUserByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -106,7 +81,7 @@ public class AccountController(UserManager<AppUser> userManager, SignInManager<A
 
         public async Task<IActionResult> Logout()
         {
-            await signInManager.SignOutAsync();
+            await authService.LogoutAsync();
             return RedirectToAction("Index", "Home");
         }
 

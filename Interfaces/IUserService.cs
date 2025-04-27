@@ -1,10 +1,13 @@
 using System;
+using LostAndFound.Entities;
 using LostAndFound.Models;
 
 namespace LostAndFound.Interfaces;
 
 public interface IUserService
 {
+    Task<AppUser?> FindByEmailAsync(string email);
+    Task<AppUser?> FindByNameAsync(string username);
     Task<UserDTO?> GetUserByIdAsync(int id);
     Task<UserDTO?> GetUserByEmailAsync(string email);
     Task<UserDTO?> GetUserByUsernameAsync(string username);

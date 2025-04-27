@@ -1,9 +1,9 @@
-@model LostAndFound.Models.PostDTO
+﻿@model LostAndFound.Models.PostDTO
 @inject LostAndFound.Interfaces.ICategoryService CategoryService
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Create Post";
+    ViewData["Title"] = "Update Post";
     var categories = await CategoryService.GetAllCategoriesAsync();
 }
 
@@ -11,21 +11,25 @@
     <div class="row g-4">
         <div class="col-12 col-lg-7 order-2 order-lg-1">
             <div class="p-4 bg-light rounded shadow-sm">
-                <form asp-controller="Post" asp-action="CreatePost" method="post" enctype="multipart/form-data">
+                <form asp-controller="Post" asp-action="PostUpdate" method="post" enctype="multipart/form-data">
                     <fieldset>
-                        <legend>Create New Post</legend>
+                        <legend>Update Post</legend>
+                        
+                       
+                        <input type="hidden" asp-for="Id" />
 
+                      
                         <div class="mb-4">
                             <label class="form-label">Post Type</label>
                             <div class="d-flex gap-3">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="PostType" id="typeLost" value="Lost" checked>
+                                    <input class="form-check-input" type="radio" name="PostType" id="typeLost" value="Lost" checked="@(Model.PostType == "Lost")">
                                     <label class="form-check-label" for="typeLost">
                                         Lost Items
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="PostType" id="typeFound" value="Found">
+                                    <input class="form-check-input" type="radio" name="PostType" id="typeFound" value="Found" checked="@(Model.PostType == "Found")">
                                     <label class="form-check-label" for="typeFound">
                                         Found Items
                                     </label>
@@ -59,13 +63,17 @@
                                     }
                                   </div>
                                   <div class="card-body">
-                                 
+                                   
+                                    <input type="hidden" asp-for="Items[@i].Id" />
+                                    
+                                   
                                     <div class="form-floating mb-3">
                                       <input asp-for="Items[@i].Name" class="form-control" placeholder="Item name" required />
                                       <label asp-for="Items[@i].Name"></label>
                                       <span asp-validation-for="Items[@i].Name" class="text-danger"></span>
                                     </div>
 
+                                    
                                     <div class="form-floating mb-3">
                                       <select asp-for="Items[@i].CategoryId" class="form-select" required>
                                         <option value="">-- Select Category --</option>
@@ -81,15 +89,18 @@
                                       <span asp-validation-for="Items[@i].CategoryId" class="text-danger"></span>
                                     </div>
 
+                                  
                                     <div class="form-floating mb-3">
                                       <textarea asp-for="Items[@i].Description" class="form-control" style="height: 100px;" placeholder="Item description" required></textarea>
                                       <label asp-for="Items[@i].Description"></label>
                                       <span asp-validation-for="Items[@i].Description" class="text-danger"></span>
                                     </div>
 
+                                   
                                     <input asp-for="Items[@i].Country" type="hidden" id="country_@i" required />
                                     <input asp-for="Items[@i].City" type="hidden" id="city_@i" required />
                                     <input asp-for="Items[@i].Location" type="hidden" id="location_@i" required />
+                                    
                                     
                                     <div class="mb-3">
                                       <span asp-validation-for="Items[@i].Country" class="text-danger"></span>
@@ -97,10 +108,19 @@
                                       <span asp-validation-for="Items[@i].Location" class="text-danger"></span>
                                     </div>
 
+                                  
                                     <div id="display_location_@i" class="mb-3">
-                                      <small class="text-muted">No location selected. <span class="text-danger">*Required</span></small>
+                                      @if (!string.IsNullOrEmpty(Model.Items[i].City) && !string.IsNullOrEmpty(Model.Items[i].Country))
+                                      {
+                                        <small class="text-success">@Model.Items[i].City, @Model.Items[i].Country (<a href="@Model.Items[i].Location" target="_blank">View Map</a>)</small>
+                                      }
+                                      else
+                                      {
+                                        <small class="text-muted">No location selected. <span class="text-danger">*Required</span></small>
+                                      }
                                     </div>
 
+                                    
                                     <button type="button" class="btn btn-secondary select-location mb-3" data-item-index="@i" data-bs-toggle="modal" data-bs-target="#locationModal">
                                       Pick Location
                                     </button>
@@ -111,19 +131,63 @@
                                       <span asp-validation-for="Items[@i].SpecificLocation" class="text-danger"></span>
                                     </div>
 
-                                    <div class="form-floating mb-3 date-field lost-field">
-                                      <input asp-for="Items[@i].LostAt" class="form-control" type="datetime-local" placeholder="Lost at" />
+                                    
+                                    <div class="form-floating mb-3 date-field lost-field @(Model.PostType != "Lost" ? "d-none" : "")">
+                                    @if(Model.PostType == "Lost")
+                                    {
+                                        <input asp-for="Items[@i].LostAt" class="form-control" type="datetime-local" placeholder="Lost at" required />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="Items[@i].LostAt" class="form-control" type="datetime-local" placeholder="Lost at" />
+                                    }
                                       <label asp-for="Items[@i].LostAt">When Lost</label>
                                       <span asp-validation-for="Items[@i].LostAt" class="text-danger"></span>
                                     </div>
-                                    <div class="form-floating mb-3 date-field found-field d-none">
-                                      <input asp-for="Items[@i].FoundAt" class="form-control" type="datetime-local" placeholder="Found at" />
-                                      <label asp-for="Items[@i].FoundAt">When Found</label>
-                                      <span asp-validation-for="Items[@i].FoundAt" class="text-danger"></span>
+                                    <div class="form-floating mb-3 date-field found-field @(Model.PostType != "Found" ? "d-none" : "")">
+                                    @if(Model.PostType == "Found")
+                                    {
+                                        <input asp-for="Items[@i].FoundAt" class="form-control" type="datetime-local" placeholder="Found at" required />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="Items[@i].FoundAt" class="form-control" type="datetime-local" placeholder="Found at" />
+                                    }
+                                        <label asp-for="Items[@i].FoundAt">When Found</label>
+                                        <span asp-validation-for="Items[@i].FoundAt" class="text-danger"></span>
                                     </div>
 
+                                    <!-- Existing Photos Display -->
+                                    @if (Model.Items[i].PhotosDTO != null && Model.Items[i].PhotosDTO.Any())
+                                    {
+                                      <div class="mb-4">
+                                        <label class="form-label">Current Photos</label>
+                                        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+                                            @foreach (var photo in Model.Items[i].PhotosDTO)
+                                            {
+                                            <div class="col existing-photo" data-photo-id="@photo.Id">
+                                                <div class="card h-100 shadow-sm">
+                                                    <div >
+                                                        <img src="@photo.Url" alt="Item photo" class="img-thumbnail overflow-hidden" />
+                                                    </div>
+                                                    <div class="card-footer bg-white p-2 text-center">
+                                                        <input type="hidden" name="Items[@i].ExistingPhotoIds" value="@photo.Id" />
+                                                        <button type="button" class="btn btn-sm btn-outline-danger remove-photo" 
+                                                                data-photo-id="@photo.Id" data-item-index="@i">
+                                                        <i class="bi bi-trash"></i> Remove
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                          
+                                            }
+                                        </div>
+                                    </div>
+                                    }
+                                    <div id="deletedPhotosContainer"></div>
+
                                     <div class="mb-3">
-                                      <label class="form-label">Upload Photos</label>
+                                      <label class="form-label">Upload New Photos</label>
                                       <input type="file" name="Items[@i].Photos" class="form-control" multiple accept="image/*" />
                                     </div>
                                   </div>
@@ -134,8 +198,8 @@
                         <button type="button" id="addItem" class="btn btn-outline-primary mb-4">+ Add Another Item</button>
 
                         <div class="d-flex justify-content-end gap-2">
-                            <a asp-controller="Post" asp-action="PostCreate" class="btn btn-secondary">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Create Post</button>
+                            <a asp-controller="Post" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Update Post</button>
                         </div>
                     </fieldset>
                 </form>
@@ -181,143 +245,133 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-       
-    let itemIndex = @Model.Items.Count;
-    let postType = '@Model.PostType'; 
-    let currentItemIndex = 0;
-
-
-    document.getElementById('typeLost').addEventListener('change', function() {
-        if (this.checked) {
-            postType = 'Lost';
-            updateFormFields();
-            updatePostTypeOnServer(postType);
-        }
-    });
-
-    document.getElementById('typeFound').addEventListener('change', function() {
-        if (this.checked) {
-            postType = 'Found';
-            updateFormFields();
-            updatePostTypeOnServer(postType);
-        }
-    });
-
-    function updatePostTypeOnServer(type) {
-        fetch('/Post/UpdatePostType', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-            },
-            body: JSON.stringify({ postType: type })
-        })
-        .then(response => response.json())
-        .catch(error => {
-            console.error('Error updating post type:', error);
-        });
-    }
-
-
-    function updateFormFields() {
-        document.querySelectorAll('.item-card').forEach((card, index) => {
-            const lostField = card.querySelector('.lost-field');
-            const foundField = card.querySelector('.found-field');
-            
-            if (postType === 'Lost') {
-                lostField.classList.remove('d-none');
-                foundField.classList.add('d-none');
-    
-                lostField.querySelector('input').setAttribute('required', '');
-                foundField.querySelector('input').removeAttribute('required');
-            } else {
-                lostField.classList.add('d-none');
-                foundField.classList.remove('d-none');
-                // Update required attribute
-                lostField.querySelector('input').removeAttribute('required');
-                foundField.querySelector('input').setAttribute('required', '');
-            }
-            
-   
-            card.querySelector('.item-header span').textContent = `Item ${index + 1}`;
-        });
-    }
-
-    
-    document.getElementById('addItem').addEventListener('click', function() {
-        const container = document.getElementById('itemsContainer');
-        
       
-        const loadingIndicator = document.createElement('div');
-        loadingIndicator.className = 'text-center my-3 loading-indicator';
-        loadingIndicator.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
-        container.appendChild(loadingIndicator);
-        
-       
-        fetch(`/Post/GetItemTemplate?index=${itemIndex}&postType=${postType}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.text();
-            })
-            .then(html => {
-              
-                container.querySelector('.loading-indicator')?.remove();
-                
-            
-                container.insertAdjacentHTML('beforeend', html);
-                
-                
-                itemIndex++;
-                
-               
-                if ($.validator && $.validator.unobtrusive) {
-                    $.validator.unobtrusive.parse(document.querySelector('form'));
-                }
-            })
-            .catch(error => {
-               
-                container.querySelector('.loading-indicator')?.remove();
-                
-                console.error('Error fetching item template:', error);
-                alert('Failed to add new item. Please try again.');
-            });
-    });
+        let itemIndex = @Model.Items.Count;
+        let postType = '@Model.PostType'; 
+        let currentItemIndex = 0;
 
-    
-    document.getElementById('itemsContainer').addEventListener('click', function(event) {
-        if (event.target.classList.contains('delete-item') || 
-            event.target.closest('.delete-item')) {
-            const button = event.target.classList.contains('delete-item') ? 
-                            event.target : event.target.closest('.delete-item');
-            const card = button.closest('.item-card');
-            const cardIndex = parseInt(card.getAttribute('data-index'));
-            
-            
-            const loadingOverlay = document.createElement('div');
-            loadingOverlay.className = 'position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75';
-            loadingOverlay.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
-            loadingOverlay.style.zIndex = '10';
-            card.style.position = 'relative';
-            card.appendChild(loadingOverlay);
-            
-           
-            fetch('/Post/DeleteItem', {
+        
+        document.getElementById('typeLost').addEventListener('change', function() {
+            if (this.checked) {
+                postType = 'Lost';
+                updateFormFields();
+                updatePostTypeOnServer(postType);
+            }
+        });
+
+        document.getElementById('typeFound').addEventListener('change', function() {
+            if (this.checked) {
+                postType = 'Found';
+                updateFormFields();
+                updatePostTypeOnServer(postType);
+            }
+        });
+
+       
+        function updatePostTypeOnServer(type) {
+            fetch('/Post/UpdatePostType', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
                 },
-                body: JSON.stringify({ index: cardIndex })
+                body: JSON.stringify({ postType: type, postId: '@Model.Id' })
             })
             .then(response => response.json())
-            .then(data => {
-                if (data.success) {
+            .catch(error => {
+                console.error('Error updating post type:', error);
+            });
+        }
+
+        
+        function updateFormFields() {
+            document.querySelectorAll('.item-card').forEach((card, index) => {
+                const lostField = card.querySelector('.lost-field');
+                const foundField = card.querySelector('.found-field');
+                
+                if (postType === 'Lost') {
+                    lostField.classList.remove('d-none');
+                    foundField.classList.add('d-none');
                     
-                    card.remove();
+                    lostField.querySelector('input').setAttribute('required', '');
+                    foundField.querySelector('input').removeAttribute('required');
+                } else {
+                    lostField.classList.add('d-none');
+                    foundField.classList.remove('d-none');
+                   
+                    lostField.querySelector('input').removeAttribute('required');
+                    foundField.querySelector('input').setAttribute('required', '');
+                }
+                
+                
+                card.querySelector('.item-header span').textContent = `Item ${index + 1}`;
+            });
+        }
+
+        
+        document.getElementById('addItem').addEventListener('click', function() {
+            const container = document.getElementById('itemsContainer');
+            
+           
+            const loadingIndicator = document.createElement('div');
+            loadingIndicator.className = 'text-center my-3 loading-indicator';
+            loadingIndicator.innerHTML = '<div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>';
+            container.appendChild(loadingIndicator);
+            
+            
+            fetch(`/Post/GetItemTemplate?index=${itemIndex}&postType=${postType}&postId=@Model.Id`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    
+                    container.querySelector('.loading-indicator')?.remove();
                     
                    
+                    container.insertAdjacentHTML('beforeend', html);
+                    
+                   
+                    itemIndex++;
+                    
+                  
+                    if ($.validator && $.validator.unobtrusive) {
+                        $.validator.unobtrusive.parse(document.querySelector('form'));
+                    }
+                })
+                .catch(error => {
+                  
+                    container.querySelector('.loading-indicator')?.remove();
+                    
+                    console.error('Error fetching item template:', error);
+                    alert('Failed to add new item. Please try again.');
+                });
+        });
+
+      
+        document.getElementById('itemsContainer').addEventListener('click', function(event) {
+            if (event.target.classList.contains('delete-item') || 
+                event.target.closest('.delete-item')) {
+                const button = event.target.classList.contains('delete-item') ? 
+                                event.target : event.target.closest('.delete-item');
+                const card = button.closest('.item-card');
+                const cardIndex = parseInt(card.getAttribute('data-index'));
+                const itemId = card.querySelector('input[name^="Items["][name$="].Id"]')?.value || "";
+                
+                if (confirm('Are you sure you want to remove this item?')) {
+                    
+                    const deletedInput = document.createElement('input');
+                    deletedInput.type = 'hidden';
+                    deletedInput.name = 'DeletedItemIds';
+                    deletedInput.value = itemId;
+                    document.querySelector('form').appendChild(deletedInput);
+                    
+                 
+                    card.remove();
+                    
+                  
                     document.querySelectorAll('.item-card').forEach((card, index) => {
                         card.setAttribute('data-index', index);
                         card.querySelector('.item-header span').textContent = `Item ${index + 1}`;
@@ -326,68 +380,111 @@
                         updateInputNames(card, index);
                     });
                     
-                    
+                   
                     itemIndex = document.querySelectorAll('.item-card').length;
-                } else {
-                    
-                    card.querySelector('.position-absolute')?.remove();
-                    
-                    alert('Failed to delete item. Please try again.');
-                }
-            })
-            .catch(error => {
-               
-                card.querySelector('.position-absolute')?.remove();
-                
-                console.error('Error deleting item:', error);
-                alert('Failed to delete item. Please try again.');
-            });
-        }
-    });
-
-    
-    function updateInputNames(card, newIndex) {
-        
-        card.querySelectorAll('input, select, textarea').forEach(element => {
-            const name = element.getAttribute('name');
-            if (name && name.includes('Items[')) {
-                
-                const fieldName = name.substring(name.indexOf('].') + 2);
-                
-                const newName = `Items[${newIndex}].${fieldName}`;
-                element.setAttribute('name', newName);
-                
-                
-                const id = element.getAttribute('id');
-                if (id && id.includes('_')) {
-                    const idParts = id.split('_');
-                    if (idParts.length > 1) {
-                       
-                        idParts[idParts.length - 1] = newIndex;
-                        element.setAttribute('id', idParts.join('_'));
-                    }
-                }
-                
-                if (element.getAttribute('data-val-required')) {
-                    element.setAttribute('data-val-required', 
-                        element.getAttribute('data-val-required').replace(/\[\d+\]/, `[${newIndex}]`));
-                }
-                if (element.getAttribute('data-valmsg-for')) {
-                    element.setAttribute('data-valmsg-for', 
-                        element.getAttribute('data-valmsg-for').replace(/\[\d+\]/, `[${newIndex}]`));
                 }
             }
         });
-        
-        card.querySelectorAll('[data-item-index]').forEach(element => {
-            element.setAttribute('data-item-index', newIndex);
+
+      
+        // Handle photo deletion without Ajax
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('remove-photo') || 
+                event.target.closest('.remove-photo')) {
+                
+                const button = event.target.classList.contains('remove-photo') ? 
+                                event.target : event.target.closest('.remove-photo');
+                const photoElement = button.closest('.existing-photo');
+                const photoId = button.getAttribute('data-photo-id');
+                const itemIndex = button.getAttribute('data-item-index');
+                
+                if (confirm('Are you sure you want to remove this photo?')) {
+                    // Completely hide the photo element in the UI
+                    photoElement.style.display = 'none';
+                    
+                    // Optionally add a visual indicator that something was removed
+                    const photoContainer = photoElement.parentElement;
+                    const removalIndicator = document.createElement('div');
+                    removalIndicator.className = 'col text-muted fst-italic small py-2';
+                    removalIndicator.innerHTML = 'Photo marked for removal <button type="button" class="btn btn-sm btn-link undo-removal" data-element-id="' + photoId + '">Undo</button>';
+                    photoContainer.appendChild(removalIndicator);
+
+                    // Create hidden input to mark this photo as deleted
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.id = 'removed-photo-' + photoId;
+                    hiddenInput.name = `Items[${itemIndex}].PhotosToDelete`;
+                    hiddenInput.value = photoId;
+                    
+                    // Add it to the form
+                    document.getElementById('deletedPhotosContainer').appendChild(hiddenInput);
+                }
+            }
+            
+            // Bonus: Add ability to undo removal
+            if (event.target.classList.contains('undo-removal')) {
+                const photoId = event.target.getAttribute('data-element-id');
+                const indicator = event.target.closest('.text-muted');
+                
+                // Find the hidden photo element by looking at siblings
+                const container = indicator.parentElement;
+                for (let i = 0; i < container.children.length; i++) {
+                    const child = container.children[i];
+                    if (child.classList.contains('existing-photo') && 
+                        child.querySelector('[data-photo-id="' + photoId + '"]')) {
+                        // Show the photo again
+                        child.style.display = '';
+                        break;
+                    }
+                }
+                
+                // Remove the indicator
+                indicator.remove();
+                
+                // Remove the hidden input
+                document.getElementById('removed-photo-' + photoId)?.remove();
+            }
         });
-        
-        const displayLocation = card.querySelector(`[id^="display_location_"]`);
-        if (displayLocation) {
-            displayLocation.setAttribute('id', `display_location_${newIndex}`);
+
+        function updateInputNames(card, newIndex) {
+            card.querySelectorAll('input, select, textarea').forEach(element => {
+                const name = element.getAttribute('name');
+                if (name && name.includes('Items[')) {
+                    const fieldName = name.substring(name.indexOf('].') + 2);
+                    
+                    const newName = `Items[${newIndex}].${fieldName}`;
+                    element.setAttribute('name', newName);
+                    
+                    const id = element.getAttribute('id');
+                    if (id && id.includes('_')) {
+                        const idParts = id.split('_');
+                        if (idParts.length > 1) {
+                            idParts[idParts.length - 1] = newIndex;
+                            element.setAttribute('id', idParts.join('_'));
+                        }
+                    }
+                    
+                    if (element.getAttribute('data-val-required')) {
+                        element.setAttribute('data-val-required', 
+                            element.getAttribute('data-val-required').replace(/\[\d+\]/, `[${newIndex}]`));
+                    }
+                    if (element.getAttribute('data-valmsg-for')) {
+                        element.setAttribute('data-valmsg-for', 
+                            element.getAttribute('data-valmsg-for').replace(/\[\d+\]/, `[${newIndex}]`));
+                    }
+                }
+            });
+            
+            card.querySelectorAll('[data-item-index]').forEach(element => {
+                element.setAttribute('data-item-index', newIndex);
+            });
+            
+            const displayLocation = card.querySelector(`[id^="display_location_"]`);
+            if (displayLocation) {
+                displayLocation.setAttribute('id', `display_location_${newIndex}`);
+            }
         }
-    }
+        
         
         let map, marker, geocoder;
         
@@ -424,7 +521,6 @@
                     return;
                 }
                 
-                // For each place, get the location
                 const bounds = new google.maps.LatLngBounds();
                 places.forEach(function(place) {
                     if (!place.geometry || !place.geometry.location) {
@@ -432,9 +528,7 @@
                         return;
                     }
                     
-                   
                     marker.setPosition(place.geometry.location);
-                    
                     
                     if (place.geometry.viewport) {
                         bounds.union(place.geometry.viewport);
@@ -444,10 +538,9 @@
                 });
                 
                 map.fitBounds(bounds);
-                map.setZoom(15); 
+                map.setZoom(15);
             });
             
- 
             document.addEventListener('click', function(event) {
                 if (event.target.classList.contains('select-location') || 
                     event.target.closest('.select-location')) {
@@ -455,7 +548,6 @@
                                     event.target : event.target.closest('.select-location');
                     currentItemIndex = button.getAttribute('data-item-index');
 
-                   
                     const currentLocation = document.getElementById(`location_${currentItemIndex}`).value;
                     if (currentLocation) {
                         try {
@@ -475,7 +567,6 @@
                 }
             });
             
-      
             document.getElementById('saveLocation').addEventListener('click', function() {
                 const position = marker.getPosition();
                 const lat = parseFloat(position.lat().toFixed(6));
@@ -486,21 +577,17 @@
                     const country = addr.country || "Unknown Country";
                     const city = addr.city || "Unknown City";
                     
-                   
                     document.getElementById(`country_${currentItemIndex}`).value = country;
                     document.getElementById(`city_${currentItemIndex}`).value = city;
                     document.getElementById(`location_${currentItemIndex}`).value = locationUrl;
                     
-                  
                     document.getElementById(`display_location_${currentItemIndex}`).innerHTML = 
                         `<small class="text-success">${city}, ${country} (<a href="${locationUrl}" target="_blank">View Map</a>)</small>`;
                     
-                  
                     const modalEl = document.getElementById('locationModal');
                     const modal = bootstrap.Modal.getInstance(modalEl);
                     modal.hide();
                     
-                   
                     if ($.validator && $.validator.unobtrusive) {
                         $(`#country_${currentItemIndex}`).valid();
                         $(`#city_${currentItemIndex}`).valid();
@@ -509,7 +596,6 @@
                 });
             });
             
-          
             function reverseGeocodePosition(position, callback) {
                 geocoder.geocode({ 'location': position }, function(results, status) {
                     if (status === 'OK' && results[0]) {
@@ -518,7 +604,6 @@
                             if (component.types.includes('locality')) {
                                 city = component.long_name;
                             } else if (component.types.includes('administrative_area_level_1') && city === "") {
-                                
                                 city = component.long_name;
                             }
                             if (component.types.includes('country')) {
