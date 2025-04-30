@@ -10,9 +10,6 @@ public class AutoMapperProfiles: Profile
     public AutoMapperProfiles()
     {
 
-        CreateMap<AppUser, UserDTO>();
-        CreateMap<UserDTO, AppUser>();
-
         CreateMap<Post, PostDTO>();
         CreateMap<PostDTO, Post>();
 
@@ -30,9 +27,28 @@ public class AutoMapperProfiles: Profile
         CreateMap<ItemDTO, Item>()
             .ForMember(dest => dest.Photos, opt => opt.Ignore()); 
 
+        CreateMap<AppUser, UserDTO>();
+        CreateMap<UserDTO, AppUser>();
         
         CreateMap<Category, CategoryDTO>();
         CreateMap<CategoryDTO, Category>();
+
+        CreateMap<MemberDTO, AppUser>()
+            .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Username))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
+            .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
+            .ForMember(dest => dest.Photo, opt => opt.MapFrom(src => src.PhotoDTO))
+            .ForMember(dest => dest.Items, opt => opt.Ignore())
+            .ForMember(dest => dest.Posts, opt => opt.Ignore())
+            .ForMember(dest => dest.Comments, opt => opt.Ignore());
+        CreateMap<AppUser, MemberDTO>()
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.UserName))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
+            .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
+            .ForMember(dest => dest.PhotoDTO, opt => opt.MapFrom(src => src.Photo))
+            .ForMember(dest => dest.Photo, opt => opt.Ignore());
 
         CreateMap<PagedList<Item>, PagedList<ItemDTO>>()
             .ConvertUsing<PagedListConverter<Item, ItemDTO>>();

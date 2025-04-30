@@ -165,15 +165,15 @@ public class ItemRepository : IItemRepository
             switch (filterParams.DateRange.ToLower())
             {
                 case "today":
-                    query = query.Where(i => i.FoundAt.HasValue && i.FoundAt.Value.Date == today);
+                    query = query.Where(i => i.PostedAt.Date == today);
                     break;
                 case "week":
                     var startOfWeek = today.AddDays(-(int)today.DayOfWeek);
-                    query = query.Where(i => i.FoundAt.HasValue && i.FoundAt.Value.Date >= startOfWeek);
+                    query = query.Where(i => i.PostedAt.Date >= startOfWeek);
                     break;
                 case "month":
                     var startOfMonth = new DateTime(today.Year, today.Month, 1);
-                    query = query.Where(i => i.FoundAt.HasValue && i.FoundAt.Value.Date >= startOfMonth);
+                    query = query.Where(i => i.PostedAt.Date >= startOfMonth);
                     break;
             }
         }

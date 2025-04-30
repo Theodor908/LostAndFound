@@ -40,8 +40,10 @@ public class AuthService(IUnitOfWork unitOfWork, SignInManager<AppUser> signInMa
         if (result.Succeeded)
         {
             await unitOfWork.Complete();
+            await signInManager.SignInAsync(user, registerDTO.RememberMe);
             return (true, null, user);
         }
+
 
         return (false, new Dictionary<string, string> {{"", "Server Error"}}, null);
     }

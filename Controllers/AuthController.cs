@@ -5,7 +5,7 @@ using LostAndFound.Interfaces;
 
 namespace LostAndFound.Controllers;
 
-public class AccountController(IAuthService authService, IUserService userService, IMapper mapper) : Controller
+public class AccountController(IAuthService authService, IUserService userService) : Controller
 {
 
          [HttpGet]
@@ -65,18 +65,6 @@ public class AccountController(IAuthService authService, IUserService userServic
             }
 
             return View(registerDTO);
-        }
-        [HttpGet]
-        public async Task<IActionResult> Profile(int id)
-        {
-            var user = await userService.GetUserByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            var model = mapper.Map<UserDTO>(user);
-            return View(model);
         }
 
         public async Task<IActionResult> Logout()

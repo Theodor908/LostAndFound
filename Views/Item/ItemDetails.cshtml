@@ -1,0 +1,96 @@
+﻿@model LostAndFound.Models.ItemDTO
+@inject LostAndFound.Interfaces.ICategoryService categoryService
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Item Details";
+}
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-lg-8">
+
+            <div class="bg-light rounded-4 shadow-sm p-4 mb-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h1 class="h3 mb-0">@Model.Name</h1>
+                    <a asp-controller="Post" asp-action="PostDetails" asp-route-id="@Model.PostId" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-edit me-1"></i> View Post
+                    </a>
+                </div>
+                <p class="lead">@Model.Description</p>
+            </div>
+            <div class="bg-light rounded-4 shadow-sm p-4 mb-4">
+
+                <div class="mt-4">
+                    <h5>Location Information</h5>
+                    <p><strong>Country:</strong> @Model.Country</p>
+                    <p><strong>City:</strong> @Model.City</p>
+                    <a href="@Model.Location"><strong>Location (Google Maps)</strong></a>
+                    <p><strong>Specific Location:</strong> @Model.SpecificLocation</p>
+                </div>
+
+                <div class="mt-4">
+                    <h5>Status 
+                    @if (Model.IsClaimed)
+                    {
+                        <span class="bg-success claimed-badge">Claimed</span>
+                    }
+                    else if (Model.IsFound)
+                    {
+                        <span class="badge bg-success found">Found</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger lost">Lost</span>
+                    }
+                    </h5>
+                </div>
+
+                <div class="mt-4">
+                    <h5>Timing Information</h5>
+                    <p><strong>Posted At:</strong> @Model.PostedAt.ToString("g")</p>
+                    @if (Model.FoundAt.HasValue)
+                    {
+                        <p><strong>Found At:</strong> @Model.FoundAt.Value.ToString("g")</p>
+                    }
+                    @if (Model.LostAt.HasValue)
+                    {
+                        <p><strong>Lost At:</strong> @Model.LostAt.Value.ToString("g")</p>
+                    }
+                </div>
+            
+        </div>
+
+            <div class="bg-light rounded-4 shadow-sm p-4 mb-4">
+                <h2 class="mb-4">Photos</h2>
+
+                @if (Model.PhotosDTO != null && Model.PhotosDTO.Any())
+                {
+                    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+                        @foreach (var photo in Model.PhotosDTO)
+                        {
+                            <div class="col">
+                                <div class="card h-100 shadow-sm">
+                                    <img src="@photo.Url" class="card-img-top" alt="Item photo" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        No photos available.
+                    </div>
+                }
+            </div>
+
+        <div class="col-lg-4">
+
+            <div class="bg-light rounded-4 shadow-sm p-4">
+                <h4>Category</h4>
+                <p><strong>@await categoryService.GetCategoryNameByIdAsync(Model.CategoryId)</strong></p>
+            </div>
+
+        </div>
+    </div>
+</div>

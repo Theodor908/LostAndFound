@@ -68,7 +68,7 @@
 
                                     <div class="form-floating mb-3">
                                       <select asp-for="Items[@i].CategoryId" class="form-select" required>
-                                        <option value="">-- Select Category --</option>
+                                        <option value="">Select Category</option>
                                         @{
                                           if(categories != null)
                                             foreach (var category in categories)
@@ -185,6 +185,42 @@
     let itemIndex = @Model.Items.Count;
     let postType = '@Model.PostType'; 
     let currentItemIndex = 0;
+
+    
+
+        function getCurrentDateTime() {
+            const now = new Date();
+
+            return now.getFullYear() + '-' + 
+                String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                String(now.getDate()).padStart(2, '0') + 'T' + 
+                String(now.getHours()).padStart(2, '0') + ':' + 
+                String(now.getMinutes()).padStart(2, '0');
+        }
+
+       
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const currentDateTime = getCurrentDateTime();
+            document.querySelectorAll('input[type="datetime-local"]').forEach(input => {
+                input.setAttribute('max', currentDateTime);
+            });
+            
+           
+            const originalAddItemFunction = document.getElementById('addItem').onclick;
+            document.getElementById('addItem').onclick = function() {
+               
+                if (originalAddItemFunction) originalAddItemFunction();
+                
+                
+                setTimeout(() => {
+                    const currentDateTime = getCurrentDateTime();
+                    document.querySelectorAll('input[type="datetime-local"]').forEach(input => {
+                        input.setAttribute('max', currentDateTime);
+                    });
+                }, 500);
+            };
+        });
 
 
     document.getElementById('typeLost').addEventListener('change', function() {

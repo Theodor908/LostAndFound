@@ -133,4 +133,13 @@ public class PostRepository(DataContext dataContext) : IPostRepository
         dataContext.Posts.Remove(post);
         return true;
     }
+
+    public Task<string?> GetPostTitleByIdAsync(int id)
+    {
+        var query = dataContext.Posts
+            .Where(p => p.Id == id)
+            .Select(p => p.Title);
+        return query.FirstOrDefaultAsync();
+        
+    }
 }

@@ -28,25 +28,22 @@
                         <a class="nav-link" asp-controller="Browse" asp-action="Index">Browse 
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="Post" asp-action="PostCreate">Create Post</a>
-                    </li>
                     @if(User.Identity?.IsAuthenticated == true)
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Profile" asp-route-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" role="button" aria-haspopup="true" aria-expanded="false">Profile</a>
+                            <a class="nav-link" asp-controller="User" asp-action="Profile" asp-route-id="@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value" role="button" aria-haspopup="true" aria-expanded="false">Profile</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Logout">Logout</a>
+                            <a class="nav-link" asp-controller="Auth" asp-action="Logout">Logout</a>
                         </li>
                     }
                     else
                     {
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                            <a class="nav-link" asp-controller="Auth" asp-action="Register">Register</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                            <a class="nav-link" asp-controller="Auth" asp-action="Login">Login</a>
                         </li>
                     }
                 </ul>

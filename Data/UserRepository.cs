@@ -12,10 +12,29 @@ public class UserRepository(DataContext dataContext, IPasswordHasher<AppUser> pa
     public async Task<AppUser?> GetUserByIdAsync(int id)
     {
         return await dataContext.Users
+            .Include(u => u.Posts)
             .Include(u => u.Items).ThenInclude(i => i.Photos)
             .Include(u => u.UserRoles)
             .ThenInclude(ur => ur.Role)
             .FirstOrDefaultAsync(u => u.Id == id);
+    }
+
+    public async Task<AppUser?> GetUserDetailsByIdAsync(int id)
+    {
+        return await dataContext.Users
+            .Include(u => u.Photo)
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .FirstOrDefaultAsync(u => u.Id == id);
+    }
+
+    public async Task<AppUser?> GetUserDetailsByUsernameOrEmailAsync(string usernameOrEmail)
+    {
+        return await dataContext.Users
+            .Include(u => u.Photo)
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .FirstOrDefaultAsync(u => u.UserName == usernameOrEmail || u.Email == usernameOrEmail);
     }
 
     public async Task<AppUser?> GetUserByEmailAsync(string email)

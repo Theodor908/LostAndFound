@@ -13,4 +13,6 @@ public interface IPostService
 
     Task<PostDTO?> GetPostDetailsByIdAsync(int id);
 
+    Task<bool> DeletePostAsync(int id);
+
 }

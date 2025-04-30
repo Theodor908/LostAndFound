@@ -11,6 +11,7 @@ public class BrowseController(IBrowseService browseService) : Controller
     {
         BrowseDTO viewModel = await browseService.GetBrowseDTOAsync(status, categoryName, country, city, dateRange, searchTerm, pageNumber);
         return View(viewModel);
+        // browse
     }
 
     [HttpGet]

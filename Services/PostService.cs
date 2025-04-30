@@ -16,12 +16,8 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
 
     public async Task<string> GetPostTitleByIdAsync(int id)
     {
-        var post = await unitOfWork.PostRepository.GetPostByIdAsync(id);
-        if (post == null)
-        {
-            return string.Empty;
-        }
-        return post.Title;
+        var title = await unitOfWork.PostRepository.GetPostTitleByIdAsync(id);
+        return title ?? string.Empty;
     }
 
     public async Task<int> CreatePostAsync(string username, PostDTO postDto, bool isValid)
@@ -50,6 +46,8 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
 
         var postSaved = await unitOfWork.Complete();
         if (!postSaved) return -1;
+        user.Posts.Add(post);
+        unitOfWork.UserRepository.UpdateUser(user);
         List<Item> items = [];
         foreach (var itemDto in postDto.Items)
         {
@@ -95,6 +93,7 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
                         {
                             var photo = new Photo
                             {
+                                Name = formFile.Name,
                                 Url = uploadResult.SecureUrl.AbsoluteUri,
                                 PublicId = uploadResult.PublicId,
                                 Item = item,
@@ -107,9 +106,10 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
                 }
             }
         }
-
-        var photosSaved = await unitOfWork.Complete();
-        if (!photosSaved)
+        post.Items.AddRange(items);
+        user.Items.AddRange(items);
+        var result = await unitOfWork.Complete();
+        if (!result)
         {
             await unitOfWork.PostRepository.DeletePostAsync(post.Id);
             return -1;
@@ -122,7 +122,16 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
         if (!isValid) return false;
 
         var post = await unitOfWork.PostRepository.GetPostByIdAsync(id);
-        if (post == null) return false;
+        if (post == null) 
+        {
+            return false;
+        }
+
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(post.AppUserId);
+        if (user == null) 
+        {
+            return false;
+        }
 
         post.Title = postDto.Title;
         post.Description = postDto.Description;
@@ -156,39 +165,44 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
                 item.FoundAt = itemDto.FoundAt;
                 item.LostAt = itemDto.LostAt;
                 item.IsFound = itemDto.IsFound;
-                item.IsClaimed = itemDto.IsClaimed;
+                item.IsClaimed = itemDto.IsClaimed;  
                 deletedItems.Remove(item);
                 unitOfWork.ItemRepository.UpdateItemAsync(item);
             }
 
-            // remove photos that are not in the new item
-            if (itemPhotos != null && itemDto.Photos != null)
-            {
-                foreach (var photo in itemPhotos)
-                {
-                    if (!itemDto.Photos.Any(p => p.Name == photo.Url))
-                    {
-                        deletedPhotos.Add(photo);
-                        unitOfWork.PhotoRepository.DeletePhotoAsync(photo);
-                        var result = await photoService.DeletePhotoAsync(photo.PublicId!);
-                        if (result == null) return false;
-                    }
-                }
-            }
-
+        
         }
 
         foreach (var item in deletedItems)
         {
-            List<Photo> photos = item.Photos.ToList();
+            List<Photo> photos = [.. item.Photos];
             foreach (var photo in photos)
             {
                 var result = await photoService.DeletePhotoAsync(photo.PublicId!);
                 if (result == null) return false;
                 unitOfWork.PhotoRepository.DeletePhotoAsync(photo);
             }
+            user.Items.Remove(item);
             post.Items.Remove(item);
             await unitOfWork.ItemRepository.DeleteItemAsync(item);
+        }
+
+        foreach (var itemDto in postDto.Items)
+        {
+            var item = await unitOfWork.ItemRepository.GetItemByIdAsync(itemDto.Id);
+            if (item != null && itemDto.Photos != null && itemDto.Photos.Count != 0)
+            {
+                foreach (var photo in itemDto.PhotosDTO)
+                {
+                    var photoToDelete = item.Photos.FirstOrDefault(p => p.Id == photo.Id);
+                    if (photoToDelete != null)
+                    {
+                        deletedPhotos.Remove(photoToDelete);
+                        item.Photos.Remove(photoToDelete);
+                        unitOfWork.PhotoRepository.DeletePhotoAsync(photoToDelete);
+                    }
+                }
+            }
         }
 
         foreach (var itemDto in postDto.Items)
@@ -205,6 +219,7 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
                         {
                             var photo = new Photo
                             {
+                                Name = formFile.Name,
                                 Url = uploadResult.SecureUrl.AbsoluteUri,
                                 PublicId = uploadResult.PublicId,
                                 Item = item,
@@ -217,6 +232,8 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
                 }
             }
         }
+
+
 
         var postUpdateResult = await unitOfWork.Complete();
         if (!postUpdateResult) return false;
@@ -236,5 +253,37 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
 
         PostDTO postDTO = mapper.Map<PostDTO>(post);
         return postDTO;
+    }
+
+    public async Task<bool> DeletePostAsync(int id)
+    {
+
+        var post = await unitOfWork.PostRepository.GetPostByIdAsync(id);
+        if (post == null) return false;
+
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(post.AppUserId);
+        if (user == null) return false;
+
+        List<Item> items = [.. post.Items];
+        foreach (var item in items)
+        {
+            List<Photo> photos = [.. item.Photos];
+            foreach (var photo in photos)
+            {
+                var result = await photoService.DeletePhotoAsync(photo.PublicId!);
+                if (result == null) return false;
+                unitOfWork.PhotoRepository.DeletePhotoAsync(photo);
+            }
+            user.Items.Remove(item);
+            post.Items.Remove(item);
+            await unitOfWork.ItemRepository.DeleteItemAsync(item);
+        }
+
+        await unitOfWork.PostRepository.DeletePostAsync(id);
+        var saveResult = await unitOfWork.Complete();
+        if (!saveResult) return false;
+        
+        return true;
+
     }
 }

@@ -4,10 +4,11 @@ using LostAndFound.Data;
 using LostAndFound.Entities;
 using LostAndFound.Interfaces;
 using LostAndFound.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace LostAndFound.Services;
 
-public class UserService(IUnitOfWork unitOfWork, IMapper mapper) : IUserService
+public class UserService(IUnitOfWork unitOfWork, IMapper mapper, SignInManager<AppUser> signInManager, IPhotoService photoService) : IUserService
 {
 
     public async Task<AppUser?> FindByEmailAsync(string email)
@@ -27,10 +28,7 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper) : IUserService
         unitOfWork.UserRepository.CreateUser(user, password);;
     }
 
-    public void DeleteUser(int id)
-    {
-        throw new NotImplementedException();
-    }
+    
 
     public Task<List<UserDTO>?> GetAllUsersAsync()
     {
@@ -64,13 +62,66 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper) : IUserService
         return userDTO;
     }
 
-    public void UpdateUser(UserDTO userDto)
+    public async Task<MemberDTO?> GetMemberByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        AppUser? user = await unitOfWork.UserRepository.GetUserDetailsByIdAsync(id);
+        if (user == null)
+        {
+            return null;
+        }
+        MemberDTO memberDTO = mapper.Map<MemberDTO>(user);
+        return memberDTO;
     }
 
-    public void CreateUser(UserDTO userDto)
+    public async Task<bool> UpdateMemberAsync(MemberDTO memberDto)
     {
-        throw new NotImplementedException();
+        AppUser? user = await unitOfWork.UserRepository.GetUserDetailsByIdAsync(memberDto.Id);
+        if (user == null)
+        {
+            return false;
+        }
+
+        if(memberDto.Photo != null)
+        {
+            // delete the current photo if it exists
+            if (user.Photo != null)
+            {
+                var deleteResult = await photoService.DeletePhotoAsync(user.Photo.PublicId!);
+                if (deleteResult == null)
+                {
+                    return false;
+                }
+                unitOfWork.PhotoRepository.DeletePhotoAsync(user.Photo);
+                user.Photo = null;
+            }
+
+            var uploadResult = await photoService.UploadPhotoAsync(memberDto.Photo);
+            if (uploadResult == null)
+            {
+                return false;
+            }
+
+        }
+
+        mapper.Map(memberDto, user);
+        unitOfWork.UserRepository.UpdateUser(user);
+        var result = await unitOfWork.Complete();
+        if (!result)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public async Task<bool> DeleteUserAsync(int id)
+    {
+        await signInManager.SignOutAsync();
+        unitOfWork.UserRepository.DeleteUser(id);
+        var result = await unitOfWork.Complete();
+        if (!result)
+        {
+            return false;
+        }
+        return true;
     }
 }

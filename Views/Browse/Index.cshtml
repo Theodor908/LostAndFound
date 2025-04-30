@@ -99,13 +99,17 @@
                     <div class="card h-100 shadow-sm item-card">
                         @if(item.IsClaimed)
                         {
-                            <div class="claimed-badge">Claimed</div>
+                            <div class="bg-success position-absolute top-0 end-0 m-2 claimed-badge">Claimed</div>
+                        }
+                        else if(item.IsFound)
+                        {
+                        <div class="badge bg-success position-absolute top-0 end-0 m-2 found">
+                            Found
+                        </div>
                         }
                         else
                         {
-                        <div class="status-badge @(item.IsFound ? "found" : "lost")">
-                            @(item.IsFound ? "Found" : "Lost")
-                        </div>
+                            <div class="badge bg-danger position-absolute top-0 end-0 m-2 lost">Lost</div>
                         }
                         @if (item.PhotosDTO.Any())
                         {
@@ -137,8 +141,8 @@
                             <p class="card-text text-muted mb-3">
                                 <i class="fas fa-clipboard me-1"></i> Post: @await postService.GetPostTitleByIdAsync(item.PostId)
                             </p>
-                            <a asp-controller="Post" asp-action="PostDetails" asp-route-id="@item.PostId" class="btn btn-primary w-100">
-                                View Post Details
+                            <a asp-controller="Item" asp-action="ItemDetails" asp-route-id="@item.Id" class="btn btn-primary w-100">
+                                View Item Details
                             </a>
                         </div>
                     </div>

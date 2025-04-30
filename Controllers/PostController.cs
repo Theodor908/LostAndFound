@@ -12,7 +12,6 @@ public class PostController(IUserService userService, ICategoryService categoryS
 {
     private const string TempDataKey = "CurrentPostDraft";
     
-    [HttpGet]
     public async Task<IActionResult> PostCreate()
     {
         int userId = User.GetUserId();
@@ -54,7 +53,6 @@ public class PostController(IUserService userService, ICategoryService categoryS
         return RedirectToAction("PostDetails", new { id = result });
     }
     
-    [HttpGet]
     public async Task<IActionResult> PostDetails(int id)
     {
         var postDetails = await postService.GetPostDetailsByIdAsync(id);
@@ -89,18 +87,9 @@ public class PostController(IUserService userService, ICategoryService categoryS
             return NotFound();
         }
         
-        PostDTO postDTO = new()
-        {
-            Id = postDetails.Id,
-            Title = postDetails.Title,
-            Description = postDetails.Description,
-            PostType = postDetails.PostType,
-            Items = postDetails.Items
-        };
-        
         ViewBag.Categories = await categoryService.GetAllCategoriesAsync();
         
-        return View(postDTO);
+        return View(postDetails);
     }
 
     [HttpPost]
@@ -124,9 +113,20 @@ public class PostController(IUserService userService, ICategoryService categoryS
             return BadRequest("Failed to update post");
         }
 
-        return RedirectToAction("PostDetails", new { id = id });
+        return RedirectToAction("PostDetails", new { id });
     }
 
+    [HttpGet]
+    public async Task<IActionResult> PostDelete(int id)
+    {
+        var result = await postService.DeletePostAsync(id);
+        if (!result)
+        {
+            return BadRequest("Failed to delete post");
+        }
+        
+        return RedirectToAction("Profile", "User", new { id = User.GetUserId() });
+    }
 
     [HttpGet]
     public async Task<IActionResult> GetItemTemplate(int index, string postType)

@@ -7,6 +7,7 @@ using LostAndFound.Repositories;
 using LostAndFound.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace LostAndFound.Extensions;
 
@@ -26,6 +27,15 @@ public static class ApplicationServiceExtensions
         options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
     .AddIdentityCookies();
+
+    services.AddHybridCache(options =>
+    {
+        options.DefaultEntryOptions = new HybridCacheEntryOptions
+        {
+            LocalCacheExpiration = TimeSpan.FromMinutes(5),
+            Expiration = TimeSpan.FromMinutes(30),
+        };
+    });
     
     services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));

@@ -13,29 +13,32 @@
             <div class="p-4 bg-light rounded shadow-sm">
                 <form asp-controller="Post" asp-action="PostUpdate" method="post" enctype="multipart/form-data">
                     <fieldset>
-                        <legend>Update Post</legend>
-                        
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h1 class="h3 mb-0">Update Post</h1>
+                            <a asp-controller="Post" asp-action="PostDelete" asp-route-id="@Model.Id" method="get" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-edit me-1"></i> Delete
+                            </a>
+                        </div>
                        
                         <input type="hidden" asp-for="Id" />
 
-                      
-                        <div class="mb-4">
-                            <label class="form-label">Post Type</label>
-                            <div class="d-flex gap-3">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="PostType" id="typeLost" value="Lost" checked="@(Model.PostType == "Lost")">
-                                    <label class="form-check-label" for="typeLost">
-                                        Lost Items
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="PostType" id="typeFound" value="Found" checked="@(Model.PostType == "Found")">
-                                    <label class="form-check-label" for="typeFound">
-                                        Found Items
-                                    </label>
+                            <div class="mb-4">
+                                <label class="form-label">Post Type</label>
+                                <div class="d-flex gap-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="PostType" id="typeLost" value="Lost" checked="@(Model.PostType == "Lost")">
+                                        <label class="form-check-label" for="typeLost">
+                                            Lost Items
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="PostType" id="typeFound" value="Found" checked="@(Model.PostType == "Found")">
+                                        <label class="form-check-label" for="typeFound">
+                                            Found Items
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
                         <div class="form-floating mb-3">
                             <input asp-for="Title" class="form-control" placeholder="Enter title" required />
@@ -55,17 +58,19 @@
                                 <div class="card mb-4 shadow-sm item-card" data-index="@i">
                                   <div class="card-header bg-primary text-white item-header d-flex justify-content-between align-items-center">
                                     <span>Item @(@i + 1)</span>
-                                    @if (i > 0)
-                                    {
-                                      <button type="button" class="btn btn-sm btn-outline-light delete-item">
-                                        <i class="bi bi-trash"></i> Remove
-                                      </button>
-                                    }
-                                  </div>
+                                    <button type="button" class="btn btn-sm btn-outline-light delete-item">
+                                    <i class="bi bi-trash"></i> Remove
+                                    </button>
+                                    </div>
                                   <div class="card-body">
                                    
                                     <input type="hidden" asp-for="Items[@i].Id" />
                                     
+                                    <div class="form-check mb-3">
+                                      <input asp-for="Items[@i].IsClaimed" class="form-check-input" type="checkbox" id="isClaimed_@i" />
+                                      <label class="form-check-label" for="isClaimed_@i">Claimed</label>
+                                    </div>
+                                
                                    
                                     <div class="form-floating mb-3">
                                       <input asp-for="Items[@i].Name" class="form-control" placeholder="Item name" required />
@@ -157,38 +162,36 @@
                                         <span asp-validation-for="Items[@i].FoundAt" class="text-danger"></span>
                                     </div>
 
-                                    <!-- Existing Photos Display -->
-                                    @if (Model.Items[i].PhotosDTO != null && Model.Items[i].PhotosDTO.Any())
-                                    {
-                                      <div class="mb-4">
-                                        <label class="form-label">Current Photos</label>
-                                        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
-                                            @foreach (var photo in Model.Items[i].PhotosDTO)
-                                            {
+                            @if (Model.Items[i].PhotosDTO != null && Model.Items[i].PhotosDTO.Any())
+                            {
+                                <div class="mb-4">
+                                    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
+                                        @for(int j = 0; j < Model.Items[i].PhotosDTO.Count; j++)
+                                        {
+                                             var photo = Model.Items[i].PhotosDTO[j];
+                                             <input type="hidden" asp-for="Items[@i].PhotosDTO[@j].Id" value="@photo.Id" />
                                             <div class="col existing-photo" data-photo-id="@photo.Id">
-                                                <div class="card h-100 shadow-sm">
-                                                    <div >
-                                                        <img src="@photo.Url" alt="Item photo" class="img-thumbnail overflow-hidden" />
-                                                    </div>
-                                                    <div class="card-footer bg-white p-2 text-center">
-                                                        <input type="hidden" name="Items[@i].ExistingPhotoIds" value="@photo.Id" />
-                                                        <button type="button" class="btn btn-sm btn-outline-danger remove-photo" 
-                                                                data-photo-id="@photo.Id" data-item-index="@i">
+                                            <div class="card h-100 shadow-sm">
+                                                <div class="position-relative">
+                                                    <img src="@photo.Url" alt="Item photo" class="img-thumbnail overflow-hidden" />
+                                                </div>
+                                                <div class="card-footer bg-white p-2 text-center">
+                                                    <button type="button" class="btn btn-sm btn-outline-danger remove-photo" 
+                                                            data-photo-id="@photo.Id" data-item-index="@i" data-photo-index="@j">
                                                         <i class="bi bi-trash"></i> Remove
-                                                        </button>
-                                                    </div>
+                                                    </button>
                                                 </div>
                                             </div>
-                          
-                                            }
                                         </div>
+                                        }
                                     </div>
-                                    }
+                                </div>
+                            }
                                     <div id="deletedPhotosContainer"></div>
 
-                                    <div class="mb-3">
-                                      <label class="form-label">Upload New Photos</label>
-                                      <input type="file" name="Items[@i].Photos" class="form-control" multiple accept="image/*" />
+                                   <div class="mb-3">
+                                        <label class="form-label fw-bold">Upload Photos</label>
+                                        <input type="file" name="Items[@i].Photos" class="form-control" multiple accept="image/*" />
                                     </div>
                                   </div>
                                 </div>
@@ -250,6 +253,50 @@
         let postType = '@Model.PostType'; 
         let currentItemIndex = 0;
 
+
+        function getCurrentDateTime() {
+            const now = new Date();
+
+            return now.getFullYear() + '-' + 
+                String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                String(now.getDate()).padStart(2, '0') + 'T' + 
+                String(now.getHours()).padStart(2, '0') + ':' + 
+                String(now.getMinutes()).padStart(2, '0');
+        }
+
+       
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const currentDateTime = getCurrentDateTime();
+            document.querySelectorAll('input[type="datetime-local"]').forEach(input => {
+                input.setAttribute('max', currentDateTime);
+            });
+            
+           
+            const originalAddItemFunction = document.getElementById('addItem').onclick;
+            document.getElementById('addItem').onclick = function() {
+               
+                if (originalAddItemFunction) originalAddItemFunction();
+                
+                
+                setTimeout(() => {
+                    const currentDateTime = getCurrentDateTime();
+                    document.querySelectorAll('input[type="datetime-local"]').forEach(input => {
+                        input.setAttribute('max', currentDateTime);
+                    });
+                }, 500);
+                const totalItems = document.querySelectorAll('.item-card').length + 1;
+                if (totalItems > 1) {
+                    document.querySelectorAll('.delete-item').forEach(button => {
+                        button.style.display = 'block';
+                    });
+                } else {
+                    document.querySelectorAll('.delete-item').forEach(button => {
+                        button.style.display = 'none';
+                    });
+                }
+            };
+        });
         
         document.getElementById('typeLost').addEventListener('change', function() {
             if (this.checked) {
@@ -351,43 +398,74 @@
         });
 
       
-        document.getElementById('itemsContainer').addEventListener('click', function(event) {
-            if (event.target.classList.contains('delete-item') || 
-                event.target.closest('.delete-item')) {
-                const button = event.target.classList.contains('delete-item') ? 
-                                event.target : event.target.closest('.delete-item');
-                const card = button.closest('.item-card');
-                const cardIndex = parseInt(card.getAttribute('data-index'));
-                const itemId = card.querySelector('input[name^="Items["][name$="].Id"]')?.value || "";
-                
-                if (confirm('Are you sure you want to remove this item?')) {
-                    
-                    const deletedInput = document.createElement('input');
-                    deletedInput.type = 'hidden';
-                    deletedInput.name = 'DeletedItemIds';
-                    deletedInput.value = itemId;
-                    document.querySelector('form').appendChild(deletedInput);
-                    
-                 
-                    card.remove();
-                    
-                  
-                    document.querySelectorAll('.item-card').forEach((card, index) => {
-                        card.setAttribute('data-index', index);
-                        card.querySelector('.item-header span').textContent = `Item ${index + 1}`;
-                        
-                        
-                        updateInputNames(card, index);
-                    });
-                    
-                   
-                    itemIndex = document.querySelectorAll('.item-card').length;
-                }
+  
+    document.getElementById('itemsContainer').addEventListener('click', function(event) {
+        if (event.target.classList.contains('delete-item') || 
+            event.target.closest('.delete-item')) {
+            const button = event.target.classList.contains('delete-item') ? 
+                            event.target : event.target.closest('.delete-item');
+            const card = button.closest('.item-card');
+            const cardIndex = parseInt(card.getAttribute('data-index'));
+            const itemId = card.querySelector('input[name^="Items["][name$="].Id"]')?.value || "";
+            
+
+            const totalItems = document.querySelectorAll('.item-card').length;
+            if (totalItems <= 1) {
+                alert('You must have at least one item in your post.');
+                return;
             }
+            
+            if (confirm('Are you sure you want to remove this item?')) {
+    
+                const deletedInput = document.createElement('input');
+                deletedInput.type = 'hidden';
+                deletedInput.name = 'DeletedItemIds';
+                deletedInput.value = itemId;
+                document.querySelector('form').appendChild(deletedInput);
+                
+                card.remove();
+                
+                document.querySelectorAll('.item-card').forEach((card, index) => {
+                    card.setAttribute('data-index', index);
+                    card.querySelector('.item-header span').textContent = `Item ${index + 1}`;
+                    
+                    updateInputNames(card, index);
+                });
+                
+                itemIndex = document.querySelectorAll('.item-card').length;
+            }
+        }
+
+        const totalItems = document.querySelectorAll('.item-card').length;
+        if (totalItems <= 1) {
+            document.querySelectorAll('.delete-item').forEach(button => {
+                button.style.display = 'none';
+            });
+        } else {
+            document.querySelectorAll('.delete-item').forEach(button => {
+                button.style.display = 'block';
+            });
+        }
+        console.log('Total items:', totalItems);
+
+    });
+       
+        document.addEventListener('DOMContentLoaded', function() {
+           
+            document.querySelectorAll('.existing-photo').forEach(photo => {
+                const photoId = photo.getAttribute('data-photo-id');
+                const itemIndex = photo.querySelector('.remove-photo').getAttribute('data-item-index');         
+              
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = `Items[${itemIndex}].PhotosToDelete`;
+                hiddenInput.value = photoId;
+                
+              
+                document.getElementById('deletedPhotosContainer').appendChild(hiddenInput);
+            });
         });
 
-      
-        // Handle photo deletion without Ajax
         document.addEventListener('click', function(event) {
             if (event.target.classList.contains('remove-photo') || 
                 event.target.closest('.remove-photo')) {
@@ -399,49 +477,40 @@
                 const itemIndex = button.getAttribute('data-item-index');
                 
                 if (confirm('Are you sure you want to remove this photo?')) {
-                    // Completely hide the photo element in the UI
                     photoElement.style.display = 'none';
                     
-                    // Optionally add a visual indicator that something was removed
                     const photoContainer = photoElement.parentElement;
                     const removalIndicator = document.createElement('div');
                     removalIndicator.className = 'col text-muted fst-italic small py-2';
                     removalIndicator.innerHTML = 'Photo marked for removal <button type="button" class="btn btn-sm btn-link undo-removal" data-element-id="' + photoId + '">Undo</button>';
                     photoContainer.appendChild(removalIndicator);
 
-                    // Create hidden input to mark this photo as deleted
                     const hiddenInput = document.createElement('input');
                     hiddenInput.type = 'hidden';
                     hiddenInput.id = 'removed-photo-' + photoId;
                     hiddenInput.name = `Items[${itemIndex}].PhotosToDelete`;
                     hiddenInput.value = photoId;
                     
-                    // Add it to the form
                     document.getElementById('deletedPhotosContainer').appendChild(hiddenInput);
                 }
             }
             
-            // Bonus: Add ability to undo removal
             if (event.target.classList.contains('undo-removal')) {
                 const photoId = event.target.getAttribute('data-element-id');
                 const indicator = event.target.closest('.text-muted');
                 
-                // Find the hidden photo element by looking at siblings
                 const container = indicator.parentElement;
                 for (let i = 0; i < container.children.length; i++) {
                     const child = container.children[i];
                     if (child.classList.contains('existing-photo') && 
                         child.querySelector('[data-photo-id="' + photoId + '"]')) {
-                        // Show the photo again
                         child.style.display = '';
                         break;
                     }
                 }
                 
-                // Remove the indicator
                 indicator.remove();
                 
-                // Remove the hidden input
                 document.getElementById('removed-photo-' + photoId)?.remove();
             }
         });

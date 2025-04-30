@@ -7,6 +7,7 @@ namespace LostAndFound.Interfaces;
 public interface IPostRepository
 {
     Task<Post?> GetPostByIdAsync(int id);
+    Task<string?> GetPostTitleByIdAsync(int id);
     Task<List<Post>?> GetAllPostsAsync();
     Task<List<Post>> GetPostsByUserIdAsync(int userId);
     Task<Post?> GetPostWithItemsAndCommentsByIdAsync(int id);
