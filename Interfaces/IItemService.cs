@@ -9,4 +9,5 @@ public interface IItemService
     Task<List<ItemDTO>?> GetAllItemsAsync();
     Task<bool> UpdateItemAsync(int id, ItemDTO itemDto, bool isValid);
     Task<bool> DeleteItemAsync(int id);
+    Task<int> GetItemCountAsync();
 }

@@ -48,15 +48,25 @@ public static class ApplicationServiceExtensions
     services.AddScoped<IPostRepository, PostRepository>();
     services.AddScoped<IPhotoRepository, PhotoRepository>();
     services.AddScoped<ICategoryRepository, CategoryRepository>();
+    services.AddScoped<IRoleRepository, RoleRepository>();
+    services.AddScoped<IReportRepository, ReportRepository>();
+    services.AddScoped<IBugRepository, BugRepository>();
+    services.AddScoped<IBanRepository, BanRepository>();
 
     services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+    services.AddScoped<IRoleService, RoleService>();
     services.AddScoped<IPhotoService, PhotoService>();
     services.AddScoped<IUserService, UserService>();
     services.AddScoped<IPostService, PostService>();
+    services.AddScoped<IReportService, ReportService>();
     services.AddScoped<ICategoryService, CategoryService>();
     services.AddScoped<IItemService, ItemService>();
     services.AddScoped<IBrowseService, BrowseService>();
+    services.AddScoped<IBugService, BugService>();
+    services.AddScoped<IBanService, BanService>();
+    services.AddScoped<IAdminService, AdminService>();
+
 
     services.AddScoped<IAuthService, AuthService>();
     return services;

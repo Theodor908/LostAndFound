@@ -119,7 +119,7 @@ public class ItemRepository : IItemRepository
 
     public async Task<PagedList<Item>> GetFilteredItemsAsync(ItemFilterParams filterParams)
     {
-        Console.WriteLine($"FilterParams: {filterParams.Status}, {filterParams.CategoryName}, {filterParams.Country}, {filterParams.City}, {filterParams.DateRange}, {filterParams.SearchTerm}");
+        //Console.WriteLine($"FilterParams: {filterParams.Status}, {filterParams.CategoryName}, {filterParams.Country}, {filterParams.City}, {filterParams.DateRange}, {filterParams.SearchTerm}");
         var query = _context.Items
             .Include(i => i.Category)
             .Include(i => i.Photos)
@@ -142,7 +142,7 @@ public class ItemRepository : IItemRepository
                     break;
             }
         }
-        Console.WriteLine($"Category: {filterParams.CategoryName}");
+        //Console.WriteLine($"Category: {filterParams.CategoryName}");
 
         if (!string.IsNullOrEmpty(filterParams.CategoryName))
         {
@@ -260,5 +260,10 @@ public class ItemRepository : IItemRepository
             .Select(i => i.City)
             .Distinct()
             .ToListAsync();
+    }
+
+    public async Task<int> GetItemCountAsync()
+    {
+        return await _context.Items.CountAsync();
     }
 }

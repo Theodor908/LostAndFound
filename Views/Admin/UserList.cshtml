@@ -1,0 +1,102 @@
+﻿@model LostAndFound.Models.MemberListDTO
+@inject LostAndFound.Interfaces.IUserService UserService
+@{
+    ViewData["Title"] = "User List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="container mt-5">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h2>Users</h2>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <form asp-controller="Admin" asp-action="UserList" method="get" class="d-flex">
+                <input type="text" name="searchTerm" class="form-control me-2" placeholder="Search by username or email" value="@Model.SearchTerm" />
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <ul class="list-group">
+        @foreach (var user in Model.MemberList.Items)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h5>@user.Username</h5>
+                    <p>@user.Email</p>
+                    @{
+                        var roles = await UserService.GetUserRolesByIdAsync(user.Id);
+                        foreach (var role in roles)
+                        {
+                            <span class="badge bg-secondary">@role</span>
+                        }
+
+                    }
+                </div>
+                <div>
+                    <a asp-controller="Admin" asp-action="BanUser" asp-route-id="@user.Id" class="btn btn-warning">Ban</a>
+                    <a asp-controller="Admin" asp-action="EditUser" asp-route-id="@user.Id" class="btn btn-secondary">Edit</a>
+                    <a asp-controller="Admin" asp-action="DeleteUser" asp-route-id="@user.Id" class="btn btn-danger">Delete</a>
+                </div>
+            </li>
+        }
+    </ul>
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <p>Total Users: @Model.MemberList.TotalCount</p>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <a asp-controller="Admin" asp-action="Index" class="btn btn-primary">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+@if (Model.MemberList.TotalPages > 1)
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item @(!Model.MemberList.HasPrevious ? "disabled" : "")">
+                            <a class="page-link" 
+                               asp-controller="Admin" 
+                               asp-action="UserList" 
+                               asp-route-searchTerm="@Model.SearchTerm"
+                               asp-route-pageNumber="@(Model.MemberList.CurrentPage - 1)">
+                                Previous
+                            </a>
+                        </li>
+                        
+                        @for (int i = 1; i <= Model.MemberList.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.MemberList.CurrentPage ? "active" : "")">
+                                <a class="page-link"
+                                    asp-controller="Admin"
+                                    asp-action="UserList"
+                                    asp-route-searchTerm="@Model.SearchTerm"
+                                    asp-route-pageNumber="@i">
+                                    @i
+                                </a>
+                            </li>
+                        }
+                        <li class="page-item @(!Model.MemberList.HasNext ? "disabled" : "")">
+                            <a class="page-link" 
+                               asp-controller="Admin" 
+                               asp-action="UserList" 
+                               asp-route-searchTerm="@Model.SearchTerm"
+                               asp-route-pageNumber="@(Model.MemberList?.CurrentPage + 1)">
+                                Next
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    }

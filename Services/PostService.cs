@@ -39,7 +39,6 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
             IsActive = true,
             AppUser = user,
             Items = [],
-            Comments = []
         };
 
         unitOfWork.PostRepository.AddPost(post);
@@ -140,6 +139,7 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
 
         unitOfWork.PostRepository.UpdatePost(post);
         List<Item> deletedItems = [.. post.Items];
+        List<Item> newItems = [];
         List<Photo> deletedPhotos = [];
         foreach (var item in post.Items)
         {
@@ -161,7 +161,7 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
                 item.City = itemDto.City;
                 item.Location = itemDto.Location;
                 item.SpecificLocation = itemDto.SpecificLocation;
-                item.PostedAt = DateTime.UtcNow;
+                item.UpdatedAt = DateTime.UtcNow;
                 item.FoundAt = itemDto.FoundAt;
                 item.LostAt = itemDto.LostAt;
                 item.IsFound = itemDto.IsFound;
@@ -169,8 +169,62 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
                 deletedItems.Remove(item);
                 unitOfWork.ItemRepository.UpdateItemAsync(item);
             }
+            else
+            {
+                var newItem = new Item
+                {
+                    Name = itemDto.Name,
+                    Description = itemDto.Description,
+                    Country = itemDto.Country,
+                    City = itemDto.City,
+                    Location = itemDto.Location,
+                    SpecificLocation = itemDto.SpecificLocation,
+                    PostedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    FoundAt = itemDto.FoundAt,
+                    LostAt = itemDto.LostAt,
+                    IsFound = itemDto.IsFound,
+                    IsClaimed = itemDto.IsClaimed,
+                    CategoryId = itemDto.CategoryId,
+                    AppUserId = user.Id,
+                    PostId = post.Id, 
+                    Photos = []
+                };
+                unitOfWork.ItemRepository.AddItem(newItem);
+                newItems.Add(newItem);
+                post.Items.Add(newItem);
+                user.Items.Add(newItem);
+            }
 
         
+        }
+
+        foreach(var item in newItems)
+        {
+            var itemDto = postDto.Items.FirstOrDefault(i => i.Name == item.Name);
+            if (itemDto != null && itemDto.Photos != null && itemDto.Photos.Count != 0)
+            {
+                foreach (var formFile in itemDto.Photos)
+                {
+                    if (formFile.Length > 0)
+                    {
+                        var uploadResult = await photoService.UploadPhotoAsync(formFile);
+                        if (uploadResult != null)
+                        {
+                            var photo = new Photo
+                            {
+                                Name = formFile.Name,
+                                Url = uploadResult.SecureUrl.AbsoluteUri,
+                                PublicId = uploadResult.PublicId,
+                                Item = item,
+                                ItemId = item.Id,
+                            };
+                            unitOfWork.PhotoRepository.AddPhoto(photo);
+                            item.Photos.Add(photo);
+                        }
+                    }
+                }
+            }
         }
 
         foreach (var item in deletedItems)
@@ -285,5 +339,15 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
         
         return true;
 
+    }
+
+    public async Task<int> GetPostCountAsync()
+    {
+        return await unitOfWork.PostRepository.GetPostCountAsync();
+    }
+
+    public async Task<int> GetPostReportCountAsync()
+    {
+        return await unitOfWork.PostRepository.GetPostReportCountAsync();
     }
 }

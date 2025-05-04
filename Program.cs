@@ -4,6 +4,8 @@ using LostAndFound.Entities;
 using LostAndFound.Extensions;
 using LostAndFound.Helpers;
 using LostAndFound.Interfaces;
+using LostAndFound.Models;
+using LostAndFound.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +41,66 @@ app.MapControllerRoute(
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
+
+using (var roleScope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<DataContext>();
+    
+    if (!context.Roles.Any())
+    {
+        var roles = new List<AppRole>
+        {
+            new AppRole { Name = "Admin", NormalizedName = "ADMIN" },
+            new AppRole { Name = "Moderator", NormalizedName = "MODERATOR" },
+            new AppRole { Name = "Member", NormalizedName = "MEMBER" }
+        };
+        
+        await context.Roles.AddRangeAsync(roles);
+        await context.SaveChangesAsync();
+    }
+
+    // create default admin user
+
+    var authService = services.GetRequiredService<IAuthService>();
+    var roleService = services.GetRequiredService<IRoleService>();
+    var userService = services.GetRequiredService<IUserService>();
+
+    var user = new RegisterDTO
+    {
+        Username = "admin9",
+        Email = "admin9@admin.com",
+        Password = "Admin123!",
+        ConfirmPassword = "Admin123!",
+        Country = "Adminland",
+        City = "Admin City",
+    };
+
+    var (succeeded, errors, appUser) = await authService.RegisterAsync(user, true);
+
+    if (succeeded)
+    {
+        var role = await roleService.GetRoleByNameAsync("Admin");
+        Console.WriteLine($"Role: {role?.Name}");
+        if (role != null)
+        {
+            var result = await roleService.AddRoleToUserAsync(appUser!.Id, "Admin");
+            var userRole = await roleService.GetUserRolesByIdAsync(appUser.Id);
+            Console.WriteLine($"User roles: {string.Join(", ", userRole!.Select(r => r.Name))}");
+            if (result)
+            {
+                Console.WriteLine($"User {appUser.UserName} added to role {role.Name}.");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to add user {appUser.UserName} to role {role.Name}.");
+            }
+        }
+    }
+    else
+    {
+        Console.WriteLine($"Failed to create admin user: {string.Join(", ", errors!.Select(e => e.Value))}");
+    }
+}
 
 // try
 // {

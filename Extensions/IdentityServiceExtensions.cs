@@ -27,14 +27,15 @@ public static class IdentityServiceExtensions
 
     services.ConfigureApplicationCookie(options =>
     {
-        options.LoginPath = "/Account/Login";
-        options.LogoutPath = "/Account/Logout";
-        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.LoginPath = "/Auth/Login";
+        options.LogoutPath = "/Auth/Logout";
+        options.AccessDeniedPath = "/Auth/AccessDenied";
     });
 
     services.AddAuthorizationBuilder()
-        .AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"))
-        .AddPolicy("ModeratePhotoRole", policy => policy.RequireRole("Admin", "Moderator"));
+        .AddPolicy("ModerateRoles", policy => policy.RequireRole("Admin"))
+        .AddPolicy("ModeratePostAndUser", policy => policy.RequireRole("Admin", "Moderator"))
+        .AddPolicy("ViewPostDetails", policy => policy.RequireRole("Admin", "Member"));
 
     return services;
 }

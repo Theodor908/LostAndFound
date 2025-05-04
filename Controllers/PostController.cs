@@ -12,7 +12,7 @@ public class PostController(IUserService userService, ICategoryService categoryS
 {
     private const string TempDataKey = "CurrentPostDraft";
     
-    public async Task<IActionResult> PostCreate()
+    public IActionResult PostCreate()
     {
         int userId = User.GetUserId();
         var model = new PostDTO
@@ -206,15 +206,15 @@ public class PostController(IUserService userService, ICategoryService categoryS
             TempData.Keep(TempDataKey);
             try
             {
-                return JsonSerializer.Deserialize<PostDTO>(json);
+                return JsonSerializer.Deserialize<PostDTO>(json)!;
             }
             catch
             {
-                return null;
+                return null!;
             }
         }
         
-        return null;
+        return null!;
     }
     
     private void SaveDraftToTempData(PostDTO draft)

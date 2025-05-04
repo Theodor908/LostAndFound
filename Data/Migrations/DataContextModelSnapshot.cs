@@ -72,6 +72,9 @@ namespace LostAndFound.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsBanned")
+                        .HasColumnType("INTEGER");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
 
@@ -132,6 +135,34 @@ namespace LostAndFound.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
+            modelBuilder.Entity("LostAndFound.Entities.Ban", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AppUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("BannedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsPermanent")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UnbannedAt")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("Bans");
+                });
+
             modelBuilder.Entity("LostAndFound.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
@@ -148,34 +179,6 @@ namespace LostAndFound.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("LostAndFound.Entities.Comment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("AppUserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("PostId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.HasIndex("PostId");
-
-                    b.ToTable("Comment");
                 });
 
             modelBuilder.Entity("LostAndFound.Entities.Item", b =>
@@ -230,6 +233,9 @@ namespace LostAndFound.Migrations
 
                     b.Property<string>("SpecificLocation")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -314,6 +320,107 @@ namespace LostAndFound.Migrations
                     b.HasIndex("AppUserId");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("LostAndFound.Entities.ReportBug", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("AppUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsResolved")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("ReportBugs");
+                });
+
+            modelBuilder.Entity("LostAndFound.Entities.ReportPost", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsResolved")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ReportedByUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ReportedUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("ReportedByUserId");
+
+                    b.ToTable("ReportPosts");
+                });
+
+            modelBuilder.Entity("LostAndFound.Entities.ReportUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsResolved")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ReportedByUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ReportedUserId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReportedByUserId");
+
+                    b.ToTable("ReportUsers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -419,23 +526,15 @@ namespace LostAndFound.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("LostAndFound.Entities.Comment", b =>
+            modelBuilder.Entity("LostAndFound.Entities.Ban", b =>
                 {
                     b.HasOne("LostAndFound.Entities.AppUser", "AppUser")
-                        .WithMany("Comments")
+                        .WithMany("Bans")
                         .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LostAndFound.Entities.Post", "Post")
-                        .WithMany("Comments")
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("AppUser");
-
-                    b.Navigation("Post");
                 });
 
             modelBuilder.Entity("LostAndFound.Entities.Item", b =>
@@ -493,6 +592,47 @@ namespace LostAndFound.Migrations
                     b.Navigation("AppUser");
                 });
 
+            modelBuilder.Entity("LostAndFound.Entities.ReportBug", b =>
+                {
+                    b.HasOne("LostAndFound.Entities.AppUser", "AppUser")
+                        .WithMany("ReportBugs")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("LostAndFound.Entities.ReportPost", b =>
+                {
+                    b.HasOne("LostAndFound.Entities.Post", "Post")
+                        .WithMany()
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LostAndFound.Entities.AppUser", "ReportedByUser")
+                        .WithMany("ReportPosts")
+                        .HasForeignKey("ReportedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("ReportedByUser");
+                });
+
+            modelBuilder.Entity("LostAndFound.Entities.ReportUser", b =>
+                {
+                    b.HasOne("LostAndFound.Entities.AppUser", "ReportedByUser")
+                        .WithMany("ReportUsers")
+                        .HasForeignKey("ReportedByUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ReportedByUser");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("LostAndFound.Entities.AppRole", null)
@@ -536,13 +676,19 @@ namespace LostAndFound.Migrations
 
             modelBuilder.Entity("LostAndFound.Entities.AppUser", b =>
                 {
-                    b.Navigation("Comments");
+                    b.Navigation("Bans");
 
                     b.Navigation("Items");
 
                     b.Navigation("Photo");
 
                     b.Navigation("Posts");
+
+                    b.Navigation("ReportBugs");
+
+                    b.Navigation("ReportPosts");
+
+                    b.Navigation("ReportUsers");
 
                     b.Navigation("UserRoles");
                 });
@@ -559,8 +705,6 @@ namespace LostAndFound.Migrations
 
             modelBuilder.Entity("LostAndFound.Entities.Post", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("Items");
                 });
 #pragma warning restore 612, 618

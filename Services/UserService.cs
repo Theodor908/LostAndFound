@@ -2,6 +2,7 @@ using System;
 using AutoMapper;
 using LostAndFound.Data;
 using LostAndFound.Entities;
+using LostAndFound.Helpers;
 using LostAndFound.Interfaces;
 using LostAndFound.Models;
 using Microsoft.AspNetCore.Identity;
@@ -30,9 +31,9 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, SignInManager<A
 
     
 
-    public Task<List<UserDTO>?> GetAllUsersAsync()
+    public async Task<MemberListDTO> GetAllUsersAsync(UserFilterParams userFilterParams)
     {
-        throw new NotImplementedException();
+        
     }
 
     public Task<UserDTO?> GetUserByEmailAsync(string email)
@@ -81,6 +82,8 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, SignInManager<A
             return false;
         }
 
+        mapper.Map(memberDto, user);
+
         if(memberDto.Photo != null)
         {
             // delete the current photo if it exists
@@ -100,10 +103,14 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, SignInManager<A
             {
                 return false;
             }
+            user.Photo = new Photo
+            {
+                Url = uploadResult.Url.ToString(),
+                PublicId = uploadResult.PublicId.ToString()
+            };
 
         }
 
-        mapper.Map(memberDto, user);
         unitOfWork.UserRepository.UpdateUser(user);
         var result = await unitOfWork.Complete();
         if (!result)
@@ -123,5 +130,26 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, SignInManager<A
             return false;
         }
         return true;
+    }
+
+    public async Task<int> GetUserCountAsync()
+    {
+        return await unitOfWork.UserRepository.GetUserCountAsync();
+    }
+
+    public async Task<int> GetUserReportCountAsync()
+    {
+        return await unitOfWork.UserRepository.GetUserReportCountAsync();
+    }
+
+    public async Task<List<string>> GetUserRolesByIdAsync(int userId)
+    {
+        var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            return new List<string>();
+        }
+        var roles = await unitOfWork.UserRepository.GetUserRolesByIdAsync(userId);
+        return roles;
     }
 }

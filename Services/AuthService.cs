@@ -1,5 +1,6 @@
 using System;
 using AutoMapper;
+using CloudinaryDotNet.Actions;
 using LostAndFound.Entities;
 using LostAndFound.Interfaces;
 using LostAndFound.Models;
@@ -11,7 +12,7 @@ namespace LostAndFound.Services;
 public class AuthService(IUnitOfWork unitOfWork, SignInManager<AppUser> signInManager) : IAuthService
 {
 
-    public async Task<(bool Succeeded, Dictionary<string, string>? Errors, AppUser? User)> RegisterAsync(RegisterDTO registerDTO)
+    public async Task<(bool Succeeded, Dictionary<string, string>? Errors, AppUser? User)> RegisterAsync(RegisterDTO registerDTO, bool skipSignIn = false)
     {
 
         var existingUser = await unitOfWork.UserRepository.GetUserByUsernameAsync(registerDTO.Username);
@@ -25,6 +26,8 @@ public class AuthService(IUnitOfWork unitOfWork, SignInManager<AppUser> signInMa
         {
             return (false, new Dictionary<string, string> { { "Email", "Email already in use." } }, null);
         }
+
+        
 
         var user = new AppUser
         {
@@ -40,7 +43,10 @@ public class AuthService(IUnitOfWork unitOfWork, SignInManager<AppUser> signInMa
         if (result.Succeeded)
         {
             await unitOfWork.Complete();
-            await signInManager.SignInAsync(user, registerDTO.RememberMe);
+            if(!skipSignIn)
+            {
+                await signInManager.SignInAsync(user, registerDTO.RememberMe);
+            }
             return (true, null, user);
         }
 

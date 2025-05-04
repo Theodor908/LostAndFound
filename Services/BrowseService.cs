@@ -46,7 +46,7 @@ public class BrowseService(IUnitOfWork unitOfWork, IMapper mapper) : IBrowseServ
             DateRange = dateRange,
             SearchTerm = searchTerm,
             PageNumber = pageNumber,
-            PageSize = 12 
+            PageSize = 12
         };
 
         var pagedItems = await GetFilteredItemsAsync(filterParams);

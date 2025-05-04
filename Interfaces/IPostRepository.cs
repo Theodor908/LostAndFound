@@ -11,8 +11,10 @@ public interface IPostRepository
     Task<List<Post>?> GetAllPostsAsync();
     Task<List<Post>> GetPostsByUserIdAsync(int userId);
     Task<Post?> GetPostWithItemsAndCommentsByIdAsync(int id);
-    Task<PagedList<Post>> GetPostsAsync(PostFilterParams filterParams);
+    Task<PagedList<Post>> GetPostsAsync(int pageNumber, int pageSize = 10, string? search = null);
     void AddPost(Post post);
     void UpdatePost(Post post);
     Task<bool> DeletePostAsync(int id);
+    Task<int> GetPostCountAsync();
+    Task<int> GetPostReportCountAsync();
 }

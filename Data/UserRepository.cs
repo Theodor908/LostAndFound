@@ -1,5 +1,6 @@
 using System;
 using LostAndFound.Entities;
+using LostAndFound.Helpers;
 using LostAndFound.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +13,9 @@ public class UserRepository(DataContext dataContext, IPasswordHasher<AppUser> pa
     public async Task<AppUser?> GetUserByIdAsync(int id)
     {
         return await dataContext.Users
+            .Include(u => u.Photo)
             .Include(u => u.Posts)
-            .Include(u => u.Items).ThenInclude(i => i.Photos)
+            .Include(u => u.Items)
             .Include(u => u.UserRoles)
             .ThenInclude(ur => ur.Role)
             .FirstOrDefaultAsync(u => u.Id == id);
@@ -115,7 +117,7 @@ public class UserRepository(DataContext dataContext, IPasswordHasher<AppUser> pa
         if (user == null) throw new ArgumentNullException(nameof(user));
         if (string.IsNullOrEmpty(password)) throw new ArgumentNullException(nameof(password));
 
-        return passwordHasher.VerifyHashedPassword(user, user.PasswordHash, password) == PasswordVerificationResult.Success;
+        return passwordHasher.VerifyHashedPassword(user, user.PasswordHash!, password) == PasswordVerificationResult.Success;
     }
 
     public void ThrowIfDisposed()
@@ -133,5 +135,69 @@ public class UserRepository(DataContext dataContext, IPasswordHasher<AppUser> pa
             dataContext.Dispose();
             _disposed = true;
         }
+    }
+
+    public async Task<int> GetUserCountAsync()
+    {
+        return await dataContext.Users.CountAsync();
+    }
+
+    public async Task<int> GetUserReportCountAsync()
+    {
+        return await dataContext.ReportUsers.CountAsync();
+    }
+
+    public async Task<PagedList<AppUser>> GetAllUsersAsync(UserFilterParams userFilterParams) 
+    {
+        var query = dataContext.Users.AsQueryable();
+
+        if (!string.IsNullOrEmpty(userFilterParams.SearchTerm))
+        {
+            query = query.Where(u => u.UserName!.Contains(userFilterParams.SearchTerm) || u.Email!.Contains(userFilterParams.SearchTerm));
+        }
+
+        var totalCount = await query.CountAsync();
+
+        if (!string.IsNullOrEmpty(userFilterParams.SortBy))
+        {
+            query = userFilterParams.SortBy.ToLower() switch
+            {
+                "email" => query.OrderBy(u => u.Email),
+                _ => query.OrderBy(u => u.UserName)
+            };
+        }
+        else
+        {
+            query = query.OrderByDescending(u => u.UserName);
+        }
+
+        var users = await query
+            .Skip((userFilterParams.PageNumber - 1) * userFilterParams.PageSize)
+            .Take(userFilterParams.PageSize)
+            .ToListAsync();
+
+        var totalPages = (int)Math.Ceiling(totalCount / (double)userFilterParams.PageSize);
+        
+        return new PagedList<AppUser>
+        {
+            Items = users,
+            TotalCount = totalCount,
+            PageSize = userFilterParams.PageSize,
+            CurrentPage = userFilterParams.PageNumber,
+            TotalPages = totalPages
+        };
+    }
+
+    public async Task<List<string>> GetUserRolesByIdAsync(int userId)
+    {
+        var user = await dataContext.Users
+            .Include(u => u.UserRoles)
+            .ThenInclude(ur => ur.Role)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null) return new List<string>();
+
+        var roles = user.UserRoles.Select(ur => ur.Role.Name).ToList();
+        return roles!;
     }
 }

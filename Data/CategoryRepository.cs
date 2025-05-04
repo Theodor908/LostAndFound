@@ -7,14 +7,27 @@ namespace LostAndFound.Data;
 
 public class CategoryRepository(DataContext dataContext) : ICategoryRepository
 {
-    public void AddCategoryAsync(Category category)
+    public void CreateCategory(Category category)
     {
         dataContext.Categories.Add(category);
     }
 
-    public void DeleteCategoryAsync(Category category)
+    public void DeleteCategory(Category category)
     {
         dataContext.Categories.Remove(category);
+    }
+
+    public async Task DeleteCategory(int categoryId)
+    {
+        var category = await dataContext.Categories.FindAsync(categoryId);
+        if (category != null)
+        {
+            dataContext.Categories.Remove(category);
+        }
+        else
+        {
+            throw new Exception($"Category with ID {categoryId} not found.");
+        }
     }
 
     public async Task<List<Category>?> GetAllCategoriesAsync()
@@ -36,8 +49,13 @@ public class CategoryRepository(DataContext dataContext) : ICategoryRepository
             .FirstOrDefaultAsync(c => c.Name == name);
     }
 
-    public void UpdateCategoryAsync(Category category)
+    public void UpdateCategory(Category category)
     {
         dataContext.Entry(category).State = EntityState.Modified;
+    }
+
+    public async Task<int> GetCategoryCountAsync()
+    {
+        return await dataContext.Categories.CountAsync();
     }
 }

@@ -134,7 +134,7 @@
                         <button type="button" id="addItem" class="btn btn-outline-primary mb-4">+ Add Another Item</button>
 
                         <div class="d-flex justify-content-end gap-2">
-                            <a asp-controller="Post" asp-action="PostCreate" class="btn btn-secondary">Cancel</a>
+                            <a asp-controller="User" asp-action="Profile" asp-route-id="@Model.AppUserId" class="btn btn-secondary">Cancel</a>
                             <button type="submit" class="btn btn-primary">Create Post</button>
                         </div>
                     </fieldset>
@@ -571,7 +571,7 @@
         }
     </script>
     
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBDw8xyqq1nqw1FMGVcv7xOrELbkkjPzo&libraries=places&callback=initMap&lang=en">
-    </script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBDw8xyqq1nqw1FMGVcv7xOrELbkkjPzo&libraries=places&callback=initMap&language=en">
+</script>
 }

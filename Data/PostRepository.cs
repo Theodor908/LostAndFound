@@ -29,9 +29,6 @@ public class PostRepository(DataContext dataContext) : IPostRepository
                 .ThenInclude(i => i.Category)
             .Include(p => p.Items)
                 .ThenInclude(i => i.Photos)
-            .Include(p => p.Comments)
-                .ThenInclude(c => c.AppUser)
-                    .ThenInclude(u => u.Photo)
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
@@ -51,13 +48,11 @@ public class PostRepository(DataContext dataContext) : IPostRepository
             .Include(p => p.Items)
             .AsQueryable();
 
-        // Apply active filter
         if (filterParams.IsActive.HasValue)
         {
             query = query.Where(p => p.IsActive == filterParams.IsActive.Value);
         }
 
-        // Apply search term
         if (!string.IsNullOrEmpty(filterParams.SearchTerm))
         {
             var searchTerm = filterParams.SearchTerm.ToLower();
@@ -66,10 +61,8 @@ public class PostRepository(DataContext dataContext) : IPostRepository
                 p.Description.ToLower().Contains(searchTerm));
         }
 
-        // Calculate total count before pagination
         var totalCount = await query.CountAsync();
 
-        // Apply sorting
         if (!string.IsNullOrEmpty(filterParams.SortBy))
         {
             query = filterParams.SortBy.ToLower() switch
@@ -80,9 +73,6 @@ public class PostRepository(DataContext dataContext) : IPostRepository
                 "title" => filterParams.SortDescending
                     ? query.OrderByDescending(p => p.Title)
                     : query.OrderBy(p => p.Title),
-                "comments" => filterParams.SortDescending
-                    ? query.OrderByDescending(p => p.Comments.Count)
-                    : query.OrderBy(p => p.Comments.Count),
                 "items" => filterParams.SortDescending
                     ? query.OrderByDescending(p => p.Items.Count)
                     : query.OrderBy(p => p.Items.Count),
@@ -93,17 +83,14 @@ public class PostRepository(DataContext dataContext) : IPostRepository
         }
         else
         {
-            // Default sort by newest
             query = query.OrderByDescending(p => p.CreatedAt);
         }
 
-        // Apply pagination
         var posts = await query
             .Skip((filterParams.PageNumber - 1) * filterParams.PageSize)
             .Take(filterParams.PageSize)
             .ToListAsync();
 
-        // Create paged result
         var totalPages = (int)Math.Ceiling(totalCount / (double)filterParams.PageSize);
         return new PagedList<Post>
         {
@@ -141,5 +128,15 @@ public class PostRepository(DataContext dataContext) : IPostRepository
             .Select(p => p.Title);
         return query.FirstOrDefaultAsync();
         
+    }
+
+    public async Task<int> GetPostCountAsync()
+    {
+        return await dataContext.Posts.CountAsync();
+    }
+
+    public async Task<int> GetPostReportCountAsync()
+    {
+        return await dataContext.ReportPosts.CountAsync();
     }
 }

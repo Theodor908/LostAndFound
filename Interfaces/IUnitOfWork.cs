@@ -9,6 +9,10 @@ public interface IUnitOfWork
     IItemRepository ItemRepository { get; }
     IUserRepository UserRepository { get; }
     IPhotoRepository PhotoRepository { get; }
+    IRoleRepository RoleRepository { get; }
+    IReportRepository ReportRepository { get; }
+    IBugRepository BugRepository { get; }
+    IBanRepository BanRepository { get; }
     Task<bool> Complete();
     bool HasChanges();
 }

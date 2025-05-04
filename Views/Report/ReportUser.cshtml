@@ -1,0 +1,69 @@
+﻿@model LostAndFound.Models.ReportUserDTO
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Report User";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="bg-light rounded-4 shadow-sm p-4 mb-4">
+                <h1 class="h3 mb-3">Report User</h1>
+                
+                @if (Model.ReportedUser != null)
+                {
+                    <div class="d-flex align-items-center mb-4">
+                        @if (Model.ReportedUser.Photo != null)
+                        {
+                            <img src="@Model.ReportedUser.Photo.Url" alt="Profile Picture" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <img src="~/img/Portrait_Placeholder.png" alt="Profile Picture" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                        }
+                        <div>
+                            <h5 class="mb-0">@Model.ReportedUser.Username</h5>
+                            <p class="text-muted mb-0"><small>@Model.ReportedUser.Email</small></p>
+                        </div>
+                    </div>
+                }
+                
+                <form asp-controller="Report" asp-action="ReportUser" method="post">
+                    <input type="hidden" asp-for="ReportedUserId" />
+                    <input type="hidden" asp-for="ReportedByUserId" />
+                    
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label"></label>
+                        <input asp-for="Title" class="form-control" placeholder="Reason for report" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="5" 
+                            placeholder="Please provide specific details about the user's behavior or actions that violate our community guidelines"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="javascript:history.back()" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>Go Back
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-flag me-1"></i>Submit Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}   

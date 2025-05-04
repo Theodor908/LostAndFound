@@ -12,6 +12,11 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
     public DbSet<Photo> Photos { get; set; } = null!;
     public DbSet<Item> Items { get; set; } = null!;
     public DbSet<Post> Posts { get; set; } = null!;
+    public DbSet<AppUserRole> AppUserRole { get; set; } = null!;
+    public DbSet<ReportPost> ReportPosts { get; set; } = null!;
+    public DbSet<ReportUser> ReportUsers { get; set; } = null!;
+    public DbSet<ReportBug> ReportBugs { get; set; } = null!;
+    public DbSet<Ban> Bans { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder builder)
     {
 
@@ -56,6 +61,26 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
             .HasMany(i => i.Photos)
             .WithOne(p => p.Item)
             .HasForeignKey(p => p.ItemId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<Ban>()
+            .HasOne(b => b.AppUser)
+            .WithMany(u => u.Bans)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<ReportPost>()
+            .HasOne(rp => rp.ReportedByUser)
+            .WithMany(u => u.ReportPosts)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<ReportBug>()
+            .HasOne(rb => rb.AppUser)
+            .WithMany(u => u.ReportBugs)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Entity<ReportUser>()
+            .HasOne(ru => ru.ReportedByUser)
+            .WithMany(u => u.ReportUsers)
             .OnDelete(DeleteBehavior.Cascade);
 
     }

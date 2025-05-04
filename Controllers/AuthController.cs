@@ -1,14 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using LostAndFound.Models;
-using AutoMapper;
 using LostAndFound.Interfaces;
 
 namespace LostAndFound.Controllers;
 
-public class AccountController(IAuthService authService, IUserService userService) : Controller
+public class AuthController(IAuthService authService) : Controller
 {
 
-         [HttpGet]
         public IActionResult Login()
         {
             return View();
@@ -33,9 +31,6 @@ public class AccountController(IAuthService authService, IUserService userServic
             return View(model);
         }
 
-
-
-        [HttpGet]
         public IActionResult Register()
         {
             return View();
@@ -56,7 +51,7 @@ public class AccountController(IAuthService authService, IUserService userServic
             if (succeeded)
             {
                 // The service has already saved changes
-                return RedirectToAction("Profile", "Account", new { id = user!.Id });
+                return RedirectToAction("Profile", "User", new { id = user!.Id });
             }
 
             foreach (var error in errors!)
@@ -71,6 +66,12 @@ public class AccountController(IAuthService authService, IUserService userServic
         {
             await authService.LogoutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult AccessDenied(string returnUrl)
+        {
+            ViewData["ReturnUrl"] = returnUrl;
+            return View();
         }
 
 }

@@ -33,6 +33,15 @@ public class AutoMapperProfiles: Profile
         CreateMap<Category, CategoryDTO>();
         CreateMap<CategoryDTO, Category>();
 
+        CreateMap<ReportPost, ReportPostDTO>();
+        CreateMap<ReportPostDTO, ReportPost>();
+
+        CreateMap<ReportUser, ReportUserDTO>();
+        CreateMap<ReportUserDTO, ReportUser>();
+        
+        CreateMap<ReportBug, ReportBugDTO>();
+        CreateMap<ReportBugDTO, ReportBug>();
+
         CreateMap<MemberDTO, AppUser>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Username))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
@@ -40,8 +49,7 @@ public class AutoMapperProfiles: Profile
             .ForMember(dest => dest.Country, opt => opt.MapFrom(src => src.Country))
             .ForMember(dest => dest.Photo, opt => opt.MapFrom(src => src.PhotoDTO))
             .ForMember(dest => dest.Items, opt => opt.Ignore())
-            .ForMember(dest => dest.Posts, opt => opt.Ignore())
-            .ForMember(dest => dest.Comments, opt => opt.Ignore());
+            .ForMember(dest => dest.Posts, opt => opt.Ignore());
         CreateMap<AppUser, MemberDTO>()
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.UserName))
             .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
@@ -50,8 +58,31 @@ public class AutoMapperProfiles: Profile
             .ForMember(dest => dest.PhotoDTO, opt => opt.MapFrom(src => src.Photo))
             .ForMember(dest => dest.Photo, opt => opt.Ignore());
 
+        CreateMap<AppRole, RoleDTO>();
+        CreateMap<RoleDTO, AppRole>();
+
         CreateMap<PagedList<Item>, PagedList<ItemDTO>>()
             .ConvertUsing<PagedListConverter<Item, ItemDTO>>();
+
+        CreateMap<PagedList<AppUser>, PagedList<MemberDTO>>()
+            .ConvertUsing<PagedListConverter<AppUser, MemberDTO>>();
+
+        CreateMap<PagedList<Post>, PagedList<PostDTO>>()
+            .ConvertUsing<PagedListConverter<Post, PostDTO>>();
+
+        CreateMap<PagedList<ReportPost>, PagedList<ReportPostDTO>>()
+            .ConvertUsing<PagedListConverter<ReportPost, ReportPostDTO>>();
+
+        CreateMap<PagedList<ReportUser>, PagedList<ReportUserDTO>>()
+            .ConvertUsing<PagedListConverter<ReportUser, ReportUserDTO>>();
+
+        CreateMap<PagedList<ReportBug>, PagedList<ReportBugDTO>>()
+            .ConvertUsing<PagedListConverter<ReportBug, ReportBugDTO>>();
+
+        CreateMap<PagedList<Category>, PagedList<CategoryDTO>>()
+            .ConvertUsing<PagedListConverter<Category, CategoryDTO>>();
+
+        
 
     }
 }

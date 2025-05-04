@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using AutoMapper;
 using LostAndFound.Entities;
 using LostAndFound.Interfaces;
@@ -6,6 +7,21 @@ namespace LostAndFound.Services
 {
     public class CategoryService(IUnitOfWork unitOfWork, IMapper mapper) : ICategoryService
     {
+        public void CreateCategory(string categoryName)
+        {
+            Category category = new()
+            {
+                Name = categoryName
+            };
+
+            unitOfWork.CategoryRepository.CreateCategory(category);
+        }
+
+        public async Task DeleteCategory(int categoryId)
+        {
+            await unitOfWork.CategoryRepository.DeleteCategory(categoryId);
+        }
+
         public async Task<List<CategoryDTO>?> GetAllCategoriesAsync()
         {
             List<Category>? categories = await unitOfWork.CategoryRepository.GetAllCategoriesAsync();
@@ -30,6 +46,24 @@ namespace LostAndFound.Services
                 return string.Empty;
             }
             return category.Name;
+        }
+
+        public async Task<bool> UpdateCategoryAsync(int categoryId, string newCategoryName)
+        {
+            Category? category = await unitOfWork.CategoryRepository.GetCategoryByIdAsync(categoryId);
+            if (category == null)
+            {
+                return false;
+            }
+
+            category.Name = newCategoryName;
+            unitOfWork.CategoryRepository.UpdateCategory(category);
+            return true;
+        }
+
+        public async Task<int> GetCategoryCountAsync()
+        {
+            return await unitOfWork.CategoryRepository.GetCategoryCountAsync();
         }
     }
 }

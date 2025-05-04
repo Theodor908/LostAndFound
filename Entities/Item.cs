@@ -13,6 +13,7 @@ public class Item
     public required string Location { get; set; } = string.Empty;
     public required string SpecificLocation { get; set; } = string.Empty;
     public DateTime PostedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? FoundAt { get; set; } = null;
     public DateTime? LostAt { get; set; } = null;
     public bool IsFound { get; set; } = false;

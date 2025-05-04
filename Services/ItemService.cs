@@ -28,6 +28,11 @@ public class ItemService(IMapper mapper, IUnitOfWork unitOfWork) : IItemService
         throw new NotImplementedException();
     }
 
+    public async Task<int> GetItemCountAsync()
+    {
+        return await unitOfWork.ItemRepository.GetItemCountAsync();
+    }
+
     public async Task<ItemDTO?> GetItemDetailsByIdAsync(int id)
     {
         var item = await unitOfWork.ItemRepository.GetItemByIdAsync(id);

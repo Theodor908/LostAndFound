@@ -29,4 +29,5 @@ public interface IItemRepository
     
     Task<List<string>> GetDistinctCountriesAsync();
     Task<List<string>> GetDistinctCitiesByCountryAsync(string country);
+    Task<int> GetItemCountAsync();
 }

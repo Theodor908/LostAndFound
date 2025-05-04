@@ -201,7 +201,7 @@
                         <button type="button" id="addItem" class="btn btn-outline-primary mb-4">+ Add Another Item</button>
 
                         <div class="d-flex justify-content-end gap-2">
-                            <a asp-controller="Post" asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+                            <a asp-controller="Post" asp-action="PostDetails" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
                             <button type="submit" class="btn btn-primary">Update Post</button>
                         </div>
                     </fieldset>
@@ -248,7 +248,6 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-      
         let itemIndex = @Model.Items.Count;
         let postType = '@Model.PostType'; 
         let currentItemIndex = 0;

@@ -11,18 +11,18 @@ namespace LostAndFound.Controllers;
 public class UserController(IUserService userService) : Controller
 {
 
-        public async Task<IActionResult> Profile(int id)
+    public async Task<IActionResult> Profile(int id)
+    {
+        var user = await userService.GetUserByIdAsync(id);
+        if (user == null)
         {
-            var user = await userService.GetUserByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            var model = user;
-            return View(model);
+            return NotFound();
         }
-    [HttpGet]
+
+        var model = user;
+        return View(model);
+    }
+
     public async Task<IActionResult> EditProfile(int id)
     {
         var user = await userService.GetMemberByIdAsync(id);

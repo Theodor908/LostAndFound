@@ -12,7 +12,6 @@ public class Post
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
     public List<Item> Items { get; set; } = [];
-    public List<Comment> Comments { get; set; } = [];
     public bool IsActive { get; set; } = true;
 
     public int AppUserId { get; set; }

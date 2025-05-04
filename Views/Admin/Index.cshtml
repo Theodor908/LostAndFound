@@ -1,0 +1,92 @@
+﻿@model LostAndFound.Models.AdminDTO
+@{
+    ViewData["Title"] = "Admin Dashboard"; 
+    Layout = "~/Views/Shared/_Layout.cshtml";  
+}
+
+<div class="container mt-5">
+    <h1 class="text-center">Admin Dashboard</h1>
+    <div class="row mt-4">
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text">@Model.CountUsers</p>
+                    <a href="@Url.Action("UserList", "Admin")" class="btn btn-primary">View Users</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Roles</h5>
+                    <p class="card-text">@Model.CountRoles</p>
+                    <a href="@Url.Action("RoleList", "Admin")" class="btn btn-primary">View Roles</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Posts</h5>
+                    <p class="card-text">@Model.CountPosts</p>
+                    <a href="@Url.Action("PostList", "Admin")" class="btn btn-primary">View Posts</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Categories</h5>
+                    <p class="card-text">@Model.CountCategories</p>
+                    <a href="@Url.Action("CategoriesList", "Admin")" class="btn btn-primary">View Categories</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Items</h5>
+                    <p class="card-text">@Model.CountItems</p>
+                    <a href="@Url.Action("Index", "Browse")" class="btn btn-primary">View Items</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Bans</h5>
+                    <p class="card-text">@Model.CountBans</p>
+                    <a href="@Url.Action("Bans", "Admin")" class="btn btn-primary">View Bans</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Bug Reports</h5>
+                    <p class="card-text">@Model.CountBugReports</p>
+                    <a href="@Url.Action("BugReports", "Admin")" class="btn btn-primary">View Bug Reports</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Posts Reported</h5>
+                    <p class="card-text">@Model.CountPostReports</p>
+                    <a href="@Url.Action("PostsReported", "Admin")" class="btn btn-primary">View Reported Posts</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users Reported</h5>
+                    <p class="card-text">@Model.CountUserReports</p>
+                    <a href="@Url.Action("UsersReported", "Admin")" class="btn btn-primary">View Reported Users</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
