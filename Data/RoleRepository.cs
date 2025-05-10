@@ -35,8 +35,15 @@ public class RoleRepository(DataContext dataContext) : IRoleRepository
 
     public async Task<PagedList<AppRole>> GetAllRolesAsync(RoleFilterParams filterParams)
     {
-        var roles = await dataContext.Roles
-            .Where(r => r.Name == filterParams.SearchTerm || string.IsNullOrEmpty(filterParams.SearchTerm))
+        // use like for search term
+        var query = dataContext.Roles.AsQueryable();
+        if (!string.IsNullOrEmpty(filterParams.SearchTerm))
+        {
+            var searchTerm = filterParams.SearchTerm.ToLower();
+            query = query.Where(r => r.Name!.ToLower().Contains(searchTerm.ToLower()));
+        }
+        query = query.OrderBy(r => r.Name);
+        var roles = await query
             .Skip((filterParams.PageNumber - 1) * filterParams.PageSize)
             .Take(filterParams.PageSize)
             .ToListAsync();
@@ -160,5 +167,19 @@ public class RoleRepository(DataContext dataContext) : IRoleRepository
     public async Task<int> GetRoleCountAsync()
     {
         return await dataContext.Roles.CountAsync();
+    }
+
+    public async Task<List<AppUser>?> GetUsersInRoleByIdAsync(int roleId)
+    {
+        return await dataContext.UserRoles
+            .Include(ur => ur.User)
+            .Where(ur => ur.RoleId == roleId)
+            .Select(ur => ur.User)
+            .ToListAsync();
+    }
+
+    public async Task<List<AppRole>?> GetAllRolesNoPaginationAsync()
+    {
+        return await dataContext.Roles.ToListAsync();
     }
 }

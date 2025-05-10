@@ -15,9 +15,66 @@ public class PostRepository(DataContext dataContext) : IPostRepository
             .FirstOrDefaultAsync(p => p.Id == id);
     }
 
-    public async Task<List<Post>?> GetAllPostsAsync()
+    public async Task<PagedList<Post>> GetAllPostsAsync(PostFilterParams postFilterParams)
     {
-        return await dataContext.Posts.ToListAsync();
+        var query = dataContext.Posts
+            .Include(p => p.AppUser)
+            .AsQueryable();
+
+        if (postFilterParams.IsActive.HasValue)
+        {
+            query = query.Where(p => p.IsActive == postFilterParams.IsActive.Value);
+        }
+
+        if (!string.IsNullOrEmpty(postFilterParams.SearchTerm))
+        {
+            var searchTerm = postFilterParams.SearchTerm.ToLower();
+            query = query.Where(p =>
+                p.Title.ToLower().Contains(searchTerm) ||
+                p.Description.ToLower().Contains(searchTerm));
+        }
+
+        if (!string.IsNullOrEmpty(postFilterParams.PostType))
+        {
+            query = query.Where(p => postFilterParams.PostType! == p.PostType);
+        }
+
+        var totalCount = await query.CountAsync();
+
+        if (!string.IsNullOrEmpty(postFilterParams.SortBy))
+        {
+            query = postFilterParams.SortBy.ToLower() switch
+            {
+                "date" => postFilterParams.SortDescending
+                    ? query.OrderByDescending(p => p.CreatedAt)
+                    : query.OrderBy(p => p.CreatedAt),
+                "title" => postFilterParams.SortDescending
+                    ? query.OrderByDescending(p => p.Title)
+                    : query.OrderBy(p => p.Title),
+                _ => postFilterParams.SortDescending
+                    ? query.OrderByDescending(p => p.CreatedAt)
+                    : query.OrderBy(p => p.CreatedAt)
+            };
+        }
+        else
+        {
+            query = query.OrderByDescending(p => p.CreatedAt);
+        }
+
+        var posts = await query
+            .Skip((postFilterParams.PageNumber - 1) * postFilterParams.PageSize)
+            .Take(postFilterParams.PageSize)
+            .ToListAsync();
+
+        var totalPages = (int)Math.Ceiling(totalCount / (double)postFilterParams.PageSize);
+        return new PagedList<Post>
+        {
+            Items = posts,
+            TotalCount = totalCount,
+            PageSize = postFilterParams.PageSize,
+            CurrentPage = postFilterParams.PageNumber,
+            TotalPages = totalPages
+        };
     }
 
     public async Task<Post?> GetPostWithItemsAndCommentsByIdAsync(int id)

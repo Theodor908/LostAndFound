@@ -9,89 +9,83 @@
 <div class="container py-4">
     <div class="row">
         <div class="col-lg-8">
-
-            <div class="bg-light rounded-4 shadow-sm p-4 mb-4">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <h1 class="h3 mb-0">@Model?.Post?.Title</h1> 
-                    @{
-                        Boolean isAdmin = roleService.GetUserRoleNameByIdAsync(User.GetUserId()).Result == "Admin";
-                    }
-                    @if (User.GetUserId() == Model?.Post?.AppUserId || isAdmin)
-                    {
-                        <a asp-controller="Post" asp-action="PostUpdate" asp-route-id="@Model?.Post.Id" method="get" 
-                        class="btn btn-outline-primary btn-sm">
-                            <i class="fas fa-edit me-1"></i> Update Post
-                        </a>
-                    }
-                </div>
-                <p class="lead">@Model?.Post?.Description</p>
-            </div>
-
-
-
-            <div class="bg-light rounded-4 shadow-sm p-4 mb-4">
-                <h2 class="mb-4">Items</h2>
-
-                @if (Model?.Post?.Items != null && Model.Post.Items.Any())
-                {
-                    <div class="row g-3">
-                        @foreach (var item in Model.Post.Items)
+                <div class="bg-light rounded-4 shadow-sm p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h1 class="h3 mb-0">@Model?.Post?.Title</h1> 
+                        @{
+                            Boolean isAdmin = roleService.GetUserRoleNameByIdAsync(User.GetUserId()).Result == "Admin";
+                        }
+                        @if (User.GetUserId() == Model?.Post?.AppUserId || isAdmin)
                         {
-                            <div class="col-12">
-                                <div class="card h-100 shadow-sm">
-                                    @if (item.PhotosDTO != null && item.PhotosDTO.Any())
-                                    {
-                                        @foreach (var photo in item.PhotosDTO)
+                            <a asp-controller="Post" asp-action="PostUpdate" asp-route-id="@Model?.Post.Id" method="get" 
+                            class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-edit me-1"></i> Update Post
+                            </a>
+                        }
+                    </div>
+                        <a asp-controller="Report" asp-action="ReportPost" asp-route-id="@Model?.Post.Id" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-flag me-1"></i> Report Post
+                        </a>
+                    <p class="mt-4">Post is @(Model?.Post?.IsActive == true ? "active" : "inactive")</p>
+                    <p class="lead mt-4">@Model?.Post?.Description</p>
+                </div>
+
+
+                <div class="@(Model?.Post?.IsActive == false ? "opacity-50 pe-none" : "")">
+                <div class="bg-light rounded-4 shadow-sm p-4 mb-4">
+                    <h2 class="mb-4">Items</h2>
+
+                    @if (Model?.Post?.Items != null && Model.Post.Items.Any())
+                    {
+                        <div class="row g-3">
+                            @foreach (var item in Model.Post.Items)
+                            {
+                                <div class="col-12">
+                                    <div class="card h-100 shadow-sm">
+                                        @if (item.PhotosDTO != null && item.PhotosDTO.Any())
                                         {
-                                            <img src="@photo.Url" class="card-img-top" alt="@item.Name" />
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <div class="card-img-top bg-secondary text-white text-center py-5">
-                                            <img src="~/img/Item_Placeholder.png" alt="Placeholder" class="img-fluid" />
-                                        </div>
-                                    }
-                                    @{
-                                        if(item.IsClaimed == true)
-                                        {
-                                            <div class="bg-success position-absolute top-0 end-0 m-2 claimed-badge">Claimed</div>
-                                        }
-                                        else if(item.IsFound == true)
-                                        {
-                                            <div class="badge bg-success position-absolute top-0 end-0 m-2">Found</div>
+                                            @foreach (var photo in item.PhotosDTO)
+                                            {
+                                                <img src="@photo.Url" class="card-img-top" alt="@item.Name" />
+                                            }
                                         }
                                         else
                                         {
-                                            <div class="badge bg-danger position-absolute top-0 end-0 m-2">Lost</div>
+                                            <div class="card-img-top bg-secondary text-white text-center py-5">
+                                                <img src="~/img/Item_Placeholder.png" alt="Placeholder" class="img-fluid" />
+                                            </div>
                                         }
-                                    }
-                                    <div class="card-body">
-                                        <h5 class="card-title">@item.Name</h5>
-                                        <p class="card-text">@item.Description</p>
+                                        @{
+                                            if(item.IsClaimed == true)
+                                            {
+                                                <div class="bg-success position-absolute top-0 end-0 m-2 claimed-badge">Claimed</div>
+                                            }
+                                            else if(item.IsFound == true)
+                                            {
+                                                <div class="badge bg-success position-absolute top-0 end-0 m-2">Found</div>
+                                            }
+                                            else
+                                            {
+                                                <div class="badge bg-danger position-absolute top-0 end-0 m-2">Lost</div>
+                                            }
+                                        }
+                                        <div class="card-body">
+                                            <h5 class="card-title">@item.Name</h5>
+                                            <p class="card-text">@item.Description</p>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        }
-                    </div>
-                }
-                else
-                {
-                    <div class="alert alert-info">
-                        No items to display.
-                    </div>
-                }
-            </div>
-
-            <div class="bg-light rounded-4 shadow-sm p-4">
-                <h2 class="mb-4">Comments</h2>
-
-                @* TODO: Loop through comments once you have them *@
-                <div class="alert alert-info">
-                    No comments yet. Be the first to comment!
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            No items to display.
+                        </div>
+                    }
                 </div>
             </div>
-
         </div>
 
         <div class="col-lg-4">
@@ -101,6 +95,11 @@
                 <p><strong>Username:</strong> @Model?.User?.Username</p>
                 <p><strong>Email:</strong> @Model?.User?.Email</p>
                 <p><strong>Location:</strong> @Model?.User?.City, @Model?.User?.Country</p>
+                <div class="d-flex align-items-center">
+                    <a asp-controller="User" asp-action="Profile" asp-route-id="@Model?.User.Id" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-user me-1"></i> View Profile
+                    </a>
+                </div>
 
                 @if (!string.IsNullOrEmpty(Model?.User?.Email))
                 {
@@ -116,7 +115,7 @@
                 <p><strong>Created At:</strong> @Model?.Post?.CreatedAt.ToString("g")</p>
                 <p><strong>Updated At:</strong> @Model?.Post?.UpdatedAt.ToString("g")</p>
             </div>
-
+        </div>
         </div>
     </div>
 </div>

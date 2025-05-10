@@ -1,0 +1,30 @@
+﻿@model LostAndFound.Models.RoleDTO
+@{
+    ViewData["Title"] = "Edit Role";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <h1>@ViewData["Title"]</h1>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h2>Edit Role</h2>
+        </div>
+    </div>
+
+    <form asp-controller="Role" asp-action="EditRole" method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">Role Name</label>
+            <input asp-for="Name" class="form-control" required />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Update Role</button>
+    </form>
+    <div class="row mt-4">
+        <div class="col-12">
+            <a asp-controller="Role" asp-action="RoleDetails" asp-route-id="@Model.Id" class="btn btn-secondary">Back to Role Details</a>
+        </div>
+    </div>
+</div>

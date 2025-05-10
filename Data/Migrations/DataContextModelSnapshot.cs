@@ -147,13 +147,13 @@ namespace LostAndFound.Migrations
                     b.Property<DateTime>("BannedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<DateTime?>("BannedUntil")
+                        .HasColumnType("TEXT");
+
                     b.Property<bool>("IsPermanent")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Reason")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UnbannedAt")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -328,7 +328,7 @@ namespace LostAndFound.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AppUserId")
+                    b.Property<int?>("AppUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CreatedAt")
@@ -594,13 +594,9 @@ namespace LostAndFound.Migrations
 
             modelBuilder.Entity("LostAndFound.Entities.ReportBug", b =>
                 {
-                    b.HasOne("LostAndFound.Entities.AppUser", "AppUser")
+                    b.HasOne("LostAndFound.Entities.AppUser", null)
                         .WithMany("ReportBugs")
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
+                        .HasForeignKey("AppUserId");
                 });
 
             modelBuilder.Entity("LostAndFound.Entities.ReportPost", b =>

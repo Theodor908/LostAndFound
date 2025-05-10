@@ -1,5 +1,6 @@
 using AutoMapper;
 using LostAndFound.Entities;
+using LostAndFound.Helpers;
 using LostAndFound.Interfaces;
 using LostAndFound.Models;
 
@@ -7,11 +8,18 @@ namespace LostAndFound.Services;
 
 public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMapper mapper) : IPostService
 {
-    public async Task<List<PostDTO>?> GetAllPostsAsync()
+    public async Task<PostListDTO> GetAllPostsAsync(PostFilterParams postFilterParams)
     {
-        List<Post>? posts = await unitOfWork.PostRepository.GetAllPostsAsync();
-        List<PostDTO> postsDTO = mapper.Map<List<PostDTO>>(posts);
-        return postsDTO;
+        var posts = await unitOfWork.PostRepository.GetAllPostsAsync(postFilterParams);
+        var postsDTO = mapper.Map<PagedList<PostDTO>>(posts);
+        PostListDTO postListDTO = new()
+        {
+            SearchTerm = postFilterParams.SearchTerm,
+            PostType = postFilterParams.PostType,
+            IsActive = postFilterParams.IsActive,
+            PostList = postsDTO,
+        };
+        return postListDTO;
     }
 
     public async Task<string> GetPostTitleByIdAsync(int id)
@@ -136,6 +144,7 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
         post.Description = postDto.Description;
         post.UpdatedAt = DateTime.UtcNow;
         post.PostType = postDto.PostType;
+        post.IsActive = postDto.IsActive;
 
         unitOfWork.PostRepository.UpdatePost(post);
         List<Item> deletedItems = [.. post.Items];
@@ -166,6 +175,8 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
                 item.LostAt = itemDto.LostAt;
                 item.IsFound = itemDto.IsFound;
                 item.IsClaimed = itemDto.IsClaimed;  
+                item.Category = await unitOfWork.CategoryRepository.GetCategoryByIdAsync(itemDto.CategoryId);
+                item.CategoryId = itemDto.CategoryId;
                 deletedItems.Remove(item);
                 unitOfWork.ItemRepository.UpdateItemAsync(item);
             }
@@ -185,6 +196,7 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
                     LostAt = itemDto.LostAt,
                     IsFound = itemDto.IsFound,
                     IsClaimed = itemDto.IsClaimed,
+                    Category = await unitOfWork.CategoryRepository.GetCategoryByIdAsync(itemDto.CategoryId),
                     CategoryId = itemDto.CategoryId,
                     AppUserId = user.Id,
                     PostId = post.Id, 
@@ -346,8 +358,31 @@ public class PostService(IUnitOfWork unitOfWork, IPhotoService photoService, IMa
         return await unitOfWork.PostRepository.GetPostCountAsync();
     }
 
-    public async Task<int> GetPostReportCountAsync()
+    public async Task<PostDTO> ReducePostDTOItemListAsync(int itemIndex, int postId)
     {
-        return await unitOfWork.PostRepository.GetPostReportCountAsync();
+        var post = await GetPostDetailsByIdAsync(postId);
+        if (post == null)
+        {
+            return null!;
+        }
+
+        if (itemIndex < 0 || itemIndex >= post.Items.Count)
+        {
+            return post;
+        }
+
+
+        for (int i = itemIndex; i < post.Items.Count - 1; i++)
+        {
+            post.Items[i] = post.Items[i + 1];
+        }
+
+        post.Items.RemoveAt(post.Items.Count - 1);
+        if (post.Items.Count == 0)
+        {
+            post.Items.Add(new ItemDTO());
+        }
+        return post;
+        
     }
 }

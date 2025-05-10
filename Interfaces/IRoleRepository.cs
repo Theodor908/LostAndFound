@@ -10,6 +10,7 @@ public interface IRoleRepository
     Task<AppRole?> GetRoleByNameAsync(string roleName);
     Task<bool> CreateRoleAsync(AppRole role);
     Task<PagedList<AppRole>> GetAllRolesAsync(RoleFilterParams filterParams);
+    Task<List<AppRole>?> GetAllRolesNoPaginationAsync();
     Task<bool> UpdateRoleAsync(AppRole role);
     Task<bool> DeleteRoleAsync(AppRole role);
     Task<AppRole?> GetUserRoleAsync(int userId);
@@ -17,4 +18,6 @@ public interface IRoleRepository
     Task<bool> RemoveRoleFromUser(int userId, string roleName);
     Task<List<AppRole>?> GetUserRolesByIdAsync(int userId);
     Task<int> GetRoleCountAsync();
+    Task<List<AppUser>?> GetUsersInRoleByIdAsync(int roleId);
+    
 }

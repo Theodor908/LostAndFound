@@ -61,6 +61,9 @@ public class AutoMapperProfiles: Profile
         CreateMap<AppRole, RoleDTO>();
         CreateMap<RoleDTO, AppRole>();
 
+        CreateMap<Ban, BanDTO>();
+        CreateMap<BanDTO, Ban>();
+
         CreateMap<PagedList<Item>, PagedList<ItemDTO>>()
             .ConvertUsing<PagedListConverter<Item, ItemDTO>>();
 
@@ -81,6 +84,13 @@ public class AutoMapperProfiles: Profile
 
         CreateMap<PagedList<Category>, PagedList<CategoryDTO>>()
             .ConvertUsing<PagedListConverter<Category, CategoryDTO>>();
+
+        CreateMap<PagedList<AppRole>, PagedList<RoleDTO>>()
+            .ConvertUsing<PagedListConverter<AppRole, RoleDTO>>();
+
+        CreateMap<PagedList<Ban>, PagedList<BanDTO>>()
+            .ConvertUsing<PagedListConverter<Ban, BanDTO>>();
+            
 
         
 

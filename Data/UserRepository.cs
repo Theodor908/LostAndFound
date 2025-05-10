@@ -142,11 +142,6 @@ public class UserRepository(DataContext dataContext, IPasswordHasher<AppUser> pa
         return await dataContext.Users.CountAsync();
     }
 
-    public async Task<int> GetUserReportCountAsync()
-    {
-        return await dataContext.ReportUsers.CountAsync();
-    }
-
     public async Task<PagedList<AppUser>> GetAllUsersAsync(UserFilterParams userFilterParams) 
     {
         var query = dataContext.Users.AsQueryable();
@@ -156,9 +151,13 @@ public class UserRepository(DataContext dataContext, IPasswordHasher<AppUser> pa
             query = query.Where(u => u.UserName!.Contains(userFilterParams.SearchTerm) || u.Email!.Contains(userFilterParams.SearchTerm));
         }
 
-        var totalCount = await query.CountAsync();
 
-        if (!string.IsNullOrEmpty(userFilterParams.SortBy))
+        if (userFilterParams.IsBanned.HasValue)
+        {
+            query = userFilterParams.IsBanned.Value == true ? query.Where(u => u.IsBanned) : query.Where(u => !u.IsBanned);
+        }
+
+        if (!string.IsNullOrEmpty(userFilterParams.SortBy) && userFilterParams.IsAscending.HasValue)
         {
             query = userFilterParams.SortBy.ToLower() switch
             {
@@ -171,6 +170,8 @@ public class UserRepository(DataContext dataContext, IPasswordHasher<AppUser> pa
             query = query.OrderByDescending(u => u.UserName);
         }
 
+        var totalCount = await query.CountAsync();
+        
         var users = await query
             .Skip((userFilterParams.PageNumber - 1) * userFilterParams.PageSize)
             .Take(userFilterParams.PageSize)

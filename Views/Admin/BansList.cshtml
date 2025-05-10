@@ -1,0 +1,59 @@
+﻿@model LostAndFound.Models.BanListDTO
+@{
+    ViewData["Title"] = "Bans List"; 
+    Layout = "~/Views/Shared/_Layout.cshtml";  
+}
+
+<div class="container mt-5">
+    <h1>@ViewData["Title"]</h1>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h2>Bans</h2>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-12">
+                <form asp-controller="Admin" asp-action="BansList">
+                    <div class="d-flex align-items-center justify-content-between gap-3">
+                        <input type="text" name="searchTerm" class="form-control" placeholder="Search by username" value="@Model.SearchTerm" />              
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <ul class="list-group"></ul>
+        @foreach (var ban in Model.BannedUsersList.Items)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5>@ban.AppUser!.Username</h5>
+                        <p>@ban.Reason</p>
+                        <p>@ban.BannedAt.ToString("dd/MM/yyyy")</p>
+                        @{
+                            if(ban.BannedUntil != null && ban.IsPermanent == false)
+                            {
+                                <p>Banned Until: @ban.BannedUntil.Value.ToString("dd/MM/yyyy")</p>
+                            }
+                            else if(ban.IsPermanent == true)
+                            {
+                                <p>Permanent Ban</p>
+                            }
+                        }
+                        
+                    </div>
+                    <div>
+                        <a asp-controller="Admin" asp-action="BanDetails" asp-route-id="@ban.Id" class="btn btn-secondary">Details</a>
+                        <a asp-controller="Admin" asp-action="BanDelete" asp-route-id="@ban.Id" class="btn btn-danger">Delete</a>
+                    </div>
+                </li>   
+            }
+        </ul>
+        <div class="row mt-4">
+            <div class="col-12 text-center">
+                <p>Total Bans: @Model.BannedUsersList.Items.Count</p>
+            </div>
+        </div>
+    </div>
+</div>

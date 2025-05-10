@@ -38,6 +38,14 @@ public class AuthService(IUnitOfWork unitOfWork, SignInManager<AppUser> signInMa
             SecurityStamp = Guid.NewGuid().ToString()
         };
 
+        // assign default role to user : member
+        var role = await unitOfWork.RoleRepository.GetRoleByNameAsync("Member");
+        if (role == null)
+        {
+            return (false, new Dictionary<string, string> { { "Role", "Role not found." } }, null);
+        }
+        user.UserRoles.Add(new AppUserRole { RoleId = role.Id, UserId = user.Id });
+
         var result = await unitOfWork.UserRepository.CreateUser(user, registerDTO.Password);
 
         if (result.Succeeded)

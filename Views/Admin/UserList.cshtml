@@ -1,6 +1,10 @@
-﻿@model LostAndFound.Models.MemberListDTO
+﻿
+@model LostAndFound.Models.MemberListDTO
 @inject LostAndFound.Interfaces.IUserService UserService
+@using System.Security.Claims;
+@using LostAndFound.Extensions;
 @{
+
     ViewData["Title"] = "User List";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -15,10 +19,23 @@
     </div>
 
     <div class="row mb-3">
-        <div class="col-md-6">
-            <form asp-controller="Admin" asp-action="UserList" method="get" class="d-flex">
-                <input type="text" name="searchTerm" class="form-control me-2" placeholder="Search by username or email" value="@Model.SearchTerm" />
-                <button type="submit" class="btn btn-primary">Search</button>
+        <div class="col-12">
+            <form asp-controller="Admin" asp-action="UserList">
+                <div class="d-flex align-items-center justify-content-between gap-3">
+                    <input type="text" name="searchTerm" class="form-control" placeholder="Search by username or email" value="@Model.SearchTerm" />
+                    
+                    <select name="sortBy" class="form-select" style="min-width: 120px;">
+                        <option value="username" selected="@(Model.SortBy == "name")">Name</option>
+                        <option value="email" selected="@(Model.SortBy == "email")">Email</option>
+                    </select>
+                    
+                    <div class="form-check form-switch d-flex align-items-center">
+                        <input asp-for="@Model.IsBanned" class="form-check-input" type="checkbox" id="isBanned" name="isBanned" />
+                        <label class="form-check-label ms-2" for="isBanned">Show Banned</label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
             </form>
         </div>
     </div>
@@ -26,6 +43,10 @@
     <ul class="list-group">
         @foreach (var user in Model.MemberList.Items)
         {
+            if(user.Id == User.GetUserId())
+            {
+                continue;
+            }
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div>
                     <h5>@user.Username</h5>
@@ -38,11 +59,32 @@
                         }
 
                     }
+                    @{
+                        if (user.IsBanned)
+                        {
+                            <span class="badge bg-danger">Banned</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Active</span>
+                        }
+                    }
                 </div>
                 <div>
-                    <a asp-controller="Admin" asp-action="BanUser" asp-route-id="@user.Id" class="btn btn-warning">Ban</a>
-                    <a asp-controller="Admin" asp-action="EditUser" asp-route-id="@user.Id" class="btn btn-secondary">Edit</a>
-                    <a asp-controller="Admin" asp-action="DeleteUser" asp-route-id="@user.Id" class="btn btn-danger">Delete</a>
+                    
+                    @{
+                        if(!user.IsBanned)
+                        {
+                            <a asp-controller="Admin" asp-action="BanUser" asp-route-id="@user.Id" class="btn btn-warning">Ban</a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Admin" asp-action="UnbanUser" asp-route-id="@user.Id" class="btn btn-success">Unban</a>
+                        }
+                    }
+                    <a asp-controller="Admin" asp-action="UserDetails" asp-route-id="@user.Id" class="btn btn-success">Details</a>
+                    <a asp-controller="Admin" asp-action="UserRoleAssignment" asp-route-id="@user.Id" class="btn btn-info">Roles</a>
+                    <a asp-controller="Admin" asp-action="UserDelete" asp-route-id="@user.Id" class="btn btn-danger">Delete</a>
                 </div>
             </li>
         }
@@ -50,11 +92,6 @@
     <div class="row mt-4">
         <div class="col-12 text-center">
             <p>Total Users: @Model.MemberList.TotalCount</p>
-        </div>
-    </div>
-    <div class="row mt-4">
-        <div class="col-12 text-center">
-            <a asp-controller="Admin" asp-action="Index" class="btn btn-primary">Back to Dashboard</a>
         </div>
     </div>
 </div>
@@ -100,3 +137,8 @@
             </div>
         </div>
     }
+    <div class="row mt-4 mb-4">
+        <div class="col-12 text-center">
+            <a asp-controller="Admin" asp-action="Index" class="btn btn-primary">Back to Dashboard</a>
+        </div>
+    </div>

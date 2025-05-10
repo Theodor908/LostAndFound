@@ -24,4 +24,5 @@ public class MemberDTO
     [MaxFileSize(1024 * 1024, ErrorMessage = "Maximum file size is 1MB")]
     [AllowedExtensions([".jpg", ".jpeg", ".png", ".gif"], ErrorMessage = "Only image files (.jpg, .jpeg, .png, .gif) are allowed")]
     public IFormFile? Photo { get; set; }
+    public bool IsBanned { get; set; } = false;
 }

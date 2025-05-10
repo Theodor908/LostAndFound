@@ -52,17 +52,18 @@ public class UserController(IUserService userService) : Controller
 
         return RedirectToAction("Profile", new { id = memberDTO.Id });
     }
-
-    [HttpPost]
-        public async Task<IActionResult> DeleteUser(int id)
+    public async Task<IActionResult> DeleteUser(int id, bool actionByAdmin = false)
+    {
+        var result = await userService.DeleteUserAsync(id, actionByAdmin);
+        if (!result)
         {
-            var result = await userService.DeleteUserAsync(id);
-            if (!result)
-            {
-                return StatusCode(500, "Internal server error");
-            }
-
+            return StatusCode(500, "Internal server error");
+        }
+        if(!actionByAdmin)
+        {
             return RedirectToAction("Index", "Home");
         }
+        return RedirectToAction("UserList", "Admin");
+    }
 
 }

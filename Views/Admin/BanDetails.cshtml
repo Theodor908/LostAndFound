@@ -1,0 +1,45 @@
+﻿@model LostAndFound.Models.BanDTO
+@{
+    ViewData["Title"] = "Ban User Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center">Ban User Details</h1>
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">User ID</label>
+                        <input class="form-control" value="@Model.AppUserId" readonly />
+                        <span asp-validation-for="AppUserId" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3"></div>
+                        <label class="form-label">Username</label>
+                        <input class="form-control" value="@Model.AppUser!.Username" readonly />
+                        <span asp-validation-for="AppUserId" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ban Reason</label>
+                        <textarea class="form-control" readonly>@Model.Reason</textarea>
+                        <span asp-validation-for="Reason" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <form asp-controller="Admin" asp-action="UnbanUser" asp-route-id="@Model.AppUserId" method="post">
+                        <input type="hidden" name="banId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-success">Unban User</button>
+                    </form>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <a asp-controller="Admin" asp-action="BansList" class="btn btn-secondary">Return to Ban List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -101,150 +101,157 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-        const photoInput = document.getElementById('photoUpload');
-        const profileImage = document.querySelector('.profile-img');
-        
-        if (photoInput && profileImage) {
-            profileImage.style.transition = 'opacity 0.3s ease';
+            // Profile Image Preview
+            const photoInput = document.getElementById('photoUpload');
+            const profileImage = document.querySelector('.profile-img');
             
-            photoInput.addEventListener('change', function() {
-                if (this.files && this.files[0]) {
-                    const file = this.files[0];
-                    const fileSize = file.size;
-                    const maxSize = 1 * 1024 * 1024; 
-                    const fileType = file.type;
-                    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+            if (photoInput && profileImage) {
+                profileImage.style.transition = 'opacity 0.3s ease';
+                
+                photoInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const file = this.files[0];
+                        const fileSize = file.size;
+                        const maxSize = 1 * 1024 * 1024; 
+                        const fileType = file.type;
+                        const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
 
-                    if (fileSize > maxSize) {
-                        alert("File is too large. Maximum size is 1MB.");
-                        this.value = "";
-                        return;
-                    }
-                    
-                    if (!validTypes.includes(fileType)) {
-                        alert("Invalid file type. Only JPG, JPEG, PNG and GIF are allowed.");
-                        this.value = ""; 
-                        return;
-                    }
-                    
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        profileImage.style.opacity = '0';
+                        if (fileSize > maxSize) {
+                            alert("File is too large. Maximum size is 1MB.");
+                            this.value = "";
+                            return;
+                        }
                         
-                        setTimeout(() => {
-                            profileImage.src = e.target.result;
-                            profileImage.style.opacity = '1';
-                        }, 300);
-                    };
-                    
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-        
-        const apiKey = 'YkV4T2h4dGVWWHY5Z1RWT2hCeUJGZlc4d2VIRFp4TnBpWk5JTTZGaA==';
-        const countrySelect = document.getElementById('countrySelect');
-        const citySelect = document.getElementById('citySelect');
+                        if (!validTypes.includes(fileType)) {
+                            alert("Invalid file type. Only JPG, JPEG, PNG and GIF are allowed.");
+                            this.value = ""; 
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            profileImage.style.opacity = '0';
+                            
+                            setTimeout(() => {
+                                profileImage.src = e.target.result;
+                                profileImage.style.opacity = '1';
+                            }, 300);
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // Country/City Selection
+            const apiKey = 'YkV4T2h4dGVWWHY5Z1RWT2hCeUJGZlc4d2VIRFp4TnBpWk5JTTZGaA==';
+            const countrySelect = document.getElementById('countrySelect');
+            const citySelect = document.getElementById('citySelect');
 
-        const currentCountry = '@Model.Country'.trim();
-        const currentCity = '@Model.City'.trim();
+            const currentCountry = '@Model.Country'.trim();
+            const currentCity = '@Model.City'.trim();
 
-        var city_map = new Map();
+            var city_map = new Map();
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const countries = await fetchCountries();
-                populateCountryDropdown(countries);
+            async function initializeLocations() {
+                try {
+                    const countries = await fetchCountries();
+                    populateCountryDropdown(countries);
 
-                if (currentCountry) {
-                    const match = Array.from(countrySelect.options).find(opt => opt.textContent.trim() === currentCountry);
-                    if (match) {
-                        countrySelect.value = match.value;
-                        // Manually trigger change after value is set
-                        await loadCities(match.dataset.iso2);
-                        citySelect.disabled = false;
+                    if (currentCountry) {
+                        // Find the matching country by name
+                        const matchingCountry = countries.find(c => c.name === currentCountry);
+                        if (matchingCountry) {
+                            countrySelect.value = matchingCountry.name;
+                            
+                            // Load cities for the selected country
+                            await loadCities(matchingCountry.iso2);
 
-                        if (currentCity) {
-                            const cityMatch = Array.from(citySelect.options).find(opt => opt.textContent.trim() === currentCity);
-                            if (cityMatch) citySelect.value = cityMatch.value;
+                            // Now set the city value
+                            if (currentCity) {
+                                citySelect.value = currentCity;
+                            }
                         }
                     }
+                } catch (error) {
+                    console.error('Error initializing country/city:', error);
                 }
-            } catch (error) {
-                console.error('Error initializing country/city:', error);
+            }
+
+            // Initialize on page load
+            initializeLocations();
+
+            countrySelect.addEventListener('change', async () => {
+                const selectedOption = countrySelect.selectedOptions[0];
+                if (!selectedOption) return;
+                
+                const iso2 = selectedOption.dataset.iso2;
+                if (iso2) {
+                    await loadCities(iso2);
+                }
+            });
+
+            async function loadCities(countryIso2) {
+                citySelect.innerHTML = '<option value="">Loading cities...</option>';
+                citySelect.disabled = true;
+
+                try {
+                    let cities = city_map.get(countryIso2);
+                    if (!cities) {
+                        cities = await fetchCities(countryIso2);
+                        city_map.set(countryIso2, cities);
+                    }
+                    populateCityDropdown(cities);
+                } catch (err) {
+                    console.error('Error loading cities:', err);
+                    citySelect.innerHTML = '<option value="">Failed to load cities</option>';
+                } finally {
+                    citySelect.disabled = false;
+                }
+            }
+
+            async function fetchCountries() {
+                const res = await fetch('https://api.countrystatecity.in/v1/countries', {
+                    headers: { 'X-CSCAPI-KEY': apiKey }
+                });
+                if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+                return await res.json();
+            }
+
+            async function fetchCities(iso2) {
+                const res = await fetch(`https://api.countrystatecity.in/v1/countries/${iso2}/cities`, {
+                    headers: { 'X-CSCAPI-KEY': apiKey }
+                });
+                if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+                return await res.json();
+            }
+
+            function populateCountryDropdown(countries) {
+                countrySelect.innerHTML = '<option value="">Select Country</option>';
+                countries.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.name;
+                    opt.textContent = c.name;
+                    opt.dataset.iso2 = c.iso2;
+                    countrySelect.appendChild(opt);
+                });
+            }
+
+            function populateCityDropdown(cities) {
+                citySelect.innerHTML = '<option value="">Select City</option>';
+                
+                if (!cities || cities.length === 0) {
+                    citySelect.innerHTML = '<option value="">No cities available</option>';
+                    return;
+                }
+
+                cities.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.name;
+                    opt.textContent = c.name;
+                    citySelect.appendChild(opt);
+                });
             }
         });
-
-        countrySelect.addEventListener('change', async () => {
-            const selected = countrySelect.selectedOptions[0];
-            if (!selected) return;
-            const iso2 = selected.dataset.iso2;
-            await loadCities(iso2);
-        });
-
-        async function loadCities(countryIso2) {
-            citySelect.innerHTML = '<option value="">Loading cities...</option>';
-            citySelect.disabled = true;
-
-            try {
-                let cities = city_map.get(countryIso2);
-                if (!cities) {
-                    cities = await fetchCities(countryIso2);
-                    city_map.set(countryIso2, cities);
-                }
-                populateCityDropdown(cities);
-            } catch (err) {
-                console.error('Error loading cities:', err);
-            } finally {
-                citySelect.disabled = false;
-            }
-        }
-
-        async function fetchCountries() {
-            const res = await fetch('https://api.countrystatecity.in/v1/countries', {
-                headers: { 'X-CSCAPI-KEY': apiKey }
-            });
-            if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-            return await res.json();
-        }
-
-        async function fetchCities(iso2) {
-            const res = await fetch(`https://api.countrystatecity.in/v1/countries/${iso2}/cities`, {
-                headers: { 'X-CSCAPI-KEY': apiKey }
-            });
-            if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-            return await res.json();
-        }
-
-        function populateCountryDropdown(countries) {
-            countrySelect.innerHTML = '<option value="">Select Country</option>';
-            countries.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c.name;
-                opt.textContent = c.name;
-                opt.dataset.iso2 = c.iso2;
-                countrySelect.appendChild(opt);
-            });
-        }
-
-        function populateCityDropdown(cities) {
-            citySelect.innerHTML = '';
-            if (!cities || cities.length === 0) {
-                citySelect.innerHTML = '<option>No City</option>';
-                return;
-            }
-
-            const defaultOpt = document.createElement('option');
-            defaultOpt.value = '';
-            defaultOpt.textContent = 'Select City';
-            citySelect.appendChild(defaultOpt);
-
-            cities.forEach(c => {
-                const opt = document.createElement('option');
-                opt.value = c.name;
-                opt.textContent = c.name;
-                citySelect.appendChild(opt);
-            });
-        }  
     </script>
 }

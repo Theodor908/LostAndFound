@@ -4,7 +4,7 @@ using LostAndFound.Models;
 
 namespace LostAndFound.Services;
 
-public class AdminService(IRoleService roleService, ICategoryService categoryService, IUserService userService, IPostService postService, IItemService itemService, IBugService bugService, IBanService banService) : IAdminService
+public class AdminService(IRoleService roleService, ICategoryService categoryService, IUserService userService, IPostService postService, IItemService itemService, IBanService banService, IReportService reportService) : IAdminService
 {
 
     public Task<bool> BanUserAsync(int userId, string reason, DateTime? banEndDate = null, bool deleteAccount = false)
@@ -36,13 +36,13 @@ public class AdminService(IRoleService roleService, ICategoryService categorySer
     {
         int countUsers = await userService.GetUserCountAsync();
         int countPosts = await postService.GetPostCountAsync();
-        int countCategories = await categoryService.GetCategoryCountAsync();
+        int countCategories = await categoryService.GetCategoriesCountAsync();
         int countRoles = await roleService.GetRoleCountAsync();
         int countItems = await itemService.GetItemCountAsync();
         int countBans = await banService.GetBanCountAsync();
-        int countBugReports = await bugService.GetBugReportCountAsync();
-        int countPostReports = await postService.GetPostReportCountAsync();
-        int countUserReports = await userService.GetUserReportCountAsync();
+        int countBugReports = await reportService.GetReportBugCountAsync();
+        int countPostReports = await reportService.GetReportPostCountAsync();
+        int countUserReports = await reportService.GetReportUserCountAsync();
 
 
         var adminDashboardData = new AdminDTO

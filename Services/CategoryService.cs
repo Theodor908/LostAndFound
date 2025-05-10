@@ -1,13 +1,21 @@
 using System.Threading.Tasks;
 using AutoMapper;
 using LostAndFound.Entities;
+using LostAndFound.Helpers;
 using LostAndFound.Interfaces;
 using LostAndFound.Models;
 namespace LostAndFound.Services
 {
     public class CategoryService(IUnitOfWork unitOfWork, IMapper mapper) : ICategoryService
     {
-        public void CreateCategory(string categoryName)
+
+        public async Task<List<CategoryDTO>> GetAllCategoriesAsync()
+        {
+            var categories = await unitOfWork.CategoryRepository.GetAllCategoriesAsync();
+            var categoryList = mapper.Map<List<CategoryDTO>>(categories);
+            return categoryList;
+        }
+        public async Task CreateCategory(string categoryName)
         {
             Category category = new()
             {
@@ -15,25 +23,44 @@ namespace LostAndFound.Services
             };
 
             unitOfWork.CategoryRepository.CreateCategory(category);
+            var result = await unitOfWork.Complete();
+            if (!result)
+            {
+                throw new Exception("Failed to create category");
+            }
         }
 
-        public async Task DeleteCategory(int categoryId)
+        public async Task<bool> DeleteCategoryAsync(int categoryId)
         {
             await unitOfWork.CategoryRepository.DeleteCategory(categoryId);
+            var result = await unitOfWork.Complete();
+            if (!result)
+            {
+                throw new Exception("Failed to delete category");
+            }
+            return true;
         }
 
-        public async Task<List<CategoryDTO>?> GetAllCategoriesAsync()
+        public async Task<CategoryListDTO> GetAllCategoriesAsync(CategoryFilterParams categoryFilterParams)
         {
-            List<Category>? categories = await unitOfWork.CategoryRepository.GetAllCategoriesAsync();
-
-             List<CategoryDTO> categoryDTOs = mapper.Map<List<CategoryDTO>>(categories);
-
-            return categoryDTOs;
+            var categories = await unitOfWork.CategoryRepository.GetAllCategoriesAsync(categoryFilterParams);
+            var categoryList = mapper.Map<PagedList<CategoryDTO>>(categories);    
+            var categoryListDTO = new CategoryListDTO
+            {
+                SearchTerm = categoryFilterParams.SearchTerm!,
+                CategoryList = categoryList
+            };
+            return categoryListDTO;
         }
 
         public async Task<CategoryDTO?> GetCategoryById(int id)
         {
             Category? category = await unitOfWork.CategoryRepository.GetCategoryByIdAsync(id);
+
+            if (category == null)
+            {
+                return null;
+            }
             CategoryDTO categoryDTO = mapper.Map<CategoryDTO>(category);
             return categoryDTO;
         }
@@ -58,12 +85,34 @@ namespace LostAndFound.Services
 
             category.Name = newCategoryName;
             unitOfWork.CategoryRepository.UpdateCategory(category);
+            var result = await unitOfWork.Complete();
+            if (!result)
+            {
+                throw new Exception("Failed to update category");
+            }
             return true;
         }
 
-        public async Task<int> GetCategoryCountAsync()
+        public async Task<CategoryDTO> CreateCategoryAsync(string categoryName)
         {
-            return await unitOfWork.CategoryRepository.GetCategoryCountAsync();
+            Category category = new()
+            {
+                Name = categoryName
+            };
+
+            unitOfWork.CategoryRepository.CreateCategory(category);
+            var result = await unitOfWork.Complete();
+            if (!result)
+            {
+                throw new Exception("Failed to create category");
+            }
+
+            return mapper.Map<CategoryDTO>(category);
+        }
+
+        public Task<int> GetCategoriesCountAsync()
+        {
+            return unitOfWork.CategoryRepository.GetCategoriesCountAsync();
         }
     }
 }

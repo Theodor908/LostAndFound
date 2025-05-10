@@ -19,6 +19,5 @@ public interface IUserRepository : IDisposable
     bool VerifyPassword(AppUser user, string password);
     void DeleteUser(int id);
     Task<int> GetUserCountAsync();
-    Task<int> GetUserReportCountAsync();
     Task<List<string>> GetUserRolesByIdAsync(int userId);
 }

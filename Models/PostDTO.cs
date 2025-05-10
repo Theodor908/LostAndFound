@@ -5,6 +5,7 @@ using LostAndFound.Helpers.Validators;
 public class PostDTO : IValidatableObject
 {
     public int Id { get; set; }
+    public bool IsActive { get; set; } = true;
     public string PostType { get; set; } = string.Empty;
     [Required(ErrorMessage = "Title is required")]
     [StringLength(200, MinimumLength = 5, ErrorMessage = "Title must be between 5 and 200 characters")]
@@ -33,6 +34,8 @@ public class PostDTO : IValidatableObject
     
     [Display(Name = "User ID")]
     public int AppUserId { get; set; }
+
+    public List<int> DeletedItemIds { get; set; } = new List<int>();
     
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

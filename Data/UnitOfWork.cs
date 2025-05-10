@@ -3,7 +3,7 @@ using LostAndFound.Interfaces;
 
 namespace LostAndFound.Data;
 
-public class UnitOfWork(DataContext dataContext, IPostRepository postRepository, ICategoryRepository categoryRepository, IItemRepository itemRepository, IUserRepository userRepository, IPhotoRepository photoRepository, IRoleRepository roleRepository, IReportRepository reportRepository, IBugRepository bugRepository, IBanRepository banRepository) : IUnitOfWork
+public class UnitOfWork(DataContext dataContext, IPostRepository postRepository, ICategoryRepository categoryRepository, IItemRepository itemRepository, IUserRepository userRepository, IPhotoRepository photoRepository, IRoleRepository roleRepository, IReportRepository reportRepository, IBanRepository banRepository) : IUnitOfWork
 {
     public IPostRepository PostRepository => postRepository;
     public ICategoryRepository CategoryRepository => categoryRepository;
@@ -12,7 +12,6 @@ public class UnitOfWork(DataContext dataContext, IPostRepository postRepository,
     public IPhotoRepository PhotoRepository => photoRepository;
     public IRoleRepository RoleRepository => roleRepository;
     public IReportRepository ReportRepository => reportRepository;
-    public IBugRepository BugRepository => bugRepository;
     public IBanRepository BanRepository => banRepository;
     
     public async Task<bool> Complete()

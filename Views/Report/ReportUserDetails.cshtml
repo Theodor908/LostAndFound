@@ -1,0 +1,81 @@
+﻿@model LostAndFound.Models.ReportUserDTO
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Report User Details";
+}
+@inject LostAndFound.Interfaces.IUserService UserService
+
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="bg-light rounded-4 shadow-sm p-4 mb-4">
+                <h1 class="h3 mb-3">Report User Details</h1>
+                <p class="text-muted mb-4">
+                    <i class="fas fa-flag me-2"></i>Details of the reported user.
+                </p>
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" readonly />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="5" readonly></textarea>
+                </div>
+                @{ 
+                    var reportedUser = await UserService.GetUserByIdAsync(Model.ReportedUserId); 
+                    var reportedByUser = await UserService.GetUserByIdAsync(Model.ReportedByUserId); 
+                }
+                @{ 
+                    if (reportedByUser == null) 
+                    { 
+                        <div class="alert alert-danger" role="alert"> 
+                            <i class="fas fa-exclamation-triangle me-2"></i>Reported by user not found. 
+                        </div> 
+                    } 
+                    else 
+                    { 
+                        <div class="alert alert-info" role="alert"> 
+                            <a class="text-decoration-none" asp-controller="User" asp-action="Profile" asp-route-id="@reportedByUser.Id"> 
+                                <i class="fas fa-user me-2"></i>Reported by: @reportedByUser.Username 
+                            </a> 
+                        </div> 
+                    } 
+
+                    if (reportedUser == null) 
+                    { 
+                        <div class="alert alert-danger" role="alert"> 
+                            <i class="fas fa-exclamation-triangle me-2"></i>Reported user not found. 
+                        </div> 
+                    } 
+                    else 
+                    {
+                        <div class="alert alert-info" role="alert"> 
+                            <a class="text-decoration-none" asp-controller="User" asp-action="Profile" asp-route-id="@reportedUser.Id"> 
+                                <i class="fas fa-user me-2"></i>Reported user: @reportedUser.Username 
+                            </a> 
+                        </div> 
+                    }
+                }
+                <div class="d-flex justify-content-between">
+                    <a asp-controller="Admin" asp-action="ReportUserList" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Report User List
+                    </a>
+                        @if (Model.IsResolved)
+                        {
+                            <span class="badge bg-success">Resolved</span>
+                        }
+                        else
+                        {
+                           @if(User.IsInRole("Admin"))
+                            {
+                                <a asp-controller="Report" asp-action="SolveUser" asp-route-id="@Model.Id" class="btn btn-success">
+                                    <i class="fas fa-check me-1"></i>Resolve Report
+                                </a>
+                            }
+                        }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

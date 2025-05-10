@@ -1,0 +1,98 @@
+﻿@model LostAndFound.Models.RoleListDTO
+@{
+    ViewData["Title"] = "Role List";  
+    Layout = "~/Views/Shared/_Layout.cshtml";  
+}
+
+<div class="container mt-5">
+    <h1>@ViewData["Title"]</h1>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h2>Roles</h2>
+        </div>
+    </div>
+
+    <div class="row mb-3"></div>
+        <div class="col-12">
+            <form asp-controller="Admin" asp-action="RoleList">
+                <div class="d-flex align-items-center justify-content-between gap-3">
+                    <input type="text" name="searchTerm" class="form-control" placeholder="Search by role name" value="@Model.SearchTerm" />              
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <ul class="list-group mt-4">
+        @foreach (var role in Model.RoleList.Items)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <h5>@role.Name</h5>
+                </div>
+                <div>
+                    <a asp-controller="Admin" asp-action="RoleDetails" asp-route-id="@role.Id" class="btn btn-secondary">Details</a>
+                    <a asp-controller="Admin" asp-action="RoleDelete" asp-route-id="@role.Id" class="btn btn-danger">Delete</a>
+                </div>
+            </li>
+        }
+    </ul>
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            <p>Total Roles: @Model.RoleList.Items.Count</p>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <a asp-controller="Admin" asp-action="RoleCreate" class="btn btn-primary">Create New Role</a>
+        </div>
+    </div>
+</div>
+@if (Model.RoleList.TotalPages > 1)
+    {
+        <div class="row mt-4">
+            <div class="col-12">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item @(!Model.RoleList.HasPrevious ? "disabled" : "")">
+                            <a class="page-link" 
+                               asp-controller="Admin" 
+                               asp-action="RoleList" 
+                               asp-route-searchTerm="@Model.SearchTerm"
+                               asp-route-pageNumber="@(Model.RoleList.CurrentPage - 1)">
+                                Previous
+                            </a>
+                        </li>
+                        
+                        @for (int i = 1; i <= Model.RoleList.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.RoleList.CurrentPage ? "active" : "")">
+                                <a class="page-link"
+                                    asp-controller="Admin"
+                                    asp-action="RoleList"
+                                    asp-route-searchTerm="@Model.SearchTerm"
+                                    asp-route-pageNumber="@i">
+                                    @i
+                                </a>
+                            </li>
+                        }
+                        <li class="page-item @(!Model.RoleList.HasNext ? "disabled" : "")">
+                            <a class="page-link" 
+                               asp-controller="Admin" 
+                               asp-action="RoleList" 
+                               asp-route-searchTerm="@Model.SearchTerm"
+                               asp-route-pageNumber="@(Model.RoleList?.CurrentPage + 1)">
+                                Next
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    }
+    <div class="row mt-4 mb-4"></div>
+        <div class="col-12 text-center">
+            <a asp-controller="Admin" asp-action="Index" class="btn btn-primary">Back to Dashboard</a>
+        </div>
+    </div>

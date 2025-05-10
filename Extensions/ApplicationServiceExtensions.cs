@@ -50,7 +50,6 @@ public static class ApplicationServiceExtensions
     services.AddScoped<ICategoryRepository, CategoryRepository>();
     services.AddScoped<IRoleRepository, RoleRepository>();
     services.AddScoped<IReportRepository, ReportRepository>();
-    services.AddScoped<IBugRepository, BugRepository>();
     services.AddScoped<IBanRepository, BanRepository>();
 
     services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -63,7 +62,6 @@ public static class ApplicationServiceExtensions
     services.AddScoped<ICategoryService, CategoryService>();
     services.AddScoped<IItemService, ItemService>();
     services.AddScoped<IBrowseService, BrowseService>();
-    services.AddScoped<IBugService, BugService>();
     services.AddScoped<IBanService, BanService>();
     services.AddScoped<IAdminService, AdminService>();
 

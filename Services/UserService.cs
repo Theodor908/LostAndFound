@@ -6,10 +6,12 @@ using LostAndFound.Helpers;
 using LostAndFound.Interfaces;
 using LostAndFound.Models;
 using Microsoft.AspNetCore.Identity;
+//use claims here
+using System.Security.Claims;
 
 namespace LostAndFound.Services;
 
-public class UserService(IUnitOfWork unitOfWork, IMapper mapper, SignInManager<AppUser> signInManager, IPhotoService photoService) : IUserService
+public class UserService(IUnitOfWork unitOfWork, IMapper mapper, SignInManager<AppUser> signInManager, IPhotoService photoService, IRoleService roleService) : IUserService
 {
 
     public async Task<AppUser?> FindByEmailAsync(string email)
@@ -33,7 +35,14 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, SignInManager<A
 
     public async Task<MemberListDTO> GetAllUsersAsync(UserFilterParams userFilterParams)
     {
-        
+        var users = await unitOfWork.UserRepository.GetAllUsersAsync(userFilterParams);
+        var usersDTO = mapper.Map<PagedList<MemberDTO>>(users);
+        var memberListDTO = new MemberListDTO
+        {
+            SearchTerm = userFilterParams.SearchTerm,
+            MemberList = usersDTO
+        };
+        return memberListDTO;
     }
 
     public Task<UserDTO?> GetUserByEmailAsync(string email)
@@ -120,9 +129,10 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, SignInManager<A
         return true;
     }
 
-    public async Task<bool> DeleteUserAsync(int id)
+    public async Task<bool> DeleteUserAsync(int id, bool actionByAdmin = false)
     {
-        await signInManager.SignOutAsync();
+        if(!actionByAdmin)
+            await signInManager.SignOutAsync();
         unitOfWork.UserRepository.DeleteUser(id);
         var result = await unitOfWork.Complete();
         if (!result)
@@ -135,11 +145,6 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, SignInManager<A
     public async Task<int> GetUserCountAsync()
     {
         return await unitOfWork.UserRepository.GetUserCountAsync();
-    }
-
-    public async Task<int> GetUserReportCountAsync()
-    {
-        return await unitOfWork.UserRepository.GetUserReportCountAsync();
     }
 
     public async Task<List<string>> GetUserRolesByIdAsync(int userId)

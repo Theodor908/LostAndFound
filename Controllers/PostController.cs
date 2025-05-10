@@ -1,9 +1,11 @@
+using LostAndFound.Entities;
 using LostAndFound.Extensions;
 using LostAndFound.Interfaces;
 using LostAndFound.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace LostAndFound.Controllers;
 
@@ -75,6 +77,15 @@ public class PostController(IUserService userService, ICategoryService categoryS
     [HttpGet] 
     public async Task<IActionResult> PostUpdate(int id)
     {
+        PostDTO postDTO;
+
+        if (TempData.TryGetValue("DraftPostDTO", out var json) && json is string jsonString)
+        {
+            postDTO = JsonSerializer.Deserialize<PostDTO>(jsonString);
+            ViewBag.Categories = await categoryService.GetAllCategoriesAsync();
+            return View(postDTO);
+        }
+
         var postDetails = await postService.GetPostDetailsByIdAsync(id);
         if (postDetails == null)
         {
@@ -92,28 +103,40 @@ public class PostController(IUserService userService, ICategoryService categoryS
         return View(postDetails);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> PostUpdate(int id, PostDTO postDTO)
+    public async Task<IActionResult> PostDTOItemListShrink(int id, int postId)
     {
-        if (id != postDTO.Id)
+        var post = postService.GetPostDetailsByIdAsync(postId).Result;
+        if (post == null)
         {
-            return BadRequest("Post ID mismatch");
+            return NotFound();
+        }
+        
+        if (id < 0 || id >= post.Items.Count)
+        {
+            return BadRequest("Invalid item index");
         }
 
-        if (!ModelState.IsValid)
-        {
-            ViewBag.Categories = await categoryService.GetAllCategoriesAsync();
-            return View("PostUpdate", postDTO);
-        }
+    
+        var postDTO = await postService.ReducePostDTOItemListAsync(id, postId);
+        postDTO.Id = postId;
+        TempData["DraftPostDTO"] = JsonSerializer.Serialize(postDTO);
+        
+        return RedirectToAction("PostUpdate", new { id = postDTO.Id});
+    }
+    [HttpPost]
+    public async Task<IActionResult> PostUpdate(PostDTO postDTO)
+    {
 
-        var result = await postService.UpdatePostAsync(id, postDTO, ModelState.IsValid);
+        var result = await postService.UpdatePostAsync(postDTO.Id, postDTO, true);
+        // delete postdto draft 
+        TempData.Remove("DraftPostDTO");
 
         if (!result)
         {
             return BadRequest("Failed to update post");
         }
 
-        return RedirectToAction("PostDetails", new { id });
+        return RedirectToAction("PostDetails", new { postDTO.Id });
     }
 
     [HttpGet]

@@ -15,8 +15,15 @@ public interface IReportRepository
     Task<bool> ResolveReportPostAsync(int reportPostId);
     Task<bool> ResolveReportBugAsync(int reportBugId);  
     Task<bool> ResolveReportUserAsync(int reportUserId);
-    Task<PagedList<ReportPost>> GetAllReportPostsAsync(int pageNumber, int pageSize = 10, string? search = null);
-    Task<PagedList<ReportBug>> GetAllReportBugsAsync(int pageNumber, int pageSize = 10, string? search = null);
-    Task<PagedList<ReportUser>> GetAllReportUsersAsync(int pageNumber, int pageSize = 10, string? search = null);
+    Task<int> GetReportPostCountAsync();
+    Task<int> GetReportBugCountAsync();
+    Task<int> GetReportUserCountAsync();
+
+    Task<ReportPost> GetReportPostByIdAsync(int reportPostId);
+    Task<ReportBug> GetReportBugByIdAsync(int reportBugId);
+    Task<ReportUser> GetReportUserByIdAsync(int reportUserId);
+    Task<PagedList<ReportPost>> GetReportedPostsAsync(ReportPostFilterParams filterParams);
+    Task<PagedList<ReportBug>> GetReportedBugsAsync(ReportBugFilterParams filterParams);
+    Task<PagedList<ReportUser>> GetReportedUsersAsync(ReportUserFilterParams filterParams);
 }
 

@@ -123,7 +123,14 @@
                         }
                         
                         <div class="card-body">
-                            <h5 class="card-title">@item.Name.Substring(0, Math.Min(item.Description.Length, 50))</h5>
+                            @if(item.Name.Length > 50)
+                            {
+                                <h5 class="card-title">@item.Name.Substring(0, Math.Min(item.Description.Length, 50)) ...</h5>
+                            }
+                            else
+                            {
+                                <h5 class="card-title">@item.Name</h5>
+                            }
                             <p class="card-text text-muted mb-1">
                                 <i class="fas fa-tag me-1"></i> @await categoryService.GetCategoryNameByIdAsync(item.CategoryId)
                             </p>

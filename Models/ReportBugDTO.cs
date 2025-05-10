@@ -5,6 +5,7 @@ namespace LostAndFound.Models;
 
 public class ReportBugDTO
 {
+    public int Id { get; set; }
     [Required]
     [StringLength(100)]
     [DataType(DataType.Text)]

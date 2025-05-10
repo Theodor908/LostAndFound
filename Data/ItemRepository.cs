@@ -266,4 +266,13 @@ public class ItemRepository : IItemRepository
     {
         return await _context.Items.CountAsync();
     }
+
+    public async Task<bool> DeleteItemByIdAsync(int id)
+    {
+        var item = await GetItemByIdAsync(id);
+        if (item == null) return false;
+
+        _context.Items.Remove(item);
+        return true;
+    }
 }

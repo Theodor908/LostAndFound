@@ -73,11 +73,6 @@ public class DataContext(DbContextOptions<DataContext> options) : IdentityDbCont
             .WithMany(u => u.ReportPosts)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Entity<ReportBug>()
-            .HasOne(rb => rb.AppUser)
-            .WithMany(u => u.ReportBugs)
-            .OnDelete(DeleteBehavior.Cascade);
-
         builder.Entity<ReportUser>()
             .HasOne(ru => ru.ReportedByUser)
             .WithMany(u => u.ReportUsers)

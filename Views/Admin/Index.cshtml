@@ -39,7 +39,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Total Categories</h5>
                     <p class="card-text">@Model.CountCategories</p>
-                    <a href="@Url.Action("CategoriesList", "Admin")" class="btn btn-primary">View Categories</a>
+                    <a href="@Url.Action("CategoryList", "Admin")" class="btn btn-primary">View Categories</a>
                 </div>
             </div>
         </div>
@@ -57,7 +57,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Total Bans</h5>
                     <p class="card-text">@Model.CountBans</p>
-                    <a href="@Url.Action("Bans", "Admin")" class="btn btn-primary">View Bans</a>
+                    <a href="@Url.Action("BansList", "Admin")" class="btn btn-primary">View Bans</a>
                 </div>
             </div>
         </div>
@@ -66,7 +66,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Total Bug Reports</h5>
                     <p class="card-text">@Model.CountBugReports</p>
-                    <a href="@Url.Action("BugReports", "Admin")" class="btn btn-primary">View Bug Reports</a>
+                    <a href="@Url.Action("ReportBugList", "Admin")" class="btn btn-primary">View Bug Reports</a>
                 </div>
             </div>
         </div>
@@ -75,7 +75,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Total Posts Reported</h5>
                     <p class="card-text">@Model.CountPostReports</p>
-                    <a href="@Url.Action("PostsReported", "Admin")" class="btn btn-primary">View Reported Posts</a>
+                    <a href="@Url.Action("ReportPostList", "Admin")" class="btn btn-primary">View Reported Posts</a>
                 </div>
             </div>
         </div>
@@ -84,7 +84,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Total Users Reported</h5>
                     <p class="card-text">@Model.CountUserReports</p>
-                    <a href="@Url.Action("UsersReported", "Admin")" class="btn btn-primary">View Reported Users</a>
+                    <a href="@Url.Action("ReportUserList", "Admin")" class="btn btn-primary">View Reported Users</a>
                 </div>
             </div>
         </div>

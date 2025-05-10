@@ -1,0 +1,51 @@
+﻿@model LostAndFound.Models.BanDTO
+@{
+    ViewData["Title"] = "Ban User";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <h1 class="text-center">Ban User</h1>
+    <div class="row mt-4">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <form asp-action="BanUser" method="post">
+                        <div class="mb-3">
+                            <label asp-for="AppUserId" class="form-label">User ID</label>
+                            <input asp-for="AppUserId" class="form-control" readonly value="@Model.AppUserId" />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="@Model.AppUser!.Username" class="form-label">Username</label>
+                            <input asp-for="@Model.AppUser!.Username" class="form-control" readonly value="@Model.AppUser!.Username" />
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="Reason" class="form-label">Ban Reason</label>
+                            <textarea asp-for="Reason" class="form-control" required></textarea>
+                            <span asp-validation-for="Reason" class="text-danger"></span>
+                        </div>
+                        <div class="mb-3">
+                            <label asp-for="BannedUntil" class="form-label">Ban Duration</label>
+                            <input asp-for="BannedUntil" class="form-control" type="date" />
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input asp-for="IsPermanent" class="form-check-input" type="checkbox" />
+                            <label asp-for="IsPermanent" class="form-check-label">Permanent Ban</label>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Ban User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const bannedUntilInput = document.getElementById("BannedUntil");
+            const today = new Date().toISOString().split("T")[0];
+            bannedUntilInput.setAttribute("min", today);
+        });
+    </script>
+}

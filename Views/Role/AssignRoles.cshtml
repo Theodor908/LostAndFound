@@ -1,0 +1,48 @@
+﻿@model LostAndFound.Models.UserRoleAssignmentDTO
+@inject LostAndFound.Interfaces.IUserService UserService
+@inject LostAndFound.Interfaces.IRoleService RoleService
+@{
+    ViewData["Title"] = "Assign Roles"; 
+    Layout = "~/Views/Shared/_Layout.cshtml";  
+    var user = await UserService.GetUserByIdAsync(Model.UserId);
+    var userRoles = await RoleService.GetUserRolesByIdAsync(Model.UserId);
+}
+
+<div class="container mt-5">
+    <h1>@ViewData["Title"]</h1>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <h2>Assign Roles to @user!.Username</h2>
+        </div>
+        <div class="col-md-6 text-end">
+            <a asp-controller="Admin" asp-action="UserList" class="btn btn-secondary">Back to User List</a>
+        </div>
+    </div>
+    <form asp-controller="Role" asp-action="AssignRoles" method="post">
+        <input type="hidden" name="UserId" value="@Model.UserId" />
+        <div class="list-group">
+            @for (int i = 0; i < Model.RoleAssignments.Count; i++)
+            {
+                if(Model.RoleAssignments[i].Role.Name == "Admin")
+                {
+                    <p>Admin</p>
+                    break;
+                }
+                <input type="hidden" name="RoleAssignments[@i].Role.Id" value="@Model.RoleAssignments[i].Role.Id" />
+                <input type="checkbox" 
+                    name="RoleAssignments[@i].IsAssigned"
+                    value="true"
+                    @(Model.RoleAssignments[i].IsAssigned ? "checked" : "") />
+                <input type="hidden" name="RoleAssignments[@i].Role.Name" value="@Model.RoleAssignments[i].Role.Name" />
+                <label>@Model.RoleAssignments[i].Role.Name</label>
+            }
+
+        </div>
+
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a asp-controller="Admin" asp-action="UserList" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
