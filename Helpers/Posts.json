@@ -1,0 +1,389 @@
+[
+  {
+    "PostType": "Lost",
+    "IsClosed": false,
+    "Title": "Lost Black Wallet",
+    "Description": "I lost my black leather wallet near Central Park on May 15. It contains my ID, credit cards, and some cash. Please contact me if found.",
+    "CreatedAt": "2025-05-15T10:00:00Z",
+    "UpdatedAt": "2025-05-15T10:00:00Z",
+    "IsActive": true,
+    "AppUserId": 1,
+    "Items": [
+      {
+        "Name": "Black Leather Wallet",
+        "Description": "A black leather wallet with multiple card slots and a cash compartment.",
+        "Country": "USA",
+        "City": "New York",
+        "Location": "Central Park",
+        "SpecificLocation": "Near the Bethesda Fountain",
+        "PostedAt": "2025-05-15T10:00:00Z",
+        "UpdatedAt": "2025-05-15T10:00:00Z",
+        "FoundAt": null,
+        "LostAt": "2025-05-15T08:00:00Z",
+        "IsFound": false,
+        "IsClaimed": false,
+        "CategoryId": 7,
+        "AppUserId": 1,
+        "PostId": 0
+      }
+    ]
+  },
+  {
+    "PostType": "Found",
+    "IsClosed": false,
+    "Title": "Found Blue Umbrella",
+    "Description": "Found a blue umbrella at the subway station on 5th Avenue on May 14. It’s in good condition. Contact me to claim it.",
+    "CreatedAt": "2025-05-14T12:00:00Z",
+    "UpdatedAt": "2025-05-14T12:00:00Z",
+    "IsActive": true,
+    "AppUserId": 2,
+    "Items": [
+      {
+        "Name": "Blue Umbrella",
+        "Description": "A compact blue umbrella with a wooden handle.",
+        "Country": "UK",
+        "City": "London",
+        "Location": "5th Avenue Subway Station",
+        "SpecificLocation": "Platform 2",
+        "PostedAt": "2025-05-14T12:00:00Z",
+        "UpdatedAt": "2025-05-14T12:00:00Z",
+        "FoundAt": "2025-05-14T11:00:00Z",
+        "LostAt": null,
+        "IsFound": true,
+        "IsClaimed": false,
+        "CategoryId": 4,
+        "AppUserId": 2,
+        "PostId": 0
+      }
+    ]
+  },
+  {
+    "PostType": "Lost",
+    "IsClosed": false,
+    "Title": "Missing Golden Retriever",
+    "Description": "My golden retriever, Max, went missing in the Hyde Park area on May 16. He’s friendly and has a red collar. Please call if you see him.",
+    "CreatedAt": "2025-05-16T09:00:00Z",
+    "UpdatedAt": "2025-05-16T09:00:00Z",
+    "IsActive": true,
+    "AppUserId": 3,
+    "Items": [
+      {
+        "Name": "Golden Retriever",
+        "Description": "A friendly golden retriever named Max with a red collar.",
+        "Country": "Spain",
+        "City": "Madrid",
+        "Location": "Hyde Park",
+        "SpecificLocation": "Near the main entrance",
+        "PostedAt": "2025-05-16T09:00:00Z",
+        "UpdatedAt": "2025-05-16T09:00:00Z",
+        "FoundAt": null,
+        "LostAt": "2025-05-16T07:00:00Z",
+        "IsFound": false,
+        "IsClaimed": false,
+        "CategoryId": 10,
+        "AppUserId": 3,
+        "PostId": 0
+      }
+    ]
+  },
+  {
+    "PostType": "Found",
+    "IsClosed": false,
+    "Title": "Found Electronics and Jewelry",
+    "Description": "Found a smartphone and a silver ring near the downtown library on May 13. Please provide details to claim them.",
+    "CreatedAt": "2025-05-13T14:00:00Z",
+    "UpdatedAt": "2025-05-13T14:00:00Z",
+    "IsActive": true,
+    "AppUserId": 4,
+    "Items": [
+      {
+        "Name": "Smartphone",
+        "Description": "A black smartphone in a protective case, found near the library entrance.",
+        "Country": "UAE",
+        "City": "Dubai",
+        "Location": "Downtown Library",
+        "SpecificLocation": "Entrance steps",
+        "PostedAt": "2025-05-13T14:00:00Z",
+        "UpdatedAt": "2025-05-13T14:00:00Z",
+        "FoundAt": "2025-05-13T13:00:00Z",
+        "LostAt": null,
+        "IsFound": true,
+        "IsClaimed": false,
+        "CategoryId": 1,
+        "AppUserId": 4,
+        "PostId": 0
+      },
+      {
+        "Name": "Silver Ring",
+        "Description": "A silver ring with an engraved pattern, found near the library entrance.",
+        "Country": "UAE",
+        "City": "Dubai",
+        "Location": "Downtown Library",
+        "SpecificLocation": "Entrance steps",
+        "PostedAt": "2025-05-13T14:00:00Z",
+        "UpdatedAt": "2025-05-13T14:00:00Z",
+        "FoundAt": "2025-05-13T13:00:00Z",
+        "LostAt": null,
+        "IsFound": true,
+        "IsClaimed": false,
+        "CategoryId": 3,
+        "AppUserId": 4,
+        "PostId": 0
+      }
+    ]
+  },
+    {
+    "PostType": "Lost",
+    "IsClosed": false,
+    "Title": "Lost Winter Jacket",
+    "Description": "I lost my blue winter jacket at the Toronto subway on May 16. It’s a puffy jacket with a hood. Please contact me if found.",
+    "CreatedAt": "2025-05-16T14:00:00Z",
+    "UpdatedAt": "2025-05-16T14:00:00Z",
+    "IsActive": true,
+    "AppUserId": 6,
+    "Items": [
+      {
+        "Name": "Blue Winter Jacket",
+        "Description": "A blue puffy jacket with a detachable hood and fleece lining.",
+        "Country": "Canada",
+        "City": "Toronto",
+        "Location": "Union Station",
+        "SpecificLocation": "Platform 3",
+        "PostedAt": "2025-05-16T14:00:00Z",
+        "UpdatedAt": "2025-05-16T14:00:00Z",
+        "FoundAt": null,
+        "LostAt": "2025-05-16T12:00:00Z",
+        "IsFound": false,
+        "IsClaimed": false,
+        "CategoryId": 2,
+        "AppUserId": 6,
+        "PostId": 0
+      }
+    ]
+  },
+  {
+    "PostType": "Found",
+    "IsClosed": false,
+    "Title": "Found Necklace",
+    "Description": "Found a gold necklace near the Eiffel Tower on May 17. It has a heart pendant. Contact me to claim it.",
+    "CreatedAt": "2025-05-17T10:00:00Z",
+    "UpdatedAt": "2025-05-17T10:00:00Z",
+    "IsActive": true,
+    "AppUserId": 7,
+    "Items": [
+      {
+        "Name": "Gold Necklace",
+        "Description": "A gold necklace with a heart-shaped pendant, found on the ground.",
+        "Country": "France",
+        "City": "Paris",
+        "Location": "Eiffel Tower",
+        "SpecificLocation": "Near the ticket booth",
+        "PostedAt": "2025-05-17T10:00:00Z",
+        "UpdatedAt": "2025-05-17T10:00:00Z",
+        "FoundAt": "2025-05-17T09:00:00Z",
+        "LostAt": null,
+        "IsFound": true,
+        "IsClaimed": false,
+        "CategoryId": 3,
+        "AppUserId": 7,
+        "PostId": 0
+      }
+    ]
+  },
+  {
+    "PostType": "Lost",
+    "IsClosed": false,
+    "Title": "Lost Backpack and Passport",
+    "Description": "Lost my backpack containing my passport at a café in Mumbai on May 16. Urgent, please help!",
+    "CreatedAt": "2025-05-16T16:00:00Z",
+    "UpdatedAt": "2025-05-16T16:00:00Z",
+    "IsActive": true,
+    "AppUserId": 8,
+    "Items": [
+      {
+        "Name": "Black Backpack",
+        "Description": "A black backpack with multiple compartments and a laptop sleeve.",
+        "Country": "India",
+        "City": "Mumbai",
+        "Location": "Café Coffee Day",
+        "SpecificLocation": "Near the counter",
+        "PostedAt": "2025-05-16T16:00:00Z",
+        "UpdatedAt": "2025-05-16T16:00:00Z",
+        "FoundAt": null,
+        "LostAt": "2025-05-16T15:00:00Z",
+        "IsFound": false,
+        "IsClaimed": false,
+        "CategoryId": 4,
+        "AppUserId": 8,
+        "PostId": 0
+      },
+      {
+        "Name": "Passport",
+        "Description": "An Indian passport inside the backpack, critical document.",
+        "Country": "India",
+        "City": "Mumbai",
+        "Location": "Café Coffee Day",
+        "SpecificLocation": "Near the counter",
+        "PostedAt": "2025-05-16T16:00:00Z",
+        "UpdatedAt": "2025-05-16T16:00:00Z",
+        "FoundAt": null,
+        "LostAt": "2025-05-16T15:00:00Z",
+        "IsFound": false,
+        "IsClaimed": false,
+        "CategoryId": 5,
+        "AppUserId": 8,
+        "PostId": 0
+      }
+    ]
+  },
+  {
+    "PostType": "Found",
+    "IsClosed": false,
+    "Title": "Found Car Keys",
+    "Description": "Found a set of car keys at a park in São Paulo on May 17. They have a leather keychain. Contact me to claim.",
+    "CreatedAt": "2025-05-17T12:00:00Z",
+    "UpdatedAt": "2025-05-17T12:00:00Z",
+    "IsActive": true,
+    "AppUserId": 9,
+    "Items": [
+      {
+        "Name": "Car Keys",
+        "Description": "A set of car keys with a leather keychain and three keys.",
+        "Country": "Brazil",
+        "City": "São Paulo",
+        "Location": "Ibirapuera Park",
+        "SpecificLocation": "Near the fountain",
+        "PostedAt": "2025-05-17T12:00:00Z",
+        "UpdatedAt": "2025-05-17T12:00:00Z",
+        "FoundAt": "2025-05-17T11:00:00Z",
+        "LostAt": null,
+        "IsFound": true,
+        "IsClaimed": false,
+        "CategoryId": 6,
+        "AppUserId": 9,
+        "PostId": 0
+      }
+    ]
+  },
+  {
+    "PostType": "Lost",
+    "IsClosed": false,
+    "Title": "Lost Textbook",
+    "Description": "I lost my math textbook at a library in Tokyo on May 16. It has my name written inside. Please help!",
+    "CreatedAt": "2025-05-16T18:00:00Z",
+    "UpdatedAt": "2025-05-16T18:00:00Z",
+    "IsActive": true,
+    "AppUserId": 10,
+    "Items": [
+      {
+        "Name": "Math Textbook",
+        "Description": "A calculus textbook with a blue cover, my name is written on the first page.",
+        "Country": "Japan",
+        "City": "Tokyo",
+        "Location": "Ueno Library",
+        "SpecificLocation": "Reading room",
+        "PostedAt": "2025-05-16T18:00:00Z",
+        "UpdatedAt": "2025-05-16T18:00:00Z",
+        "FoundAt": null,
+        "LostAt": "2025-05-16T17:00:00Z",
+        "IsFound": false,
+        "IsClaimed": false,
+        "CategoryId": 8,
+        "AppUserId": 10,
+        "PostId": 0
+      }
+    ]
+  },
+  {
+    "PostType": "Lost",
+    "IsClosed": false,
+    "Title": "Lost Glasses and Cat",
+    "Description": "I lost my prescription glasses and my cat, Luna, near the Nile River promenade on May 17. The glasses are in a black case, and Luna is a white cat with blue eyes. Please contact me if you find either.",
+    "CreatedAt": "2025-05-17T17:00:00Z",
+    "UpdatedAt": "2025-05-17T17:00:00Z",
+    "IsActive": true,
+    "AppUserId": 11,
+    "Items": [
+      {
+        "Name": "Prescription Glasses",
+        "Description": "Black-framed prescription glasses in a hard black case.",
+        "Country": "Egypt",
+        "City": "Cairo",
+        "Location": "Nile River Promenade",
+        "SpecificLocation": "Near the Qasr El Nil Bridge",
+        "PostedAt": "2025-05-17T17:00:00Z",
+        "UpdatedAt": "2025-05-17T17:00:00Z",
+        "FoundAt": null,
+        "LostAt": "2025-05-17T15:00:00Z",
+        "IsFound": false,
+        "IsClaimed": false,
+        "CategoryId": 9,
+        "AppUserId": 11,
+        "PostId": 0
+      },
+      {
+        "Name": "White Cat",
+        "Description": "A white cat named Luna with blue eyes, no collar.",
+        "Country": "Egypt",
+        "City": "Cairo",
+        "Location": "Nile River Promenade",
+        "SpecificLocation": "Near the Qasr El Nil Bridge",
+        "PostedAt": "2025-05-17T17:00:00Z",
+        "UpdatedAt": "2025-05-17T17:00:00Z",
+        "FoundAt": null,
+        "LostAt": "2025-05-17T15:00:00Z",
+        "IsFound": false,
+        "IsClaimed": false,
+        "CategoryId": 10,
+        "AppUserId": 11,
+        "PostId": 0
+      }
+    ]
+  },
+  {
+    "PostType": "Found",
+    "IsClosed": false,
+    "Title": "Found Sunglasses and Dog",
+    "Description": "Found a pair of sunglasses and a small dog near the Colosseum on May 17. The sunglasses are Ray-Ban, and the dog is a brown terrier with a green collar. Please contact me to claim them.",
+    "CreatedAt": "2025-05-17T18:00:00Z",
+    "UpdatedAt": "2025-05-17T18:00:00Z",
+    "IsActive": true,
+    "AppUserId": 12,
+    "Items": [
+      {
+        "Name": "Ray-Ban Sunglasses",
+        "Description": "A pair of Ray-Ban sunglasses with black lenses, found on a bench.",
+        "Country": "Italy",
+        "City": "Rome",
+        "Location": "Colosseum",
+        "SpecificLocation": "Near the main entrance",
+        "PostedAt": "2025-05-17T18:00:00Z",
+        "UpdatedAt": "2025-05-17T18:00:00Z",
+        "FoundAt": "2025-05-17T17:00:00Z",
+        "LostAt": null,
+        "IsFound": true,
+        "IsClaimed": false,
+        "CategoryId": 9,
+        "AppUserId": 12,
+        "PostId": 0
+      },
+      {
+        "Name": "Brown Terrier",
+        "Description": "A small brown terrier with a green collar, very friendly.",
+        "Country": "Italy",
+        "City": "Rome",
+        "Location": "Colosseum",
+        "SpecificLocation": "Near the main entrance",
+        "PostedAt": "2025-05-17T18:00:00Z",
+        "UpdatedAt": "2025-05-17T18:00:00Z",
+        "FoundAt": "2025-05-17T17:00:00Z",
+        "LostAt": null,
+        "IsFound": true,
+        "IsClaimed": false,
+        "CategoryId": 10,
+        "AppUserId": 12,
+        "PostId": 0
+      }
+    ]
+  }
+]

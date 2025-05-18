@@ -1,0 +1,74 @@
+[
+    {
+        "Username": "john_doe",
+        "Email": "john.doe@example.com",
+        "City": "New York",
+        "Country": "USA"
+    },
+    {
+        "Username": "jane_smith",
+        "Email": "jane.smith@example.com",
+        "City": "London",
+        "Country": "UK"
+    },
+    {
+        "Username": "maria_garcia",
+        "Email": "maria.garcia@example.com",
+        "City": "Madrid",
+        "Country": "Spain"
+    },
+    {
+        "Username": "ahmed_khan",
+        "Email": "ahmed.khan@example.com",
+        "City": "Dubai",
+        "Country": "UAE"
+    },
+    {
+        "Username": "emily_wong",
+        "Email": "emily.wong@example.com",
+        "City": "Sydney",
+        "Country": "Australia"
+    },
+    {
+        "Username": "liam_brown",
+        "Email": "liam.brown@example.com",
+        "City": "Toronto",
+        "Country": "Canada"
+    },
+    {
+        "Username": "sofia_martin",
+        "Email": "sofia.martin@example.com",
+        "City": "Paris",
+        "Country": "France"
+    },
+    {
+        "Username": "raj_patel",
+        "Email": "raj.patel@example.com",
+        "City": "Mumbai",
+        "Country": "India"
+    },
+    {
+        "Username": "clara_oliveira",
+        "Email": "clara.oliveira@example.com",
+        "City": "São Paulo",
+        "Country": "Brazil"
+    },
+    {
+        "Username": "hiroshi_tanaka",
+        "Email": "hiroshi.tanaka@example.com",
+        "City": "Tokyo",
+        "Country": "Japan"
+    },
+    {
+        "Username": "amina_hassan",
+        "Email": "amina.hassan@example.com",
+        "City": "Cairo",
+        "Country": "Egypt"
+    },
+    {
+        "Username": "luca_rossi",
+        "Email": "luca.rossi@example.com",
+        "City": "Rome",
+        "Country": "Italy"
+    }
+]

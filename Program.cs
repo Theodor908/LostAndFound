@@ -42,82 +42,24 @@ app.MapControllerRoute(
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 
-using (var roleScope = app.Services.CreateScope())
+try
 {
-    var context = scope.ServiceProvider.GetRequiredService<DataContext>();
-    
-    if (!context.Roles.Any())
-    {
-        var roles = new List<AppRole>
-        {
-            new AppRole { Name = "Admin", NormalizedName = "ADMIN" },
-            new AppRole { Name = "Moderator", NormalizedName = "MODERATOR" },
-            new AppRole { Name = "Member", NormalizedName = "MEMBER" }
-        };
-        
-        await context.Roles.AddRangeAsync(roles);
-        await context.SaveChangesAsync();
-    }
+    var context = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
 
-    // create default admin user
+    await context.Database.MigrateAsync();
 
-    var authService = services.GetRequiredService<IAuthService>();
-    var roleService = services.GetRequiredService<IRoleService>();
-    var userService = services.GetRequiredService<IUserService>();
-
-    var user = new RegisterDTO
-    {
-        Username = "admin9",
-        Email = "admin9@admin.com",
-        Password = "Admin123!",
-        ConfirmPassword = "Admin123!",
-        Country = "Adminland",
-        City = "Admin City",
-    };
-
-    var (succeeded, errors, appUser) = await authService.RegisterAsync(user, true);
-
-    if (succeeded)
-    {
-        var role = await roleService.GetRoleByNameAsync("Admin");
-        Console.WriteLine($"Role: {role?.Name}");
-        if (role != null)
-        {
-            var result = await roleService.AddRoleToUserAsync(appUser!.Id, "Admin");
-            var userRole = await roleService.GetUserRolesByIdAsync(appUser.Id);
-            Console.WriteLine($"User roles: {string.Join(", ", userRole!.Select(r => r.Name))}");
-            if (result)
-            {
-                Console.WriteLine($"User {appUser.UserName} added to role {role.Name}.");
-            }
-            else
-            {
-                Console.WriteLine($"Failed to add user {appUser.UserName} to role {role.Name}.");
-            }
-        }
-    }
-    else
-    {
-        Console.WriteLine($"Failed to create admin user: {string.Join(", ", errors!.Select(e => e.Value))}");
-    }
+    await Seed.SeedUsers(userManager, roleManager);
+    await Seed.SeedCategories(context);
+    await Seed.SeedPosts(context);
+    await Seed.SeedPhotos(context);
 }
-
-// try
-// {
-//     var context = services.GetRequiredService<DataContext>();
-//     var userManager = services.GetRequiredService<UserManager<AppUser>>();
-//     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-
-//     await context.Database.MigrateAsync();
-
-//     // await Seed.SeedUsers(userManager, roleManager);
-//     // await Seed.SeedData(context); 
-// }
-// catch (Exception ex)
-// {
-//     var logger = services.GetRequiredService<ILogger<Program>>();
-//     logger.LogError(ex, "An error occurred during migration");
-// }
+catch (Exception ex)
+{
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occurred during migration");
+}
 
 
 app.Run();
